@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngelSix.SolidWorksApi.AddinInstaller", "AngelSix.SolidWorksApi.AddinInstaller.csproj", "{09432F0F-4769-47AD-861E-3A88E66EB86C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{09432F0F-4769-47AD-861E-3A88E66EB86C}.Debug|x64.ActiveCfg = Debug|x64
+		{09432F0F-4769-47AD-861E-3A88E66EB86C}.Debug|x64.Build.0 = Debug|x64
+		{09432F0F-4769-47AD-861E-3A88E66EB86C}.Release|x64.ActiveCfg = Release|x64
+		{09432F0F-4769-47AD-861E-3A88E66EB86C}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

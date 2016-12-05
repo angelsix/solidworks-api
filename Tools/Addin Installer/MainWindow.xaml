@@ -1,0 +1,79 @@
+﻿<Window x:Class="AngelSix.SolidWorksApi.AddinInstaller.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AngelSix.SolidWorksApi.AddinInstaller"
+        mc:Ignorable="d"
+        Title="SolidWorks Addin Installer - angelsix.com" 
+        Height="350" 
+        MinHeight="350"
+        Width="525" 
+        MinWidth="525"
+        Icon="Resources/favicon.ico">
+    <Border Padding="10">
+
+        <Grid>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <StackPanel>
+                <Label Content="SolidWorks Add-in Installer" FontWeight="Bold" FontSize="20" />
+                <TextBlock Margin="0 10" TextWrapping="WrapWithOverflow" Text="This tool will register and install a SolidWorks Add-in dll file into the SolidWorks registry so the add-in will show up in SolidWorks" />
+
+                <Label Content="SolidWorks Application" FontWeight="Bold" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Padding="5" Name="SolidWorksPath" />
+                    <Button Name="BrowseSolidWorksButton" Click="BrowseSolidWorksButton_Click" Grid.Column="1" Content="Browse" Padding="5" />
+
+                </Grid>
+
+                <Label Content="RegAsm Application" FontWeight="Bold" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Padding="5" Name="RegAsmPath" />
+                    <Button Name="BrowseRegAsmButton" Click="BrowseRegAsmButton_Click" Grid.Column="1" Content="Browse" Padding="5" />
+
+                </Grid>
+
+                <Label Content="Add-in Dll" FontWeight="Bold" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Padding="5" Name="DllPath" />
+                    <Button Name="BrowseDllButton" Click="BrowseDllButton_Click" Grid.Column="1" Content="Browse" Padding="5" />
+
+                </Grid>
+            </StackPanel>
+
+            <Grid Grid.Row="2" Margin="0 20 0 0">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <Button Name="UninstallButton" Content="Uninstall" Click="UninstallButton_Click" />
+                <Button Grid.Column="1" Margin="5 0 0 0" Name="InstallButton" Content="Install" Click="InstallButton_Click" />
+
+            </Grid>
+
+        </Grid>
+    </Border>
+</Window>
