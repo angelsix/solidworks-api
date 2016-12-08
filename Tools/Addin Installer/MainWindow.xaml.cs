@@ -244,7 +244,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = RegAsmPath.Text,
-                    Arguments = $"/codebase {DllPath.Text}",
+                    Arguments = $"/codebase \"{DllPath.Text}\"",
                     // Run as admin
                     Verb = "runas",
                     // Redirect input and output
@@ -286,7 +286,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = RegAsmPath.Text,
-                    Arguments = $"/u {DllPath.Text}",
+                    Arguments = $"/u \"{DllPath.Text}\"",
                     // Run as admin
                     Verb = "runas",
                     // Redirect input and output
