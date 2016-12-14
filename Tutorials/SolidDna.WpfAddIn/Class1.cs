@@ -1,0 +1,71 @@
+﻿using AngelSix.SolidDna;
+using SolidWorks.Interop.sldworks;
+using System.IO;
+
+namespace SolidDna.WpfAddIn
+{
+    /// <summary>
+    /// Register as a SolidWorks Add-in
+    /// </summary>
+    public class MyAddinIntegration : AddInIntegration
+    {
+        /// <summary>
+        /// Specific application start-up code
+        /// </summary>
+        /// <param name="solidWorks"></param>
+        public override void ApplicationStartup(SldWorks solidWorks)
+        {
+
+        }
+    }
+
+    /// <summary>
+    /// My first SolidDna Plguin
+    /// </summary>
+    public class MySolidDnaPlguin : ISolidPlugIn
+    {
+        #region Private Members
+
+        /// <summary>
+        /// The Taskpane UI for our plug-in
+        /// </summary>
+        private TaskpaneIntegration<MyTaskpaneUI> mTaskpane;
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// My Add-in description
+        /// </summary>
+        public string AddInDescription {  get { return "My Addin Description"; } }
+
+        /// <summary>
+        /// My Add-in title
+        /// </summary>
+        public string AddInTitle { get { return "My Addin Title"; } }
+
+        #endregion
+
+        #region Connect To SolidWorks
+
+        public void ConnectedToSolidWorks(SldWorks solidWorks)
+        {
+            // Create our taskpane
+            mTaskpane = new TaskpaneIntegration<MyTaskpaneUI>(solidWorks)
+            {
+                Icon = Path.Combine(PlugInIntegration.PlugInFolder, "logo-small.png"),
+                WpfControl = new MyAddinControl()
+            };
+
+            mTaskpane.AddToTaskpane();
+        }
+
+        public void DisconnetedFromSolidWorks()
+        {
+
+        }
+
+        #endregion
+    }
+}
