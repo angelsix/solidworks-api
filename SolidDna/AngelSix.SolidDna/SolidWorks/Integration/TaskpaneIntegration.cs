@@ -1,5 +1,5 @@
-﻿using SolidWorks.Interop.sldworks;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 
@@ -18,14 +18,9 @@ namespace AngelSix.SolidDna
         #region Protected Members
 
         /// <summary>
-        /// The current instance of the SolidWorks application
+        /// The SolidWorks Taskpane object for this taskpane
         /// </summary>
-        protected SldWorks mSolidWorksApplication;
-
-        /// <summary>
-        /// The view of this control in the Taskpane as a SolidWorks Com native object
-        /// </summary>
-        protected TaskpaneView mTaskpaneView;
+        protected Taskpane mTaskpaneView;
 
         /// <summary>
         /// The host <see cref="ITaskpaneControl"/> control this taskpane will create
@@ -62,12 +57,8 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Default Constructor
         /// </summary>
-        /// <param name="solidWorks">The currently connected SolidWorks instance</param>
-        public TaskpaneIntegration(SldWorks solidWorks)
+        public TaskpaneIntegration()
         {
-            // Store reference to SolidWorks
-            mSolidWorksApplication = solidWorks;
-
             // Fimd out the ProgId of the desired control type
             mHostProgId = new THost().ProgId;
         }
@@ -79,13 +70,16 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Adds the specified host control to the SolidWorks Taskpane
         /// </summary>
-        public void AddToTaskpane()
+        public async Task AddToTaskpane()
         {
             // Create our Taskpane
-            mTaskpaneView = mSolidWorksApplication.CreateTaskpaneView2(this.Icon, AddInIntegration.SolidWorksAddInTitle);
+            mTaskpaneView = await AddInIntegration.SolidWorks.CreateTaskpane(this.Icon, AddInIntegration.SolidWorksAddInTitle);
 
             // Load our UI into the taskpane
-            mHostControl = (ITaskpaneControl)mTaskpaneView.AddControl(mHostProgId, string.Empty);
+            mHostControl = await mTaskpaneView.AddControl<ITaskpaneControl>(mHostProgId, string.Empty);
+
+            // Set UI thread
+            ThreadHelpers.Enable((Control)mHostControl);
 
             // Hook into disconnect event of SolidWorks to unload ourselves automatically
             AddInIntegration.DisconnectedFromSolidWorks += () => RemoveFromTaskpane();
@@ -93,22 +87,29 @@ namespace AngelSix.SolidDna
             // Add WPF control if we have one
             if (this.WpfControl != null)
             {
-                // Create a new ElementHost to host the Wpf control
-                var elementHost = new ElementHost {
-                    // Add given WPF control
-                    Child = WpfControl,
-                    // Dock fill it
-                    Dock = DockStyle.Fill };
-                
-                // Add and dock it to the parent control
-                if (mHostControl is Control)
+                // NOTE: ElementHost must be created on UI thread, so create it and continue after
+                await ThreadHelpers.RunOnUIThreadAwait(() =>
                 {
-                    // Make sure parent is docked
-                    (mHostControl as Control).Dock = DockStyle.Fill;
+                    // Create a new ElementHost to host the Wpf control
+                    var elementHost = new ElementHost
+                    {
+                        // Add given WPF control
+                        Child = WpfControl,
+                        // Dock fill it
+                        Dock = DockStyle.Fill
+                    };
 
-                    // Add WPF host
-                    (mHostControl as Control).Controls.Add(elementHost);
-                }
+                    // Add and dock it to the parent control
+                    if (mHostControl is Control)
+                    {
+                        // Make sure parent is docked
+                        (mHostControl as Control).Dock = DockStyle.Fill;
+
+                        // Add WPF host
+                        (mHostControl as Control).Controls.Add(elementHost);
+                    }
+                });
+
             }
         }
 
@@ -117,16 +118,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         public void RemoveFromTaskpane()
         {
-            if (mTaskpaneView != null)
-            {
-                // Remove taskpane view
-                mTaskpaneView.DeleteView();
+            if (mTaskpaneView == null)
+                return;
 
-                // Release COM reference and cleanup memory
-                Marshal.ReleaseComObject(mTaskpaneView);
-            }
-
-            mTaskpaneView = null;
+            // Remove taskpane view
+            mTaskpaneView.Dispose();
         }
 
         #endregion

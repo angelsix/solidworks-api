@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace AngelSix.SolidDna
 {
@@ -17,16 +17,6 @@ namespace AngelSix.SolidDna
     public abstract class AddInIntegration : ISwAddin
     {
         #region Protected Members
-
-        /// <summary>
-        /// The cookie to the current instance of SolidWorks we are running inside of
-        /// </summary>
-        protected int mSwCookie;
-
-        /// <summary>
-        /// The current instance of the SolidWorks application
-        /// </summary>
-        protected SldWorks mSolidWorksApplication;
 
         /// <summary>
         /// A list of available plug-ins loaded once SolidWorks has connected
@@ -47,6 +37,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         public static string SolidWorksAddInDescription { get; set; } = "All your pixels are belong to us!";
 
+        /// <summary>
+        /// Represents the current SolidWorks application
+        /// </summary>
+        public static SolidWorksApplication SolidWorks { get; private set; }
+
         #endregion
 
         #region Public Events
@@ -55,7 +50,7 @@ namespace AngelSix.SolidDna
         ///  Called once SolidWorks has loaded our add-in and is ready
         ///  Now is a good time to create taskpanes, meun bars or anything else
         /// </summary>
-        public static event Action<SldWorks> ConnectedToSolidWorks = (solidWorks) => { };
+        public static event Action ConnectedToSolidWorks = () => { };
 
         /// <summary>
         ///  Called once SolidWorks has unloaded our add-in
@@ -68,7 +63,7 @@ namespace AngelSix.SolidDna
         /// and before any plug-ins or listeners are informed
         /// </summary>
         /// <returns></returns>
-        public abstract void ApplicationStartup(SldWorks solidWorks);
+        public abstract void ApplicationStartup();
 
         #endregion
 
@@ -82,26 +77,27 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public bool ConnectToSW(object ThisSW, int Cookie)
         {
+            // Setup IoC
+            IoCContainer.Ensure();
+
             // Store a reference to the current SolidWorks instance
-            mSolidWorksApplication = (SldWorks)ThisSW;
-
-            // Store cookie Id
-            mSwCookie = Cookie;
-
-            // Setup callback info
-            var ok = mSolidWorksApplication.SetAddinCallbackInfo2(0, this, mSwCookie);
+            // Initialize SolidWorks (SolidDNA class)
+            SolidWorks = new SolidWorksApplication((SldWorks)ThisSW, Cookie);
 
             // Load all plug-in's at this stage for faster lookup
             mPlugIns = PlugInIntegration.SolidDnaPlugIns();
 
+            // Perform any plug-in configuration
+            PlugInIntegration.ConfigurePlugIns();
+
             // Call the application startup function for an entry point to the application
-            ApplicationStartup(mSolidWorksApplication);
+            ApplicationStartup();
 
             // Inform plug-ins
-            mPlugIns.ForEach(plugin => plugin.ConnectedToSolidWorks(mSolidWorksApplication));
+            mPlugIns.ForEach(plugin => plugin.ConnectedToSolidWorks());
 
             // Inform listeners
-            ConnectedToSolidWorks(mSolidWorksApplication);
+            ConnectedToSolidWorks();
 
             // Return ok
             return true;
@@ -118,6 +114,10 @@ namespace AngelSix.SolidDna
 
             // Inform listeners
             DisconnectedFromSolidWorks();
+
+            // Dipose SolidWorks COM
+            SolidWorks?.Dispose();
+            SolidWorks = null;
 
             // Return ok
             return true;
@@ -142,13 +142,8 @@ namespace AngelSix.SolidDna
                 // Load add-in when SolidWorks opens
                 rk.SetValue(null, 1);
 
-                // Try and find the title from the first plug-in
-                var plugins = PlugInIntegration.SolidDnaPlugIns();
-                if (plugins.Count > 0)
-                {
-                    SolidWorksAddInTitle = plugins.First().AddInTitle;
-                    SolidWorksAddInDescription = plugins.First().AddInDescription;
-                }
+                // Let plug-ins configure title and descriptions
+                PlugInIntegration.ConfigurePlugIns();
 
                 // Set SolidWorks add-in title and description
                 rk.SetValue("Title", SolidWorksAddInTitle);

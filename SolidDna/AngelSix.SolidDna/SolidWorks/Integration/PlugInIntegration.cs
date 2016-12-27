@@ -53,5 +53,19 @@ namespace AngelSix.SolidDna
 
             return assemblies;
         }
+
+        /// <summary>
+        /// Runs any initialization code reqiured on plug-ins
+        /// </summary>
+        public static void ConfigurePlugIns()
+        {
+            // Try and find the title from the first plug-in found
+            var plugins = PlugInIntegration.SolidDnaPlugIns();
+            if (plugins.Count > 0)
+            {
+                AddInIntegration.SolidWorksAddInTitle = plugins.First().AddInTitle;
+                AddInIntegration.SolidWorksAddInDescription = plugins.First().AddInDescription;
+            }
+        }
     }
 }

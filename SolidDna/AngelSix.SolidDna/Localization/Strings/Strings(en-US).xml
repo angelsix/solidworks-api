@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Strings>
+  
+  <!-- General -->
+  
+  <!-- ####################################### -->
+  <!-- #                Errors               # -->
+  <!-- ####################################### -->
+
+  <!-- SolidWorks Application -->
+  <String Name="SolidWorksApplicationFilePostOpenError">An error occurred during the post-file open event in the SolidWorks application</String>
+  <String Name="SolidWorksApplicationFilePreOpenError">An error occurred during the pre-file open event in the SolidWorks application</String>
+  <String Name="SolidWorksApplicationActiveModelChangedError">An error occurred during the active model changed event in the SolidWorks application</String>
+  <String Name="SolidWorksApplicationGetMaterialsError">An error occurred attempting to read the SolidWorks Materials databases</String>
+  <String Name="SolidWorksApplicationGetMaterialsFileNotFoundError">An error occurred attempting to read the SolidWorks Materials databases because the database file does not exist</String>
+  <String Name="SolidWorksApplicationGetMaterialsFileFormatError">An error occurred attempting to read the SolidWorks Materials databases because the file was of an unexpected format</String>
+  <String Name="SolidWorksApplicationGetMaterialsXmlNotLoadedError">An error occurred attempting to read the SolidWorks Materials databases because the Xml document returned null</String>
+  <String Name="SolidWorksApplicationFindMaterialsError">An error occurred attempting to find a material from a SolidWorks Materials database file</String>
+
+  <!-- SolidWorks Taskpane -->
+  <String Name="ErrorSolidWorksTaskpaneCreateError">An error occurred creating the SolidWorks Taskpane</String>
+  <String Name="ErrorSolidWorksTaskpaneAddControlError">An error occurred adding a control to a SolidWorks Taskpane</String>
+
+  <!-- SolidWorks Model -->
+  <String Name="SolidWorksModelGetMaterialError">An error occurred trying to get the material from a SolidWorks model</String>
+  <String Name="SolidWorksModelGetMaterialIdMissingError">An error occurred trying to get the material from a SolidWorks model because the Id string was not long enough</String>
+  <String Name="SolidWorksModelSetMaterialError">An error occurred trying to set the material of a SolidWorks model</String>
+  <String Name="SolidWorksModelSetMaterialModelNotPartError">An error occurred trying to set the material of a SolidWorks model because it is not a Part</String>
+  <String Name="SolidWorksModelGetMassPropertiesError">An error occurred trying to get the mass from a SolidWorks model</String>
+  <String Name="SolidWorksModelGetMassModelNotPartError">An error occurred trying to get the mass of a SolidWorks model because it is not a Part or Assembly</String>
+  <String Name="SolidWorksModelGetMassModelStatusFailed">An error occurred trying to get the mass of a SolidWorks model because SolidWorks reported a non-success status</String>
+
+  <!-- Thread Helpers -->
+  <String Name="ErrorThreadInvokerNullError">Unable to find UI thread as Thread Invoker Enable was never called on a UI thread</String>
+
+</Strings>

@@ -26,9 +26,8 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Called when the add-in is loaded into SolidWorks and connected
         /// </summary>
-        /// <param name="solidWorks">The SolidWorks instance we are connected to</param>
         /// <returns></returns>
-        void ConnectedToSolidWorks(SldWorks solidWorks);
+        void ConnectedToSolidWorks();
 
         /// <summary>
         /// Called when the add-in is unloaded from SolidWorks and disconnected
