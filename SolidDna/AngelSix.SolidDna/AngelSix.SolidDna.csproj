@@ -84,6 +84,7 @@
     <Compile Include="Exception\ExceptionHelpers.cs" />
     <Compile Include="File\FileHelpers.cs" />
     <Compile Include="SolidWorks\Application\SolidWorksApplicationPreferences.cs" />
+    <Compile Include="SolidWorks\Application\SolidWorksVersion.cs" />
     <Compile Include="SolidWorks\Core\SharedSolidDnaObject.cs" />
     <Compile Include="SolidWorks\Core\SolidDnaObject.cs" />
     <Compile Include="SolidWorks\Core\SolidDnaObjectDisposal.cs" />

@@ -64,9 +64,20 @@ namespace AngelSix.SolidDna
                 if (!this.Parent.IsPart && !this.Parent.IsAssembly)
                     throw new InvalidOperationException(Localization.GetString("SolidWorksModelGetMassModelNotPartError"));
 
-                int status;
-                // NOTE: 2 is best accuracy, 
-                var massProps = (double[])mBaseObject.GetMassProperties2(2, out status, false);
+                double[] massProps = null;
+                int status = -1;
+
+                //
+                // SolidWorks 2016 is the start of support for MassProperties2
+                //
+                // Tested on 2015 crashes so drop-back to lower version for support
+                //
+                if (Dna.Application.SolidWorksVersion.Version < 2016)
+                    // NOTE: 2 is best accuracy
+                    massProps = (double[])mBaseObject.GetMassProperties(2, ref status);
+                else
+                    // NOTE: 2 is best accuracy
+                    massProps = (double[])mBaseObject.GetMassProperties2(2, out status, false);
 
                 // Make sure it succeeded
                 if (status == (int)swMassPropertiesStatus_e.swMassPropertiesStatus_UnknownError)

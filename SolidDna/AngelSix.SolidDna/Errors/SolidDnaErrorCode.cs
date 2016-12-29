@@ -57,6 +57,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         SolidWorksApplicationFindMaterialsError = 9007,
 
+        /// <summary>
+        /// There was an error when trying to get the SolidWorks version number
+        /// </summary>
+        SolidWorksApplicationVersionError = 9008,
+
         #endregion
 
         #region SolidWorks Taskpane (10,000)

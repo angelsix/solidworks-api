@@ -16,6 +16,7 @@
   <String Name="SolidWorksApplicationGetMaterialsFileFormatError">An error occurred attempting to read the SolidWorks Materials databases because the file was of an unexpected format</String>
   <String Name="SolidWorksApplicationGetMaterialsXmlNotLoadedError">An error occurred attempting to read the SolidWorks Materials databases because the Xml document returned null</String>
   <String Name="SolidWorksApplicationFindMaterialsError">An error occurred attempting to find a material from a SolidWorks Materials database file</String>
+  <String Name="SolidWorksApplicationVersionError">An error occurred attempting to get the SolidWorks version information</String>
 
   <!-- SolidWorks Taskpane -->
   <String Name="ErrorSolidWorksTaskpaneCreateError">An error occurred creating the SolidWorks Taskpane</String>

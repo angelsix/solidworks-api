@@ -46,6 +46,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         public SolidWorksPreferences Preferences { get; protected set; }
 
+        /// <summary>
+        /// Gets the current SolidWorks version information
+        /// </summary>
+        public SolidWorksVersion SolidWorksVersion {  get { return GetSolidWorksVersion(); } }
+
         #endregion
 
         #region Public Events
@@ -87,6 +92,46 @@ namespace AngelSix.SolidDna
             mBaseObject.ActiveModelDocChangeNotify += ActiveModelChanged;
             mBaseObject.FileOpenPreNotify += FileOpenPreNotify;
             mBaseObject.FileOpenPostNotify += FileOpenPostNotify;
+        }
+
+        #endregion
+
+        #region Version
+
+        /// <summary>
+        /// Gets the current SolidWorks version information
+        /// </summary>
+        /// <returns></returns>
+        protected SolidWorksVersion GetSolidWorksVersion()
+        {
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() =>
+            {
+                // Get version string (such as 23.2.0 for 2015 SP2.0)
+                var revisionNumber = mBaseObject.RevisionNumber();
+
+                // Get revision string (such as sw2015_SP20)
+                string revisionString;
+
+                // Get build number (such as d150130.002)
+                string buildNumber;
+
+                // Get the hotfix string
+                string hotfixString;
+
+                mBaseObject.GetBuildNumbers2(out revisionString, out buildNumber, out hotfixString);
+
+                return new SolidWorksVersion
+                {
+                    RevisionNumber = revisionNumber,
+                    Revision = revisionString,
+                    BuildNumber = buildNumber,
+                    Hotfix = hotfixString
+                };
+            },
+                SolidDnaErrorTypeCode.SolidWorksApplication,
+                SolidDnaErrorCode.SolidWorksApplicationVersionError,
+                Localization.GetString("SolidWorksApplicationVersionError"));
         }
 
         #endregion

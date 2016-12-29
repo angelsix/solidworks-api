@@ -96,7 +96,7 @@ namespace SolidDna.CustomProperties
 
                 // If we have no model, or the model is not a part
                 // then show the No Part screen and return
-                if (model == null || !model.IsPart)
+                if (model == null || (!model.IsPart && !model.IsAssembly))
                 {
                     // Show No Part screen
                     this.NoPartContent.Visibility = System.Windows.Visibility.Visible;
@@ -111,131 +111,128 @@ namespace SolidDna.CustomProperties
                 this.NoPartContent.Visibility = System.Windows.Visibility.Hidden;
                 this.MainContent.Visibility = System.Windows.Visibility.Visible;
 
-                // Query all custom properties
-                model.CustomProperties((properties) =>
+                // Get custom properties
+                // Description
+                this.DescriptionText.Text = model.GetCustomProperty(mCustomPropertyDescription);
+
+                // Status
+                this.StatusText.Text = model.GetCustomProperty(mCustomPropertyStatus, resolved: true);
+
+                // Revision
+                this.RevisionText.Text = model.GetCustomProperty(mCustomPropertyRevision, resolved: true);
+
+                // Part Number
+                this.PartNumberText.Text = model.GetCustomProperty(mCustomPropertyPartNumber, resolved: true);
+
+                // Manufacturing Information
+
+                // Clear previous checks
+                this.MaterialWeldCheck.IsChecked = this.MaterialAssemblyCheck.IsChecked = this.MaterialPlasmaCheck.IsChecked =
+                    this.MaterialPurchaseCheck.IsChecked = this.MaterialLatheCheck.IsChecked = this.MaterialLaserCheck.IsChecked = this.MaterialDrillCheck.IsChecked =
+                    this.MaterialFoldCheck.IsChecked = this.MaterialRollCheck.IsChecked = this.MaterialSawCheck.IsChecked = false;
+
+                // Read in value
+                var manufacturingInfo = model.GetCustomProperty(mCustomPropertyManufacturingInformation);
+
+                // If we have some property, parse it
+                if (!string.IsNullOrWhiteSpace(manufacturingInfo))
                 {
-                    // Description
-                    this.DescriptionText.Text = properties.FirstOrDefault(property => string.Equals(mCustomPropertyDescription, property.Name, StringComparison.InvariantCultureIgnoreCase))?.Value;
-
-                    // Status
-                    this.StatusText.Text = properties.FirstOrDefault(property => string.Equals(mCustomPropertyStatus, property.Name, StringComparison.InvariantCultureIgnoreCase))?.ResolvedValue;
-
-                    // Revision
-                    this.RevisionText.Text = properties.FirstOrDefault(property => string.Equals(mCustomPropertyRevision, property.Name, StringComparison.InvariantCultureIgnoreCase))?.ResolvedValue;
-
-                    // Part Number
-                    this.PartNumberText.Text = properties.FirstOrDefault(property => string.Equals(mCustomPropertyPartNumber, property.Name, StringComparison.InvariantCultureIgnoreCase))?.ResolvedValue;
-
-                    // Manufacturing Information
-
-                    // Clear previous checks
-                    this.MaterialWeldCheck.IsChecked = this.MaterialAssemblyCheck.IsChecked = this.MaterialPlasmaCheck.IsChecked =
-                        this.MaterialPurchaseCheck.IsChecked = this.MaterialLatheCheck.IsChecked = this.MaterialLaserCheck.IsChecked = this.MaterialDrillCheck.IsChecked =
-                        this.MaterialFoldCheck.IsChecked = this.MaterialRollCheck.IsChecked = this.MaterialSawCheck.IsChecked = false;
-
-                    // Read in value
-                    var manufacturingInfo = properties.FirstOrDefault(property => string.Equals(mCustomPropertyManufacturingInformation, property.Name, StringComparison.InvariantCultureIgnoreCase))?.Value;
-
-                    // If we have some property, parse it
-                    if (!string.IsNullOrWhiteSpace(manufacturingInfo))
+                    // Remove whitespaces, capitalize and split by ,
+                    foreach (var part in manufacturingInfo.Replace(" ", "").ToUpper().Split(','))
                     {
-                        // Remove whitespaces, capitalize and split by ,
-                        foreach (var part in manufacturingInfo.Replace(" ", "").ToUpper().Split(','))
+                        switch (part)
                         {
-                            switch (part)
-                            {
-                                case mManufacturingWeld:
-                                    this.MaterialWeldCheck.IsChecked = true;
-                                    break;
-                                case mManufacturingAssembly:
-                                    this.MaterialAssemblyCheck.IsChecked = true;
-                                    break;
+                            case mManufacturingWeld:
+                                this.MaterialWeldCheck.IsChecked = true;
+                                break;
+                            case mManufacturingAssembly:
+                                this.MaterialAssemblyCheck.IsChecked = true;
+                                break;
 
-                                case mManufacturingPlasma:
-                                    this.MaterialPlasmaCheck.IsChecked = true;
-                                    break;
+                            case mManufacturingPlasma:
+                                this.MaterialPlasmaCheck.IsChecked = true;
+                                break;
 
-                                case mManufacturingLaser:
-                                    this.MaterialLaserCheck.IsChecked = true;
-                                    break;
+                            case mManufacturingLaser:
+                                this.MaterialLaserCheck.IsChecked = true;
+                                break;
 
-                                case mManufacturingPurchase:
-                                    this.MaterialPurchaseCheck.IsChecked = true;
-                                    break;
+                            case mManufacturingPurchase:
+                                this.MaterialPurchaseCheck.IsChecked = true;
+                                break;
 
-                                case mManufacturingLathe:
-                                    this.MaterialLatheCheck.IsChecked = true;
-                                    break;
+                            case mManufacturingLathe:
+                                this.MaterialLatheCheck.IsChecked = true;
+                                break;
 
-                                case mManufacturingDrill:
-                                    this.MaterialDrillCheck.IsChecked = true;
-                                    break;
+                            case mManufacturingDrill:
+                                this.MaterialDrillCheck.IsChecked = true;
+                                break;
 
-                                case mManufacturingFold:
-                                    this.MaterialFoldCheck.IsChecked = true;
-                                    break;
+                            case mManufacturingFold:
+                                this.MaterialFoldCheck.IsChecked = true;
+                                break;
 
-                                case mManufacturingRoll:
-                                    this.MaterialRollCheck.IsChecked = true;
-                                    break;
+                            case mManufacturingRoll:
+                                this.MaterialRollCheck.IsChecked = true;
+                                break;
 
-                                case mManufacturingSaw:
-                                    this.MaterialSawCheck.IsChecked = true;
-                                    break;
-                            }
+                            case mManufacturingSaw:
+                                this.MaterialSawCheck.IsChecked = true;
+                                break;
                         }
                     }
+                }
 
 
-                    // Length
-                    this.SheetMetalLengthText.Text = properties.FirstOrDefault(property => string.Equals(mCustomPropertyLength, property.Name, StringComparison.InvariantCultureIgnoreCase))?.Value;
-                    this.SheetMetalLengthEvaluatedText.Text = properties.FirstOrDefault(property => string.Equals(mCustomPropertyLength, property.Name, StringComparison.InvariantCultureIgnoreCase))?.ResolvedValue;
+                // Length
+                this.SheetMetalLengthText.Text = model.GetCustomProperty(mCustomPropertyLength);
+                this.SheetMetalLengthEvaluatedText.Text = model.GetCustomProperty(mCustomPropertyLength, resolved: true);
 
-                    // Finish
-                    var finish = properties.FirstOrDefault(property => string.Equals(mCustomPropertyFinish, property.Name, StringComparison.InvariantCultureIgnoreCase))?.Value;
+                // Finish
+                var finish = model.GetCustomProperty(mCustomPropertyFinish);
 
-                    // Clear the selection first
-                    this.FinishList.SelectedIndex = -1;
+                // Clear the selection first
+                this.FinishList.SelectedIndex = -1;
 
-                    // Try and find matching item
-                    foreach (var item in this.FinishList.Items)
+                // Try and find matching item
+                foreach (var item in this.FinishList.Items)
+                {
+                    // Check if the combo box item has the same name
+                    if ((string)((ComboBoxItem)item).Content == finish)
                     {
-                        // Check if the combo box item has the same name
-                        if ((string)((ComboBoxItem)item).Content == finish)
-                        {
-                            // If so select it
-                            this.FinishList.SelectedItem = item;
-                            break;
-                        }
+                        // If so select it
+                        this.FinishList.SelectedItem = item;
+                        break;
                     }
+                }
 
-                    // Purchase Information
-                    var purchaseInfo = properties.FirstOrDefault(property => string.Equals(mCustomPropertyPurchaseInformation, property.Name, StringComparison.InvariantCultureIgnoreCase))?.Value;
+                // Purchase Information
+                var purchaseInfo = model.GetCustomProperty(mCustomPropertyPurchaseInformation);
 
-                    // Clear the selection first
-                    this.PurchaseInformationList.SelectedIndex = -1;
+                // Clear the selection first
+                this.PurchaseInformationList.SelectedIndex = -1;
 
-                    // Try and find matching item
-                    foreach (var item in this.PurchaseInformationList.Items)
+                // Try and find matching item
+                foreach (var item in this.PurchaseInformationList.Items)
+                {
+                    // Check if the combo box item has the same name
+                    if ((string)((ComboBoxItem)item).Content == purchaseInfo)
                     {
-                        // Check if the combo box item has the same name
-                        if ((string)((ComboBoxItem)item).Content == purchaseInfo)
-                        {
-                            // If so select it
-                            this.PurchaseInformationList.SelectedItem = item;
-                            break;
-                        }
+                        // If so select it
+                        this.PurchaseInformationList.SelectedItem = item;
+                        break;
                     }
+                }
 
-                    // Supplier Name
-                    this.SupplierNameText.Text = properties.FirstOrDefault(property => string.Equals(mCustomPropertySupplierName, property.Name, StringComparison.InvariantCultureIgnoreCase))?.Value;
+                // Supplier Name
+                this.SupplierNameText.Text = model.GetCustomProperty(mCustomPropertySupplierName);
 
-                    // Supplier Code
-                    this.SupplierCodeText.Text = properties.FirstOrDefault(property => string.Equals(mCustomPropertySupplierCode, property.Name, StringComparison.InvariantCultureIgnoreCase))?.Value;
+                // Supplier Code
+                this.SupplierCodeText.Text = model.GetCustomProperty(mCustomPropertySupplierCode);
 
-                    // Note
-                    this.NoteText.Text = properties.FirstOrDefault(property => string.Equals(mCustomPropertyNote, property.Name, StringComparison.InvariantCultureIgnoreCase))?.Value;
-                });
+                // Note
+                this.NoteText.Text = model.GetCustomProperty(mCustomPropertyNote);
 
                 // Mass
                 this.MassText.Text = model.MassProperties?.MassInMetric();
@@ -315,10 +312,10 @@ namespace SolidDna.CustomProperties
             model.SetCustomProperty(mCustomPropertyLength, this.SheetMetalLengthText.Text);
 
             // Finish
-            model.SetCustomProperty(mCustomPropertyFinish, (string)((ComboBoxItem)this.FinishList.SelectedValue).Content);
+            model.SetCustomProperty(mCustomPropertyFinish, (string)((ComboBoxItem)this.FinishList.SelectedValue)?.Content);
 
             // Purchase Info
-            model.SetCustomProperty(mCustomPropertyPurchaseInformation, (string)((ComboBoxItem)this.PurchaseInformationList.SelectedValue).Content);
+            model.SetCustomProperty(mCustomPropertyPurchaseInformation, (string)((ComboBoxItem)this.PurchaseInformationList.SelectedValue)?.Content);
 
             // Suppler Name
             model.SetCustomProperty(mCustomPropertySupplierName, this.SupplierNameText.Text);

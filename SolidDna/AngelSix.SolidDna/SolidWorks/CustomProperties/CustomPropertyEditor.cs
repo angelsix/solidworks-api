@@ -1,4 +1,5 @@
 ﻿using SolidWorks.Interop.sldworks;
+using SolidWorks.Interop.swconst;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,6 +21,18 @@ namespace AngelSix.SolidDna
         }
 
         #endregion
+
+        /// <summary>
+        /// Checks if a custom property exists
+        /// </summary>
+        /// <param name="name">The name of the custom property</param>
+        /// <returns></returns>
+        public bool CustomPropertyExists(string name)
+        {
+            // TODO: Add error checking and exception catching
+
+            return GetCustomProperties().Any(f => string.Equals(f.Name, name, System.StringComparison.InvariantCultureIgnoreCase));
+        }
 
         /// <summary>
         /// Gets the value of a custom property by name
@@ -48,12 +61,19 @@ namespace AngelSix.SolidDna
         /// <param name="name">The name of the custom property</param>
         /// <param name="value">The value of the custom property</param>
         /// <returns></returns>
-        public void SetCustomProperty(string name, string value)
+        public void SetCustomProperty(string name, string value, swCustomInfoType_e type = swCustomInfoType_e.swCustomInfoText)
         {
             // TODO: Add error checking and exception catching
 
-            // Set custom property
-            mBaseObject.Set2(name, value);
+            // NOTE: We use Add here to create a property if one doesn't exist
+            //       I feel this is the expected behaviour of Set
+            //
+            //       To mimic the Set behaviour of the SolidWorks API
+            //       Simply do CustomPropertyExists() to check first if it exists
+            //
+
+            // Set new one
+            mBaseObject.Add3(name, (int)type, value, (int)swCustomPropertyAddOption_e.swCustomPropertyDeleteAndAdd);
         }
 
         /// <summary>
