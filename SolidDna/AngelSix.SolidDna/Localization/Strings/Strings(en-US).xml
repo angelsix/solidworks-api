@@ -30,6 +30,7 @@
   <String Name="SolidWorksModelGetMassPropertiesError">An error occurred trying to get the mass from a SolidWorks model</String>
   <String Name="SolidWorksModelGetMassModelNotPartError">An error occurred trying to get the mass of a SolidWorks model because it is not a Part or Assembly</String>
   <String Name="SolidWorksModelGetMassModelStatusFailed">An error occurred trying to get the mass of a SolidWorks model because SolidWorks reported a non-success status</String>
+  <String Name="SolidWorksModelSelectedObjectCastError">An error occurred trying to cast a selected object to a specific type</String>
 
   <!-- Thread Helpers -->
   <String Name="ErrorThreadInvokerNullError">Unable to find UI thread as Thread Invoker Enable was never called on a UI thread</String>

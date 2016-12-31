@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace AngelSix.SolidDna
 {
@@ -11,32 +9,27 @@ namespace AngelSix.SolidDna
     /// NOTE: Use this shared type if another part of the application may have access to this
     ///       same COM object and the life-cycle for each reference is managed independently
     /// </summary>
-    public class SharedSolidDnaObject<T> : IDisposable
+    public class SharedSolidDnaObject<T> : SolidDnaObject<T>
     {
-        #region Protected Members
-
-        /// <summary>
-        /// A list of COM objects that should be cleanly disposed on disposing
-        /// </summary>
-        T mBaseObject;
-
-        #endregion
+        #region Constructor
 
         /// <summary>
         /// Default constructor
         /// </summary>
         /// <param name="comObject">The COM object to wrap</param>
-        public SharedSolidDnaObject(T comObject)
+        public SharedSolidDnaObject(T comObject) : base(comObject)
         {
-            mBaseObject = comObject;
+
         }
+
+        #endregion
 
         #region Dispose
 
         /// <summary>
         /// Disposal
         /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
             if (mBaseObject == null)
                 return;

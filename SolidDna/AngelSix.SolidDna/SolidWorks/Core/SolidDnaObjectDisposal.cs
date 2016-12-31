@@ -1,4 +1,6 @@
 ﻿using SolidWorks.Interop.sldworks;
+using System;
+using System.Linq;
 
 namespace AngelSix.SolidDna
 {
@@ -10,7 +12,7 @@ namespace AngelSix.SolidDna
         public static void Dispose<T>(object comObject)
         {
             // Taskpane View
-            if (typeof(T).IsAssignableFrom(typeof(ITaskpaneView)))
+            if (typeof(T).IsInterfaceOrHasInterface<ITaskpaneView>())
             {
                 ((ITaskpaneView)comObject).DeleteView();
             }

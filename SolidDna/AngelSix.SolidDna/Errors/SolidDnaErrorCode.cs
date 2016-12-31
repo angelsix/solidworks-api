@@ -105,6 +105,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         SolidWorksModelGetMassPropertiesError = 11003,
 
+        /// <summary>
+        /// There was an error casting a selected object to a specific type
+        /// </summary>
+        SolidWorksModelSelectedObjectCastError = 11004,
+
         #endregion
 
     }

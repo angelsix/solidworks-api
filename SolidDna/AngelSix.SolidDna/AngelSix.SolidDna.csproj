@@ -36,24 +36,45 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="SolidWorks.Interop.sldworks">
-      <HintPath>..\..\References\2016\SolidWorks.Interop.sldworks.dll</HintPath>
+    <Reference Include="SolidWorks.Interop.sldworks, Version=24.3.0.57, Culture=neutral, PublicKeyToken=7c4797c3e4eeac03, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>..\..\References\2017\SolidWorks.Interop.sldworks.dll</HintPath>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.sw3dprinter">
+      <HintPath>..\..\References\2017\SolidWorks.Interop.sw3dprinter.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-    <Reference Include="SolidWorks.Interop.swcommands">
-      <HintPath>..\..\References\2016\SolidWorks.Interop.swcommands.dll</HintPath>
+    <Reference Include="SolidWorks.Interop.swcommands, Version=24.3.0.57, Culture=neutral, PublicKeyToken=0fda92720ba7919f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>..\..\References\2017\SolidWorks.Interop.swcommands.dll</HintPath>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swconst, Version=24.3.0.57, Culture=neutral, PublicKeyToken=19f43e188e4269d8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>..\..\References\2017\SolidWorks.Interop.swconst.dll</HintPath>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swdimxpert">
+      <HintPath>..\..\References\2017\SolidWorks.Interop.swdimxpert.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-    <Reference Include="SolidWorks.Interop.swconst">
-      <HintPath>..\..\References\2016\SolidWorks.Interop.swconst.dll</HintPath>
+    <Reference Include="SolidWorks.Interop.swdocumentmgr, Version=24.3.0.57, Culture=neutral, PublicKeyToken=e52dfa2d3a1e978a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>..\..\References\2017\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swmotionstudy">
+      <HintPath>..\..\References\2017\SolidWorks.Interop.swmotionstudy.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-    <Reference Include="SolidWorks.Interop.swdocumentmgr">
-      <HintPath>..\..\References\2016\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
+    <Reference Include="SolidWorks.Interop.swpublished, Version=24.3.0.57, Culture=neutral, PublicKeyToken=89a97bdc5284e6d8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>..\..\References\2017\SolidWorks.Interop.swpublished.dll</HintPath>
     </Reference>
-    <Reference Include="SolidWorks.Interop.swpublished">
-      <HintPath>..\..\References\2016\SolidWorks.Interop.swpublished.dll</HintPath>
+    <Reference Include="SolidWorks.Interop.SWRoutingLib">
+      <HintPath>..\..\References\2017\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="System" />
@@ -83,6 +104,7 @@
     <Compile Include="Errors\SolidDnaException.cs" />
     <Compile Include="Exception\ExceptionHelpers.cs" />
     <Compile Include="File\FileHelpers.cs" />
+    <Compile Include="Reflection\TypeHelpers.cs" />
     <Compile Include="SolidWorks\Application\SolidWorksApplicationPreferences.cs" />
     <Compile Include="SolidWorks\Application\SolidWorksVersion.cs" />
     <Compile Include="SolidWorks\Core\SharedSolidDnaObject.cs" />
@@ -112,12 +134,150 @@
     <Compile Include="Logging\TraceLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SolidWorks\Material\Material.cs" />
+    <Compile Include="SolidWorks\Models\Dimension\ModelDisplayDimension.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Base\ModelFeature.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Base\ModelFeatureType.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Base\ModelFeatureTypeMapping.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureCompositeCurveData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureGussetData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureEndCapData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureCosmeticWeldBeadData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureImportedCurveData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureMiterFlangeData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureReferencePointCurveData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureProjectionCurveData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureReferencePointData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSheetMetalGussetData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSimpleHoleData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSketchPatternData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSketchedBendData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSheetMetalData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureOneBendData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureLoftedBendsData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureJogData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureHemData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureFoldsData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureBoundaryBossData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureBaseFlangeData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureBendsData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureFlatPatternData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureEdgeFlangeData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureCrossBreakData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureBreakCornerData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureCoordinateSystemData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureMotionPlotAxisData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureMotionPlotData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureReferencePlaneData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureReferenceAxisData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSimulationForceData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSimulationLinearSpringData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSimulationMotorData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSimulationDamperData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSimulationGravityData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSimulation3DContactData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureCoreData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeaturePartingLineData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeaturePartingSurfaceData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureShutOffSurfaceData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSplitLineData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSurfaceTrimData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSurfaceCutData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSurfaceKnitData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSurfaceRuledData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSurfaceRevolveData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSurfaceRadiateData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSurfacePlanarData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSurfaceOffsetData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureWeldmentCutListData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureWeldmentMemberData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureWeldmentTrimExtendData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureWeldmentBeadData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureSurfaceMid.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSurfaceFlattenData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSurfaceFillData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSurfaceExtrudeData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSurfaceExtendData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureToolingSplitData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureDerivedPartData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureCavityData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureScaleData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureIntersectData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureIndentData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureFreePointCurveData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureLibraryFeatureData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureVariableFilletData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureThickenData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureTablePatternData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSweepData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSplitBodyData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureShellData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureRipData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureRibData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureRevolveData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureReplaceFaceData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureMoveCopyBodyData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureMirrorPartData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureMirrorSolidData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureMirrorPatternData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureMacroData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureLinearPatternData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureLocalLinearPatternData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureLocalCurvePatternData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureLocalCircularPatternData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureCosmeticThreadData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureCombineBodiesData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureChamferData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureCircularPatternData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureCurveDrivenPatternData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureDimPatternData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureDerivedPatternData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureDeleteFaceData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureDeleteBodyData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureHoleWizardData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureHoleSeriesData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureHelixData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureChainPatternData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSimpleFilletData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureWrapSketchData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureHealEdgesData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureDraftData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureDomeData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSaveBodyData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureLoftData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureExtrudeData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureFillPatternData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureSmartComponentData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\FeatureData\FeatureBrokenOutSectionData.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureAttribute.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureCamera.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureLight.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureMotionStudyResults.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureRefAxis.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureReferenceCurve.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureRefPoint.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureSketchPicture.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureSketchBlockInstance.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureSketchBlockDefinition.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureSketch.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureSensor.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureDrSection.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureDetailCircle.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureBom.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureCommentFolder.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureCosmeticWeldBeadFolder.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureBodyFolder.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureMate.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureRefPlane.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureTableAnchor.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureMateReference.cs" />
+    <Compile Include="SolidWorks\Models\Feature\Feature\FeatureFeatureFolder.cs" />
     <Compile Include="SolidWorks\Models\Mass\MassProperties.cs" />
     <Compile Include="SolidWorks\Models\Model.cs" />
     <Compile Include="SolidWorks\Models\ModelExtension.cs" />
     <Compile Include="SolidWorks\Models\Configuration\ModelConfiguration.cs" />
     <Compile Include="SolidWorks\Models\ModelType.cs" />
     <Compile Include="SolidWorks\Models\SelectionManager\ModelSelectionManager.cs" />
+    <Compile Include="SolidWorks\Models\SelectedObject.cs" />
     <Compile Include="SolidWorks\SolidDnaEnvironment.cs" />
     <Compile Include="SolidWorks\Application\SolidWorksApplication.cs" />
     <Compile Include="SolidWorks\Taskpane\Taskpane.cs" />
@@ -129,6 +289,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Localization\Strings\Strings%28en-US%29.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

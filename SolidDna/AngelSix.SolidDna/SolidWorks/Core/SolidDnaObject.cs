@@ -13,11 +13,23 @@ namespace AngelSix.SolidDna
         #region Protected Members
 
         /// <summary>
-        /// A list of COM objects that should be cleanly disposed on disposing
+        /// A COM objects that should be cleanly disposed on disposing
         /// </summary>
         protected T mBaseObject;
 
         #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// The raw underlying COM object
+        /// WARNING: Use with caution. You must handle all disposal from this point on
+        /// </summary>
+        public T UnsafeObject { get { return mBaseObject; } }
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Default constructor
@@ -27,6 +39,8 @@ namespace AngelSix.SolidDna
         {
             mBaseObject = comObject;
         }
+
+        #endregion
 
         #region Dispose
 

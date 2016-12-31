@@ -54,15 +54,21 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Gets the mass properties of a part/assembly
         /// </summary>
+        /// <param name="dontThrowOnError">If true, don't throw on errors, just return empty mass</param>
         /// <returns></returns>
-        public MassProperties GetMassProperties()
+        public MassProperties GetMassProperties(bool dontThrowOnError = true)
         {
             // Wrap any error
             return SolidDnaErrors.Wrap(() =>
             {
                 // Make sure we are a part
                 if (!this.Parent.IsPart && !this.Parent.IsAssembly)
-                    throw new InvalidOperationException(Localization.GetString("SolidWorksModelGetMassModelNotPartError"));
+                {
+                    if (dontThrowOnError)
+                        return new MassProperties();
+                    else
+                        throw new InvalidOperationException(Localization.GetString("SolidWorksModelGetMassModelNotPartError"));
+                }
 
                 double[] massProps = null;
                 int status = -1;
@@ -81,7 +87,12 @@ namespace AngelSix.SolidDna
 
                 // Make sure it succeeded
                 if (status == (int)swMassPropertiesStatus_e.swMassPropertiesStatus_UnknownError)
-                    throw new InvalidOperationException(Localization.GetString("SolidWorksModelGetMassModelStatusFailed"));
+                {
+                    if (dontThrowOnError)
+                        return new MassProperties();
+                    else
+                        throw new InvalidOperationException(Localization.GetString("SolidWorksModelGetMassModelStatusFailed"));
+                }
                 // If we have no mass, return empty
                 else if (status == (int)swMassPropertiesStatus_e.swMassPropertiesStatus_NoBody)
                     return new MassProperties();

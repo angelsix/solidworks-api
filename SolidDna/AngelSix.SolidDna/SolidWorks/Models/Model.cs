@@ -83,6 +83,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         public event Action ModelInformationChanged = () => { };
 
+        /// <summary>
+        /// Called when the selected objects in the model has changed
+        /// </summary>
+        public event Action SelectionChanged = () => { };
+
         #endregion
 
         #region Constructor
@@ -149,16 +154,27 @@ namespace AngelSix.SolidDna
                     this.AsAssembly().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
                     this.AsAssembly().DestroyNotify += FileDestroyedNotify;
                     this.AsAssembly().FileSavePostNotify += FileSaveNotify;
+                    this.AsAssembly().UserSelectionPostNotify += UserSelectionPostNotify;
+                    this.AsAssembly().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
                 case ModelType.Part:
                     this.AsPart().DestroyNotify += FileDestroyedNotify;
                     this.AsPart().FileSavePostNotify += FileSaveNotify;
+                    this.AsPart().UserSelectionPostNotify += UserSelectionPostNotify;
+                    this.AsPart().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
                 case ModelType.Drawing:
                     this.AsDrawing().DestroyNotify += FileDestroyedNotify;
                     this.AsDrawing().FileSavePostNotify += FileSaveNotify;
+                    this.AsDrawing().UserSelectionPostNotify += UserSelectionPostNotify;
+                    this.AsDrawing().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
             }
+        }
+
+        private int Model_ClearSelectionsNotify()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -175,6 +191,18 @@ namespace AngelSix.SolidDna
             ReloadModelData();
 
             // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called when the user changes the selected objects
+        /// </summary>
+        /// <returns></returns>
+        protected int UserSelectionPostNotify()
+        {
+            // Inform Listenes
+            this.SelectionChanged();
+
             return 0;
         }
 
@@ -380,6 +408,20 @@ namespace AngelSix.SolidDna
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelSetMaterialError,
                 Localization.GetString("SolidWorksModelSetMaterialError"));
+        }
+
+        #endregion
+
+        #region Selected Entities
+
+        /// <summary>
+        /// Get's all of the selected objects in the model
+        /// </summary>
+        /// <param name="action">The selected objects list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>
+        /// <returns></returns>
+        public void SelectedObjects(Action<List<SelectedObject>> action)
+        {
+            this.SelectionManager.SelectedObjects(action);
         }
 
         #endregion
