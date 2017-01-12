@@ -284,18 +284,22 @@ namespace SolidDna.CustomProperties
             var model = Dna.Application.ActiveModel;
 
             // Check we have a part
-            if (model == null || !model.IsPart)
+            if (model == null || (!model.IsPart && !model.IsAssembly))
                 return;
 
             // Description
             model.SetCustomProperty(mCustomPropertyDescription, this.DescriptionText.Text);
 
-            // If user doesn't have a material selected, clear it
-            if (this.RawMaterialList.SelectedIndex < 0)
-                model.SetMaterial(null);
-            // Otherwise set the material to the selected one
-            else
-                model.SetMaterial((Material)this.RawMaterialList.SelectedItem);
+            // Only set material on part
+            if (model.IsPart)
+            {
+                // If user doesn't have a material selected, clear it
+                if (this.RawMaterialList.SelectedIndex < 0)
+                    model.SetMaterial(null);
+                // Otherwise set the material to the selected one
+                else
+                    model.SetMaterial((Material)this.RawMaterialList.SelectedItem);
+            }
 
             // Manufacturing Info
             var manufacturingInfo = new List<string>();
