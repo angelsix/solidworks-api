@@ -176,57 +176,83 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Discovers all SolidDna plug-ins
         /// </summary>
+        /// <param name="loadAll">True to find all plug-ins in the same folder as the SolidDna dll</param>
         /// <returns></returns>
-        public static List<SolidPlugIn> SolidDnaPlugIns()
+        public static List<SolidPlugIn> SolidDnaPlugIns(bool loadAll = true)
         {
             // Create new empry list
             var assemblies = new List<SolidPlugIn>();
 
-            // Get the location of the SolidDna dll
-
             // Find all dll's in the same directory
-            //
-            // NOTE: Now we load explicitly from AddPlugIn list
-            //
-            foreach (var path in PlugInDetails) // Directory.GetFiles(PlugInFolder, "*.dll", SearchOption.TopDirectoryOnly))
+            if (loadAll)
             {
-                try
+                // Clear old list
+                PlugInDetails = new Dictionary<string, PlugInDetails>();
+
+                // Add new based on if foudn
+                foreach (var file in Directory.GetFiles(PlugInFolder, "*.dll", SearchOption.TopDirectoryOnly))
                 {
-                    // If we are called in the main domain, cross-load
-                    if (PlugInAppDomain != null)
+                    // Load the assembly
+                    var ass = Assembly.LoadFile(file);
+
+                    // If we didn't succeed, ignore
+                    if (ass == null)
+                        continue;
+
+                    var type = typeof(SolidPlugIn);
+
+                    // Now look through all types and see if any are of SolidPlugIn
+                    ass.GetTypes().Where(p => type.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract).ToList().ForEach(p =>
                     {
-                        // Create instance of the plug-in via cross-domain and cast back
-                        var plugin = (dynamic)PlugInAppDomain.CreateInstanceAndUnwrap(
-                                                path.Value.AssemblyFullName,
-                                                path.Value.TypeFullName);
-
-                        // If we got it, add it to the list
-                        if (plugin != null)
-                            assemblies.Add(plugin);
-                    }
-                    else
-                    {
-                        // Load the assembly
-                        var ass = Assembly.LoadFile(path.Value.FullPath);
-
-                        // If we didn't succeed, ignore
-                        if (ass == null)
-                            continue;
-
-                        var type = typeof(SolidPlugIn);
-
-                        // Now look through all types and see if any are of SolidPlugIn
-                        ass.GetTypes().Where(p => type.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract).ToList().ForEach(p =>
-                            {
-                            // Create SolidDna plugin class instance
-                            var inter = Activator.CreateInstance(p) as SolidPlugIn;
-                                assemblies.Add(inter);
-                        });
-                    }
+                        // Create SolidDna plugin class instance
+                        var inter = Activator.CreateInstance(p) as SolidPlugIn;
+                        assemblies.Add(inter);
+                    });
                 }
-                catch
+            }
+            // Or load explicit ones
+            else
+            {
+                foreach (var path in PlugInDetails)
                 {
+                    try
+                    {
+                        // If we are called in the main domain, cross-load
+                        if (PlugInAppDomain != null)
+                        {
+                            // Create instance of the plug-in via cross-domain and cast back
+                            var plugin = (dynamic)PlugInAppDomain.CreateInstanceAndUnwrap(
+                                                    path.Value.AssemblyFullName,
+                                                    path.Value.TypeFullName);
 
+                            // If we got it, add it to the list
+                            if (plugin != null)
+                                assemblies.Add(plugin);
+                        }
+                        else
+                        {
+                            // Load the assembly
+                            var ass = Assembly.LoadFile(path.Value.FullPath);
+
+                            // If we didn't succeed, ignore
+                            if (ass == null)
+                                continue;
+
+                            var type = typeof(SolidPlugIn);
+
+                            // Now look through all types and see if any are of SolidPlugIn
+                            ass.GetTypes().Where(p => type.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract).ToList().ForEach(p =>
+                                {
+                                    // Create SolidDna plugin class instance
+                                    var inter = Activator.CreateInstance(p) as SolidPlugIn;
+                                    assemblies.Add(inter);
+                                });
+                        }
+                    }
+                    catch
+                    {
+
+                    }
                 }
             }
 
@@ -238,7 +264,20 @@ namespace AngelSix.SolidDna
         /// </summary>
         public static void ConfigurePlugIns()
         {
-            mCrossDomain.ConfigurePlugIns();
+            if (mCrossDomain != null)
+                mCrossDomain.ConfigurePlugIns();
+            else
+            {
+                // This is usually run for the ComRegister function
+
+                // Try and find the title from the first plug-in found
+                var plugins = PlugInIntegration.SolidDnaPlugIns(loadAll: true);
+                if (plugins.Count > 0)
+                {
+                    AddInIntegration.SolidWorksAddInTitle = plugins.First().AddInTitle;
+                    AddInIntegration.SolidWorksAddInDescription = plugins.First().AddInDescription;
+                }
+            }
         }
     }
 }
