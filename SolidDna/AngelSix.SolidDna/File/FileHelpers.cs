@@ -1,4 +1,7 @@
-﻿namespace AngelSix.SolidDna
+﻿using System;
+using System.IO;
+
+namespace AngelSix.SolidDna
 {
     /// <summary>
     /// A set of helper functions related to File data
@@ -30,6 +33,16 @@
 
             // Return the last entry of the paths (so the folder/file name)
             return path.Substring(lastSlash + 1);
+        }
+
+        /// <summary>
+        /// Gets the codebase directory of a type in a normalized format, removing any file: prefixes
+        /// </summary>
+        /// <param name="type">The type to get the codebase from</param>
+        /// <returns></returns>
+        public static string CodeBaseNormalized(this Type type)
+        {
+            return Path.GetDirectoryName(type.Assembly.CodeBase.Replace(@"file:\", "").Replace(@"file:///", ""));
         }
     }
 }

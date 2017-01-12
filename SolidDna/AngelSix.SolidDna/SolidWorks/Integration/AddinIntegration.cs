@@ -16,15 +16,6 @@ namespace AngelSix.SolidDna
     /// </summary>
     public abstract class AddInIntegration : ISwAddin
     {
-        #region Protected Members
-
-        /// <summary>
-        /// A list of available plug-ins loaded once SolidWorks has connected
-        /// </summary>
-        protected List<ISolidPlugIn> mPlugIns = new List<ISolidPlugIn>();
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
@@ -40,30 +31,43 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Represents the current SolidWorks application
         /// </summary>
-        public static SolidWorksApplication SolidWorks { get; private set; }
+        public static SolidWorksApplication SolidWorks { get; set; }
 
         #endregion
 
         #region Public Events
 
         /// <summary>
-        ///  Called once SolidWorks has loaded our add-in and is ready
-        ///  Now is a good time to create taskpanes, meun bars or anything else
+        /// Called once SolidWorks has loaded our add-in and is ready
+        /// Now is a good time to create taskpanes, meun bars or anything else
+        ///  
+        /// NOTE: This call will be made twice, one in the default domain and one in the AppDomain as the SolidDna plug-ins
         /// </summary>
         public static event Action ConnectedToSolidWorks = () => { };
 
         /// <summary>
-        ///  Called once SolidWorks has unloaded our add-in
-        ///  Now is a good time to clean up taskpanes, meun bars or anything else
+        /// Called once SolidWorks has unloaded our add-in
+        /// Now is a good time to clean up taskpanes, meun bars or anything else
+        /// 
+        /// NOTE: This call will be made twice, one in the default domain and one in the AppDomain as the SolidDna plug-ins
         /// </summary>
         public static event Action DisconnectedFromSolidWorks = () => { };
 
         /// <summary>
         /// Specific application startup code when SolidWorks is connected 
         /// and before any plug-ins or listeners are informed
+        /// 
+        /// NOTE: This call will not be in the same AppDomain as the SolidDna plug-ins
         /// </summary>
         /// <returns></returns>
         public abstract void ApplicationStartup();
+
+        /// <summary>
+        /// Run before loading plug-ins
+        /// This call should be used to add plug-ins to be loaded, via <see cref="PlugInIntegration.AddPlugIn{T}"/>
+        /// </summary>
+        /// <returns></returns>
+        public abstract void PreLoadPlugIns();
 
         #endregion
 
@@ -84,8 +88,11 @@ namespace AngelSix.SolidDna
             // Initialize SolidWorks (SolidDNA class)
             SolidWorks = new SolidWorksApplication((SldWorks)ThisSW, Cookie);
 
-            // Load all plug-in's at this stage for faster lookup
-            mPlugIns = PlugInIntegration.SolidDnaPlugIns();
+            // Setup plug-in app domain
+            PlugInIntegration.Setup(SolidWorks);
+
+            // Get all plug-ins to load
+            PreLoadPlugIns();
 
             // Perform any plug-in configuration
             PlugInIntegration.ConfigurePlugIns();
@@ -93,11 +100,11 @@ namespace AngelSix.SolidDna
             // Call the application startup function for an entry point to the application
             ApplicationStartup();
 
-            // Inform plug-ins
-            mPlugIns.ForEach(plugin => plugin.ConnectedToSolidWorks());
-
             // Inform listeners
             ConnectedToSolidWorks();
+
+            // And plug-in domain listeners
+            PlugInIntegration.ConnectedToSolidWorks();
 
             // Return ok
             return true;
@@ -109,11 +116,14 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public bool DisconnectFromSW()
         {
-            // Inform plug-ins
-            mPlugIns.ForEach(plugin => plugin.DisconnetedFromSolidWorks());
-
             // Inform listeners
             DisconnectedFromSolidWorks();
+
+            // And plug-in domain listeners
+            PlugInIntegration.DisconnectedFromSolidWorks();
+
+            // Clean up plug-in app domain
+            PlugInIntegration.Teardown();
 
             // Dipose SolidWorks COM
             SolidWorks?.Dispose();
@@ -121,6 +131,26 @@ namespace AngelSix.SolidDna
 
             // Return ok
             return true;
+        }
+
+        #endregion
+
+        #region Connected to SolidWorks Event Calls
+
+        /// <summary>
+        /// When the add-in has connected to SolidWorks
+        /// </summary>
+        public static void OnConnectedToSolidWorks()
+        {
+            ConnectedToSolidWorks();
+        }
+
+        /// <summary>
+        /// When the add-in has disconnected to SolidWorks
+        /// </summary>
+        public static void OnDisconnectedFromSolidWorks()
+        {
+            DisconnectedFromSolidWorks();
         }
 
         #endregion

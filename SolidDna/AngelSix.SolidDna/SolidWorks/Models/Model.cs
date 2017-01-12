@@ -421,7 +421,7 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public void SelectedObjects(Action<List<SelectedObject>> action)
         {
-            this.SelectionManager.SelectedObjects(action);
+             this.SelectionManager?.SelectedObjects(action);
         }
 
         #endregion

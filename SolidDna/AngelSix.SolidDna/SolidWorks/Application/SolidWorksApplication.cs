@@ -51,6 +51,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         public SolidWorksVersion SolidWorksVersion {  get { return GetSolidWorksVersion(); } }
 
+        /// <summary>
+        /// The SolidWorks instance cookie
+        /// </summary>
+        public int SolidWorksCookie {  get { return mSwCookie; } }
+
         #endregion
 
         #region Public Events
@@ -80,7 +85,7 @@ namespace AngelSix.SolidDna
         public SolidWorksApplication(SldWorks solidWorks, int cookie) : base(solidWorks)
         {
             // Set preferences
-            this.Preferences = new SolidDna.SolidWorksApplication.SolidWorksPreferences();
+            this.Preferences = new SolidWorksPreferences();
 
             // Store cookie Id
             mSwCookie = cookie;
@@ -509,6 +514,21 @@ namespace AngelSix.SolidDna
                 SolidDnaErrorTypeCode.SolidWorksTaskpane,
                 SolidDnaErrorCode.SolidWorksTaskpaneCreateError, 
                 await Localization.GetStringAsync("ErrorSolidWorksTaskpaneCreateError"));
+        }
+
+        #endregion
+
+        #region Dispose
+
+        /// <summary>
+        /// Disposing
+        /// </summary>
+        public override void Dispose()
+        {
+            // Clean active model
+            this.ActiveModel?.Dispose();
+
+            base.Dispose();
         }
 
         #endregion

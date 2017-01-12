@@ -69,8 +69,10 @@ namespace AngelSix.SolidDna
 
         /// <summary>
         /// Adds the specified host control to the SolidWorks Taskpane
+        /// 
+        /// NOTE: This call MUST be run on the UI thread
         /// </summary>
-        public async Task AddToTaskpane()
+        public async void AddToTaskpane()
         {
             // Create our Taskpane
             mTaskpaneView = await AddInIntegration.SolidWorks.CreateTaskpane(this.Icon, AddInIntegration.SolidWorksAddInTitle);
@@ -87,28 +89,25 @@ namespace AngelSix.SolidDna
             // Add WPF control if we have one
             if (this.WpfControl != null)
             {
-                // NOTE: ElementHost must be created on UI thread, so create it and continue after
-                await ThreadHelpers.RunOnUIThreadAwait(() =>
+                // NOTE: ElementHost must be created on UI thread
+                // Create a new ElementHost to host the Wpf control
+                var elementHost = new ElementHost
                 {
-                    // Create a new ElementHost to host the Wpf control
-                    var elementHost = new ElementHost
-                    {
-                        // Add given WPF control
-                        Child = WpfControl,
-                        // Dock fill it
-                        Dock = DockStyle.Fill
-                    };
+                    // Add given WPF control
+                    Child = WpfControl,
+                    // Dock fill it
+                    Dock = DockStyle.Fill
+                };
 
-                    // Add and dock it to the parent control
-                    if (mHostControl is Control)
-                    {
-                        // Make sure parent is docked
-                        (mHostControl as Control).Dock = DockStyle.Fill;
+                // Add and dock it to the parent control
+                if (mHostControl is Control)
+                {
+                    // Make sure parent is docked
+                    (mHostControl as Control).Dock = DockStyle.Fill;
 
-                        // Add WPF host
-                        (mHostControl as Control).Controls.Add(elementHost);
-                    }
-                });
+                    // Add WPF host
+                    (mHostControl as Control).Controls.Add(elementHost);
+                }
 
             }
         }

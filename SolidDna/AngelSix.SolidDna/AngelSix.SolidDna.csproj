@@ -114,9 +114,11 @@
     <Compile Include="SolidWorks\CustomProperties\CustomPropertyEditor.cs" />
     <Compile Include="SolidWorks\Dna.cs" />
     <Compile Include="SolidWorks\Integration\AddinIntegration.cs" />
-    <Compile Include="SolidWorks\Integration\Interfaces\ISolidDnaPlugIn.cs" />
+    <Compile Include="SolidWorks\Integration\Base\PlugInDetails.cs" />
+    <Compile Include="SolidWorks\Integration\Base\SolidDnaPlugIn.cs" />
     <Compile Include="SolidWorks\Integration\Interfaces\ITaskpaneControl.cs" />
     <Compile Include="SolidWorks\Integration\PlugInIntegration.cs" />
+    <Compile Include="SolidWorks\Integration\PlugInIntegrationMarshal.cs" />
     <Compile Include="SolidWorks\Integration\TaskpaneIntegration.cs" />
     <Compile Include="Localization\Implementation\FormatProviders\BaseFormatProvider.cs" />
     <Compile Include="Localization\Implementation\FormatProviders\XmlFormatProvider.cs" />
