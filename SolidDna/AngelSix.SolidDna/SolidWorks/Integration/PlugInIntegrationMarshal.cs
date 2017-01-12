@@ -71,8 +71,8 @@ namespace AngelSix.SolidDna
 
                 if (!found)
                 {
-                    foreach (var val in PlugInIntegration.PlugInDetails.Values)
-                        if (val.AssemblyFullName == args.Name)
+                    foreach (var val in PlugInIntegration.PlugInDetails.Keys)
+                        if (val == args.Name)
                         {
                             found = true;
                             break;
@@ -154,14 +154,9 @@ namespace AngelSix.SolidDna
         /// Adds a plug-in based on it's <see cref="SolidPlugIn"/> implementation
         /// </summary>
         /// <typeparam name="fullPath">The absolute path to the plug-in dll</typeparam>
-        /// <param name="plugInTypeFullName">
-        /// The full assembly type name of the <see cref="SolidPlugIn"/> implementation. 
-        /// For example a class of MyPlugin : SolidPlugIn inside assembly My.Assembly would be
-        /// My.Assembly.MyPlugin
-        /// </param>
-        public void AddPlugIn(string fullPath, string plugInTypeFullName)
+        public void AddPlugIn(string fullPath)
         {
-            PlugInIntegration.AddPlugIn(fullPath, plugInTypeFullName);
+            PlugInIntegration.AddPlugIn(fullPath);
         }
 
         /// <summary>
@@ -172,6 +167,17 @@ namespace AngelSix.SolidDna
         public void AddPlugIn<T>()
         {
             PlugInIntegration.AddPlugIn<T>();
+        }
+
+        /// <summary>
+        /// Loads the assembly, finds all <see cref="SolidPlugIn"/> implementations and 
+        /// creates a list of <see cref="PlugInDetails"/> for them
+        /// </summary>
+        /// <param name="fullPath">The assembly full path to load</param>
+        /// <returns></returns>
+        public List<PlugInDetails> GetPlugInDetails(string fullPath)
+        {
+            return PlugInIntegration.GetPlugInDetails(fullPath);
         }
     }
 }
