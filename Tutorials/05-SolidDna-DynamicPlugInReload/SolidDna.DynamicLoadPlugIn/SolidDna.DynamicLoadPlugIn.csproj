@@ -95,6 +95,10 @@
       <Project>{48ce7ba4-1082-4089-9056-657a6a3eea39}</Project>
       <Name>AngelSix.SolidDna</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SolidDna.DynamicLoadPlugIn.Main\SolidDna.DynamicLoadPlugIn.Main.csproj">
+      <Project>{2e67a063-015f-416a-89ff-785fa3668d8c}</Project>
+      <Name>SolidDna.DynamicLoadPlugIn.Main</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

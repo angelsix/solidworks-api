@@ -1,5 +1,4 @@
 ﻿using AngelSix.SolidDna;
-using System.IO;
 
 namespace SolidDna.DynamicLoadPlugIn
 {
@@ -11,7 +10,6 @@ namespace SolidDna.DynamicLoadPlugIn
         /// <summary>
         /// Specific application start-up code
         /// </summary>
-        /// <param name="solidWorks"></param>
         public override void ApplicationStartup()
         {
 
