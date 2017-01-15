@@ -4,6 +4,6 @@ This project creates a SolidWorks AddIn using the new SolidDNA SDK, adding a bas
 # Video
 I will be making videos available on my YouTube channel that will be guides to everything contained in this repository
 
-https://www.youtube.com/user/angelsixtube
+http://www.angelsix.com/youtube
 
 

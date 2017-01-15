@@ -8,6 +8,6 @@ selected dimension
 # Video
 I will be making videos available on my YouTube channel that will be guides to everything contained in this repository
 
-https://www.youtube.com/user/angelsixtube
+http://www.angelsix.com/youtube
 
 
