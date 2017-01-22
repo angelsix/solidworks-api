@@ -184,11 +184,11 @@ namespace AngelSix.SolidDna
 
             // Find all dll's in the same directory
             if (loadAll)
-            {
+            { 
                 // Clear old list
                 PlugInDetails = new Dictionary<string, List<PlugInDetails>>();
 
-                // Add new based on if foudn
+                // Add new based on if found
                 foreach (var path in Directory.GetFiles(PlugInFolder, "*.dll", SearchOption.TopDirectoryOnly))
                     GetPlugIns(path, (plugin) => assemblies.Add(plugin));
             }

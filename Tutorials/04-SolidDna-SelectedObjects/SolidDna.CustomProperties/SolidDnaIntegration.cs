@@ -1,6 +1,7 @@
 ﻿using AngelSix.SolidDna;
 using System.IO;
 using System.Threading.Tasks;
+using System;
 
 namespace SolidDna.CustomProperties
 {
@@ -17,12 +18,17 @@ namespace SolidDna.CustomProperties
         {
 
         }
+
+        public override void PreLoadPlugIns()
+        {
+
+        }
     }
 
     /// <summary>
     /// Register as SolidDna Plguin
     /// </summary>
-    public class CustomPropertiesSolidDnaPlugin : ISolidPlugIn
+    public class CustomPropertiesSolidDnaPlugin : SolidPlugIn
     {
         #region Private Members
 
@@ -38,18 +44,18 @@ namespace SolidDna.CustomProperties
         /// <summary>
         /// My Add-in description
         /// </summary>
-        public string AddInDescription {  get { return "An example of manipulating Custom Properties inside a SolidWorks model"; } }
+        public override string AddInDescription {  get { return "An example of manipulating Custom Properties inside a SolidWorks model"; } }
 
         /// <summary>
         /// My Add-in title
         /// </summary>
-        public string AddInTitle { get { return "SolidDNA Custom Properties"; } }
+        public override string AddInTitle { get { return "SolidDNA Custom Properties"; } }
 
         #endregion
 
         #region Connect To SolidWorks
 
-        public void ConnectedToSolidWorks()
+        public override void ConnectedToSolidWorks()
         {
             // Create our taskpane
             mTaskpane = new TaskpaneIntegration<TaskpaneUserControlHost>()
@@ -59,10 +65,10 @@ namespace SolidDna.CustomProperties
             };
 
             // Add to taskpane
-            Task.Run(() => mTaskpane.AddToTaskpane());
+            mTaskpane.AddToTaskpane();
         }
 
-        public void DisconnetedFromSolidWorks()
+        public override void DisconnetedFromSolidWorks()
         {
 
         }

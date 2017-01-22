@@ -91,7 +91,7 @@ namespace AngelSix.SolidDna
             // Setup plug-in app domain
             PlugInIntegration.Setup(SolidWorks);
 
-            // Get all plug-ins to load
+            // Any pre-load steps
             PreLoadPlugIns();
 
             // Perform any plug-in configuration

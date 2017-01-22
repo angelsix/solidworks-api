@@ -16,12 +16,12 @@ namespace SolidDna.DynamicLoadPlugIn
         }
 
         /// <summary>
-        /// Add our plug-ins
+        /// Steps to take before any add-ins load
         /// </summary>
         /// <returns></returns>
         public override void PreLoadPlugIns()
         {
-            PlugInIntegration.AddPlugIn(@"D:\git\angelsix\solidworks-api\Tutorials\05-SolidDna-DynamicPlugInReload\SolidDna.DynamicLoadPlugIn\bin\Debug\SolidDna.DynamicLoadPlugIn.Main.dll");
+
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AngelSix.SolidDna
@@ -11,6 +12,11 @@ namespace AngelSix.SolidDna
     public class BaseFormatProvider
     {
         #region Protected Members
+
+        /// <summary>
+        /// A lock to limit access to the processes to one at a time
+        /// </summary>
+        private SemaphoreSlim mSelfLock = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// A list of all cached resources
@@ -40,39 +46,48 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         protected async Task<T> GetResourceDocument<T>(ResourceDefinition pathFormat, Func<Stream, T> constructData, string culture = null)
         {
-            // Get culture path 
-            var resourcePath = ResourceFormatProviderHelpers.GetCulturePath(pathFormat.Location, culture);
-
-            // Make sure list has been initialized
-            if (Cache == null)
-                Cache = new Dictionary<string, object>();
-
-            // If we have a document already, return that
-            if (Cache.ContainsKey(resourcePath))
-                return (T)Cache[resourcePath];
-
-            // Otherwise try and get it
-            T resourceDocument = default(T);
-
             try
             {
-                // Try to get the stream for this resource
-                using (var stream = await ResourceFormatProviderHelpers.GetStream(pathFormat.Type, resourcePath).ConfigureAwait(false))
+                await mSelfLock.WaitAsync();
+
+                // Get culture path 
+                var resourcePath = ResourceFormatProviderHelpers.GetCulturePath(pathFormat.Location, culture);
+
+                // Make sure list has been initialized
+                if (Cache == null)
+                    Cache = new Dictionary<string, object>();
+
+                // If we have a document already, return that
+                if (Cache.ContainsKey(resourcePath))
+                    return (T)Cache[resourcePath];
+
+                // Otherwise try and get it
+                T resourceDocument = default(T);
+
+                try
                 {
-                    // If successfully try and convert that data into a usable resource object
-                    if (stream != null)
-                        resourceDocument = constructData(stream);
+                    // Try to get the stream for this resource
+                    using (var stream = await ResourceFormatProviderHelpers.GetStream(pathFormat.Type, resourcePath).ConfigureAwait(false))
+                    {
+                        // If successfully try and convert that data into a usable resource object
+                        if (stream != null)
+                            resourceDocument = constructData(stream);
+                    }
                 }
+                finally
+                {
+                    // Add resource document if found or not (except for Urls, never add failed Urls in case of bad internet connection
+                    if (CacheResourceFiles && pathFormat.Type != ResourceDefinitionType.Url)
+                        Cache.Add(resourcePath, resourceDocument);
+                }
+
+                // Return what we found, if anything
+                return resourceDocument;
             }
             finally
             {
-                // Add resource document if found or not (except for Urls, never add failed Urls in case of bad internet connection
-                if (CacheResourceFiles && pathFormat.Type != ResourceDefinitionType.Url)
-                    Cache.Add(resourcePath, resourceDocument);
+                mSelfLock.Release();
             }
-
-            // Return what we found, if anything
-            return resourceDocument;
         }
 
         #endregion

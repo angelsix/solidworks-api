@@ -96,7 +96,7 @@
                         <CheckBox x:Name="MaterialAssemblyCheck" Content="Assembly" Checked="MaterialAssemblyCheck_Checked" />
                         <CheckBox x:Name="MaterialPlasmaCheck" Content="Plasma" Checked="MaterialPlasmaCheck_Checked" />
                         <CheckBox x:Name="MaterialLaserCheck" Content="Laser" />
-                        <CheckBox x:Name="MaterialPurchaseCheck" Content="Purchase" />
+                        <CheckBox x:Name="MaterialPurchaseCheck" Content="Purchase" Checked="MaterialPurchaseCheck_Checked" Unchecked="MaterialPurchaseCheck_Checked" />
                     </StackPanel>
 
                     <StackPanel Grid.Column="1">
@@ -159,14 +159,17 @@
                     <ComboBoxItem>Electrical</ComboBoxItem>
                 </ComboBox>
 
-                <!-- Supplier Name -->
-                <TextBlock Text="Supplier Name" Margin="0 5 0 0" />
-                <TextBox x:Name="SupplierNameText" Padding="2"  />
+                <StackPanel x:Name="SupplierDetails" Visibility="Collapsed">
+                    
+                    <!-- Supplier Name -->
+                    <TextBlock Text="Supplier Name" Margin="0 5 0 0" />
+                    <TextBox x:Name="SupplierNameText" Padding="2"  />
 
-                <!-- Supplier Code -->
-                <TextBlock Text="Supplier Code" Margin="0 5 0 0" />
-                <TextBox x:Name="SupplierCodeText" Padding="2"  />
-
+                    <!-- Supplier Code -->
+                    <TextBlock Text="Supplier Code" Margin="0 5 0 0" />
+                    <TextBox x:Name="SupplierCodeText" Padding="2"  />
+                    
+                </StackPanel>
 
                 <!-- #################### -->
                 <!--    Additional Info   -->

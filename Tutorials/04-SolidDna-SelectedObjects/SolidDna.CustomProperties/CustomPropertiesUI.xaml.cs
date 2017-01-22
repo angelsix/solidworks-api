@@ -337,11 +337,15 @@ namespace SolidDna.CustomProperties
             // Purchase Info
             model.SetCustomProperty(mCustomPropertyPurchaseInformation, (string)((ComboBoxItem)this.PurchaseInformationList.SelectedValue)?.Content);
 
-            // Suppler Name
-            model.SetCustomProperty(mCustomPropertySupplierName, this.SupplierNameText.Text);
+            // Only set supplier details if the purchase info has changed
+            if (this.MaterialPurchaseCheck.IsChecked.Value)
+            {
+                // Suppler Name
+                model.SetCustomProperty(mCustomPropertySupplierName, this.SupplierNameText.Text);
 
-            // Supplier Code
-            model.SetCustomProperty(mCustomPropertySupplierCode, this.SupplierCodeText.Text);
+                // Supplier Code
+                model.SetCustomProperty(mCustomPropertySupplierCode, this.SupplierCodeText.Text);
+            }
 
             // Note
             model.SetCustomProperty(mCustomPropertyNote, this.NoteText.Text);
@@ -440,6 +444,12 @@ namespace SolidDna.CustomProperties
                     this.SheetMetalLengthText.Text = $"\"{dimensionSelectionName}\"";
                 });
             });
+        }
+
+        private void MaterialPurchaseCheck_Checked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            // Change supplier visibility based on purchased check
+            this.SupplierDetails.Visibility = this.MaterialPurchaseCheck.IsChecked.Value ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         }
     }
 }
