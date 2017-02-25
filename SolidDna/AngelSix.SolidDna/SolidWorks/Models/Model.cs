@@ -59,10 +59,15 @@ namespace AngelSix.SolidDna
         /// </summary>
         public ModelSelectionManager SelectionManager { get; protected set; }
 
-        /// <summary>
-        /// The mass properties of the part
-        /// </summary>
-        public MassProperties MassProperties {  get { return this.Extension.GetMassProperties(); } }
+		/// <summary>
+		/// The selection manager for this model
+		/// </summary>
+		public int ConfigurationCount { get { return mBaseObject.GetConfigurationCount(); } }
+
+		/// <summary>
+		/// The mass properties of the part
+		/// </summary>
+		public MassProperties MassProperties {  get { return this.Extension.GetMassProperties(); } }
 
         #endregion
 
