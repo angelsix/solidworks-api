@@ -31,13 +31,13 @@ namespace AngelSix.SolidDna
         /// External File
         /// </summary>
         ExternalFile = 5,
-		/// <summary>
-		/// Imported assembly
-		/// </summary>
-		ImportedAssembly = 6,
-		/// <summary>
-		/// Imported part
-		/// </summary>
-		ImportedPart = 7
-	}
+        /// <summary>
+        /// Imported assembly
+        /// </summary>
+        ImportedAssembly = 6,
+        /// <summary>
+        /// Imported part
+        /// </summary>
+        ImportedPart = 7
+    }
 }
