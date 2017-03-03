@@ -60,9 +60,9 @@ namespace AngelSix.SolidDna
         public ModelSelectionManager SelectionManager { get; protected set; }
 
 		/// <summary>
-		/// The selection manager for this model
+		/// Get the number of configurations
 		/// </summary>
-		public int ConfigurationCount { get { return mBaseObject.GetConfigurationCount(); } }
+		public int ConfigurationCount { get; protected set; }
 
 		/// <summary>
 		/// The mass properties of the part
@@ -136,8 +136,11 @@ namespace AngelSix.SolidDna
             // Get the active configuration
             this.ActiveConfiguration = new ModelConfiguration(mBaseObject.IGetActiveConfiguration());
 
-            // Get the selection manager
-            this.SelectionManager = new ModelSelectionManager(mBaseObject.ISelectionManager);
+			// Get the number of configurations
+			this.ConfigurationCount = mBaseObject.GetConfigurationCount();
+
+			// Get the selection manager
+			this.SelectionManager = new ModelSelectionManager(mBaseObject.ISelectionManager);
 
             // Re-attach event handlers
             this.SetupModelEventHandlers();
