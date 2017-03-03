@@ -59,15 +59,15 @@ namespace AngelSix.SolidDna
         /// </summary>
         public ModelSelectionManager SelectionManager { get; protected set; }
 
-		/// <summary>
-		/// Get the number of configurations
-		/// </summary>
-		public int ConfigurationCount { get; protected set; }
+        /// <summary>
+        /// Get the number of configurations
+        /// </summary>
+        public int ConfigurationCount { get { return mBaseObject.GetConfigurationCount(); } }
 
-		/// <summary>
-		/// The mass properties of the part
-		/// </summary>
-		public MassProperties MassProperties {  get { return this.Extension.GetMassProperties(); } }
+        /// <summary>
+        /// The mass properties of the part
+        /// </summary>
+        public MassProperties MassProperties {  get { return this.Extension.GetMassProperties(); } }
 
         #endregion
 
@@ -136,11 +136,8 @@ namespace AngelSix.SolidDna
             // Get the active configuration
             this.ActiveConfiguration = new ModelConfiguration(mBaseObject.IGetActiveConfiguration());
 
-			// Get the number of configurations
-			this.ConfigurationCount = mBaseObject.GetConfigurationCount();
-
-			// Get the selection manager
-			this.SelectionManager = new ModelSelectionManager(mBaseObject.ISelectionManager);
+            // Get the selection manager
+            this.SelectionManager = new ModelSelectionManager(mBaseObject.ISelectionManager);
 
             // Re-attach event handlers
             this.SetupModelEventHandlers();
