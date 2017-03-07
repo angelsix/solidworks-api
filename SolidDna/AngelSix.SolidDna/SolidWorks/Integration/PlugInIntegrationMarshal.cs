@@ -131,7 +131,7 @@ namespace AngelSix.SolidDna
             AddInIntegration.OnDisconnectedFromSolidWorks();
 
             // Inform plug-ins
-            mPlugIns.ForEach(plugin => plugin.DisconnetedFromSolidWorks());
+            mPlugIns.ForEach(plugin => plugin.DisconnectedFromSolidWorks());
         }
 
         #endregion

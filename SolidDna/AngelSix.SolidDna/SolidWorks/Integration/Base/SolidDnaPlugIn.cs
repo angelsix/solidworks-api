@@ -32,6 +32,6 @@ namespace AngelSix.SolidDna
         /// Called when the add-in is unloaded from SolidWorks and disconnected
         /// </summary>
         /// <returns></returns>
-        public abstract void DisconnetedFromSolidWorks();
+        public abstract void DisconnectedFromSolidWorks();
     }
 }
