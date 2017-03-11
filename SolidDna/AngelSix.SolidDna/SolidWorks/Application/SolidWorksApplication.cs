@@ -530,6 +530,20 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region User Interaction
+
+        /// <summary>
+        /// Pops up a message box to the user with the given message
+        /// </summary>
+        /// <param name="message">The message to display to the user</param>
+        public void ShowMessageBox(string message, SolidWorksMessageBoxIcon icon = SolidWorksMessageBoxIcon.Information)
+        {
+            // Send message to user
+            mBaseObject.SendMsgToUser2(message, (int)icon, (int)SolidWorksMessageBoxButtons.Ok);
+        }
+
+        #endregion
+
         #region Dispose
 
         /// <summary>

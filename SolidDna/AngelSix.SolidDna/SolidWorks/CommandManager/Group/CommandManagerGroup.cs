@@ -299,7 +299,7 @@ namespace AngelSix.SolidDna
             var item = this.Items.FirstOrDefault(f => f.CallbackId == name);
 
             // Call the action
-            item.OnClick?.Invoke();
+            item?.OnClick?.Invoke();
         }
 
         #endregion

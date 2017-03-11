@@ -30,10 +30,6 @@ namespace SolidDna.Exporting
     /// </summary>
     public class MySolidDnaPlugin : SolidPlugIn
     {
-        #region Private Members
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
@@ -52,23 +48,18 @@ namespace SolidDna.Exporting
 
         public override void ConnectedToSolidWorks()
         {
-            Dna.Application.FileOpened += Application_FileOpened;
-        }
-
-        private void Application_FileOpened(string arg1, Model arg2)
-        {
             // Create our command group
             var group1 = Dna.Application.CommandManager.CreateCommands(
                 title: "Export Part",
                 items: new List<CommandManagerItem>(new[] { new CommandManagerItem {
-                    Name = "my name3",
-                    Tooltip = "tool3",
-                    Hint = "hint2",
+                    Name = "DXF",
+                    Tooltip = "DXF",
+                    Hint = "Export part as DXF",
                     VisibleForDrawings = false,
                     VisibleForAssemblies = false,
                     OnClick = () =>
                     {
-
+                        FileExporting.ExportPartAsDxf();
                     }
                 } }),
                 iconListsPath: "",
@@ -82,7 +73,7 @@ namespace SolidDna.Exporting
                 hint: "Export assemblies in other formats",
                 tooltip: "Such as DXF, Step and IGES");
         }
-
+        
         public override void DisconnetedFromSolidWorks()
         {
 

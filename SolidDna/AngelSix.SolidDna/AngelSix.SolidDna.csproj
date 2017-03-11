@@ -105,7 +105,9 @@
     <Compile Include="Exception\ExceptionHelpers.cs" />
     <Compile Include="File\FileHelpers.cs" />
     <Compile Include="Reflection\TypeHelpers.cs" />
+    <Compile Include="SolidWorks\Application\MessageBox\SolidWorksMessageBoxButtons.cs" />
     <Compile Include="SolidWorks\Application\SolidWorksApplicationPreferences.cs" />
+    <Compile Include="SolidWorks\Application\MessageBox\SolidWorksMessageBoxIcon.cs" />
     <Compile Include="SolidWorks\Application\SolidWorksVersion.cs" />
     <Compile Include="SolidWorks\CommandManager\Item\CommandItemType.cs" />
     <Compile Include="SolidWorks\CommandManager\Group\CommandManagerGroup.cs" />

@@ -1,6 +1,7 @@
 ﻿using SolidWorks.Interop.sldworks;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -144,8 +145,18 @@ namespace AngelSix.SolidDna
         /// <param name="name">The parameter passed into the generic callback</param>
         public void OnCallback(string name)
         {
-            // Let listeners know
-            PlugInIntegration.OnCallback(name);
+            try
+            {
+                // Let listeners know
+                PlugInIntegration.OnCallback(name);
+            }
+            catch (Exception ex)
+            {
+                Debugger.Break();
+
+                // Log it
+                Logger.Log($"OnCallback failed. {ex.GetErrorMessage()}");
+            }
         }
 
         #endregion

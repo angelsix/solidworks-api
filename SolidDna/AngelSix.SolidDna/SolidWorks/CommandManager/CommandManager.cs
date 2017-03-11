@@ -131,12 +131,12 @@ namespace AngelSix.SolidDna
         /// Removes the specific command group
         /// </summary>
         /// <param name="group">The command group to remove</param>
-        /// <param name="saveInRegistry">True to remove the CommandGroup , saving its toolbar information in the registry; false to remove both the CommandGroup and its toolbar information in the registry</param>
-        public void RemoveCommandGroup(CommandManagerGroup group, bool saveInRegistry = false)
+        /// <param name="runtimeOnly">True to remove the CommandGroup , saving its toolbar information in the registry; false to remove both the CommandGroup and its toolbar information in the registry</param>
+        public void RemoveCommandGroup(CommandManagerGroup group, bool runtimeOnly = false)
         {
             lock (mCommandGroups)
             {
-                mBaseObject.RemoveCommandGroup2(group.UserId, saveInRegistry);
+                mBaseObject.RemoveCommandGroup2(group.UserId, runtimeOnly);
             }
         }
 
@@ -151,8 +151,9 @@ namespace AngelSix.SolidDna
         /// <param name="title">The title of the command tab to get</param>
         /// <param name="onGot">Called if we got the tab</param>
         /// <param name="createIfNotExist">True to create the tab if it does not exist</param>
+        /// <param name="clearExistingItems">Removes any existing items on the tab if true</param>
         /// <returns></returns>
-        public CommandManagerTab GetCommandTab(ModelType type, string title, bool createIfNotExist = true)
+        public CommandManagerTab GetCommandTab(ModelType type, string title, bool createIfNotExist = true, bool clearExistingItems = true)
         {
             // Try and get the tab
             var unsafeTab = mBaseObject.GetCommandTab((int)type, title);
@@ -160,6 +161,19 @@ namespace AngelSix.SolidDna
             // If we did not get it, just ignore
             if (unsafeTab == null && !createIfNotExist)
                 return null;
+
+            // If we want to remove any previous tabs...
+            if (clearExistingItems && unsafeTab != null)
+            {
+                // Remove it
+                mBaseObject.RemoveCommandTab(unsafeTab);
+
+                // Clean COM object
+                Marshal.ReleaseComObject(unsafeTab);
+
+                // Set to null
+                unsafeTab = null;
+            }
 
             // Create it if it doesn't exist
             if (unsafeTab == null)
