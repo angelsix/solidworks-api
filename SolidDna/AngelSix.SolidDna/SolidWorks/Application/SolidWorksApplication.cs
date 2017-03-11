@@ -12,7 +12,7 @@ namespace AngelSix.SolidDna
     /// <summary>
     /// Represents the current SolidWorks application
     /// </summary>
-    public partial class SolidWorksApplication : SolidDnaObject<SldWorks>
+    public partial class SolidWorksApplication : SharedSolidDnaObject<SldWorks>
     {
         #region Protected Members
 
@@ -56,6 +56,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         public int SolidWorksCookie {  get { return mSwCookie; } }
 
+        /// <summary>
+        /// The command manager
+        /// </summary>
+        public CommandManager CommandManager { get; private set; }
+
         #endregion
 
         #region Public Events
@@ -90,13 +95,20 @@ namespace AngelSix.SolidDna
             // Store cookie Id
             mSwCookie = cookie;
 
+            //
+            //   NOTE: As we are in our own AppDomain, the callback is registered in the main SolidWorks AppDomain
+            //         We then pass that into our domain
+            //
             // Setup callback info
-            var ok = mBaseObject.SetAddinCallbackInfo2(0, this, cookie);
+            //var ok = mBaseObject.SetAddinCallbackInfo2(0, this, cookie);
 
             // Hook into main events
             mBaseObject.ActiveModelDocChangeNotify += ActiveModelChanged;
             mBaseObject.FileOpenPreNotify += FileOpenPreNotify;
             mBaseObject.FileOpenPostNotify += FileOpenPostNotify;
+
+            // Get command manager
+            this.CommandManager = new CommandManager(UnsafeObject.GetCommandManager(mSwCookie));
         }
 
         #endregion
@@ -518,6 +530,20 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region User Interaction
+
+        /// <summary>
+        /// Pops up a message box to the user with the given message
+        /// </summary>
+        /// <param name="message">The message to display to the user</param>
+        public void ShowMessageBox(string message, SolidWorksMessageBoxIcon icon = SolidWorksMessageBoxIcon.Information)
+        {
+            // Send message to user
+            mBaseObject.SendMsgToUser2(message, (int)icon, (int)SolidWorksMessageBoxButtons.Ok);
+        }
+
+        #endregion
+
         #region Dispose
 
         /// <summary>
@@ -528,7 +554,11 @@ namespace AngelSix.SolidDna
             // Clean active model
             this.ActiveModel?.Dispose();
 
-            base.Dispose();
+            // Dispose command manager
+            this.CommandManager?.Dispose();
+
+            // NOTE: Don't dispose the application, SolidWorks does that itself
+            //base.Dispose();
         }
 
         #endregion

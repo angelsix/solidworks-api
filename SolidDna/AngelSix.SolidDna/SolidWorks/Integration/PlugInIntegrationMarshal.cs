@@ -1,6 +1,7 @@
 ﻿using SolidWorks.Interop.sldworks;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -136,6 +137,32 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region SolidWorks Callbacks
+
+        /// <summary>
+        /// Called by the SolidWorks domain (AddInIntegration) when a callback is fired
+        /// </summary>
+        /// <param name="name">The parameter passed into the generic callback</param>
+        public void OnCallback(string name)
+        {
+            try
+            {
+                // Let listeners know
+                PlugInIntegration.OnCallback(name);
+            }
+            catch (Exception ex)
+            {
+                Debugger.Break();
+
+                // Log it
+                Logger.Log($"OnCallback failed. {ex.GetErrorMessage()}");
+            }
+        }
+
+        #endregion
+
+        #region Plug-Ins
+
         public void ConfigurePlugIns()
         {
             // Try and find the title from the first plug-in found
@@ -179,5 +206,7 @@ namespace AngelSix.SolidDna
         {
             return PlugInIntegration.GetPlugInDetails(fullPath);
         }
+
+        #endregion
     }
 }

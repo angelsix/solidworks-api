@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26206.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngelSix.SolidDna", "..\..\..\SolidDna\AngelSix.SolidDna\AngelSix.SolidDna.csproj", "{48CE7BA4-1082-4089-9056-657A6A3EEA39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolidDna.Exporting", "SolidDna.Exporting.csproj", "{73B94EE6-BC16-49B2-824D-4C4E114859AC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{48CE7BA4-1082-4089-9056-657A6A3EEA39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48CE7BA4-1082-4089-9056-657A6A3EEA39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48CE7BA4-1082-4089-9056-657A6A3EEA39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48CE7BA4-1082-4089-9056-657A6A3EEA39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73B94EE6-BC16-49B2-824D-4C4E114859AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73B94EE6-BC16-49B2-824D-4C4E114859AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73B94EE6-BC16-49B2-824D-4C4E114859AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73B94EE6-BC16-49B2-824D-4C4E114859AC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

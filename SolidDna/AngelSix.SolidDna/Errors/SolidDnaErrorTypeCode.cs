@@ -35,5 +35,11 @@ namespace AngelSix.SolidDna
         /// An error occured trying to perform a SolidWorks API call on a Model
         /// </summary>
         SolidWorksModel = 12,
+
+        /// <summary>
+        /// An error occured trying to perform a SolidWorks API call on the Command Manager
+        /// </summary>
+        SolidWorksCommandManager = 13,
+
     }
 }

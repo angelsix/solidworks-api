@@ -15,7 +15,7 @@ namespace AngelSix.SolidDna
             if (typeof(T).IsInterfaceOrHasInterface<ITaskpaneView>())
             {
                 ((ITaskpaneView)comObject).DeleteView();
-            }
+            }  
         }
     }
 }

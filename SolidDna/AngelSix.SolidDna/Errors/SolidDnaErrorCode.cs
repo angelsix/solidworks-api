@@ -112,5 +112,45 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region SolidWorks Command Manager
+
+        /// <summary>
+        /// There was an unknown error while running a SolidWorks API call related to the Command Manager
+        /// </summary>
+        SolidWorksCommandManagerError = 12000,
+
+        /// <summary>
+        /// There was an error while running a SolidWorks API call to create a Command Group
+        /// </summary>
+        SolidWorksCommandGroupCreateError = 12001,
+
+        /// <summary>
+        /// There was an error while trying to activate a Command Group
+        /// </summary>
+        SolidWorksCommandGroupActivateError = 12002,
+
+        /// <summary>
+        /// There was an error while trying to activate a Command Group that was already activated
+        /// </summary>
+        SolidWorksCommandGroupReActivateError = 12003,
+
+        /// <summary>
+        /// There was an error while running a SolidWorks API call to get a Command Tab
+        /// </summary>
+        SolidWorksCommandGroupGetCommandTabError = 12004,
+
+        /// <summary>
+        /// There was an error while trying to set a Command Group Icon list with an invalid path
+        /// </summary>
+        SolidWorksCommandGroupIvalidPathFormatError = 12005,
+
+        /// <summary>
+        /// There was an error while running a SolidWorks API call to create a Command Group Tab
+        /// </summary>
+        SolidWorksCommandGroupCreateTabError = 12006,
+
+
+        #endregion
+
     }
 }

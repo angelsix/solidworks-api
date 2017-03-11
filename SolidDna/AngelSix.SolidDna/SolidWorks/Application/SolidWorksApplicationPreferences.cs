@@ -3,7 +3,7 @@ using SolidWorks.Interop.swconst;
 
 namespace AngelSix.SolidDna
 {
-    public partial class SolidWorksApplication : SolidDnaObject<SldWorks>
+    public partial class SolidWorksApplication : SharedSolidDnaObject<SldWorks>
     {
         public class SolidWorksPreferences
         {
