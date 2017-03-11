@@ -184,6 +184,9 @@ namespace AngelSix.SolidDna
 
             // Have a toolbar
             this.HasToolbar = true;
+
+            // Listen out for callbacks
+            PlugInIntegration.CallbackFired += PlugInIntegration_CallbackFired;
         }
 
         #endregion
@@ -284,6 +287,23 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region Callbacks
+
+        /// <summary>
+        /// Fired when a SolidWorks callback is fired
+        /// </summary>
+        /// <param name="name">The name of the callback that was fired</param>
+        private void PlugInIntegration_CallbackFired(string name)
+        {
+            // Find the item, if any
+            var item = this.Items.FirstOrDefault(f => f.CallbackId == name);
+
+            // Call the action
+            item.OnClick?.Invoke();
+        }
+
+        #endregion
+
         #region Public Methods
 
         /// <summary>
@@ -293,7 +313,7 @@ namespace AngelSix.SolidDna
         public void AddCommandItem(CommandManagerItem item)
         {
             // Add the item
-            var id = mBaseObject.AddCommandItem2(item.Name, item.Position, item.Hint, item.Tooltip, item.ImageIndex, null, null, this.UserId, (int)item.ItemType);
+            var id = mBaseObject.AddCommandItem2(item.Name, item.Position, item.Hint, item.Tooltip, item.ImageIndex, $"Callback({item.CallbackId})", null, this.UserId, (int)item.ItemType);
 
             // Set the Id we got
             item.UniqueId = id;
@@ -360,27 +380,22 @@ namespace AngelSix.SolidDna
             // Get command Ids
             this.Items?.ForEach(item => item.CommandId = mBaseObject.CommandID[item.UniqueId]);
 
-            var tab = manager.GetCommandTab(ModelType.Part, "test");
-            tab.Box.UnsafeObject.AddCommands(new[] { mBaseObject.CommandID[0] }, new [] { (int)CommandManagerItemTabView.IconWithTextBelow });
-
-            return;
-
             #region Command Tab
 
-            //// Add to parts tab
-            //var list = this.Items.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForParts).ToList();
-            //if (list?.Count > 0)
-            //    AddItemsToTab(ModelType.Part, manager, list);
+            // Add to parts tab
+            var list = this.Items.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForParts).ToList();
+            if (list?.Count > 0)
+                AddItemsToTab(ModelType.Part, manager, list);
 
-            //// Add to assembly tab
-            //list = this.Items.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForAssemblies).ToList();
-            //if (list?.Count > 0)
-            //    AddItemsToTab(ModelType.Assembly, manager, list);
+            // Add to assembly tab
+            list = this.Items.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForAssemblies).ToList();
+            if (list?.Count > 0)
+                AddItemsToTab(ModelType.Assembly, manager, list);
 
-            //// Add to drawing tab
-            //list = this.Items.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForDrawings).ToList();
-            //if (list?.Count > 0)
-            //    AddItemsToTab(ModelType.Drawing, manager, list);
+            // Add to drawing tab
+            list = this.Items.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForDrawings).ToList();
+            if (list?.Count > 0)
+                AddItemsToTab(ModelType.Drawing, manager, list);
 
             #endregion
 
@@ -420,8 +435,8 @@ namespace AngelSix.SolidDna
             }
 
             // New list of values
-            var ids = new List<object>();
-            var styles = new List<object>();
+            var ids = new List<int>();
+            var styles = new List<int>();
 
             // Add each items Id and style
             items.ForEach(item =>
@@ -434,7 +449,7 @@ namespace AngelSix.SolidDna
             });
 
             // Add all the items
-            tab.Box.UnsafeObject.AddCommands(ids, styles);
+            tab.Box.UnsafeObject.AddCommands(ids.ToArray(), styles.ToArray());
         }
 
         #endregion
@@ -446,6 +461,9 @@ namespace AngelSix.SolidDna
         /// </summary>
         public override void Dispose()
         {
+            // Stop listening out for callbacks
+            PlugInIntegration.CallbackFired -= PlugInIntegration_CallbackFired;
+
             // Dispose all tabs
             foreach (var tab in mTabs.Values)
                 tab.Dispose();

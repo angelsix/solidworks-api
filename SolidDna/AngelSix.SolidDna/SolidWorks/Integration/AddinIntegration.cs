@@ -74,6 +74,16 @@ namespace AngelSix.SolidDna
         #region SolidWorks Add-in Callbacks
 
         /// <summary>
+        /// Used to pass a callback message onto our plug-ins
+        /// </summary>
+        /// <param name="arg"></param>
+        public void Callback(string arg)
+        {
+            // Inform plug-in domain of event
+            PlugInIntegration.CrossDomain?.OnCallback(arg);
+        }
+        
+        /// <summary>
         /// Called when SolidWorks has loaded our add-in and wants us to do our connection logic
         /// </summary>
         /// <param name="ThisSW">The current SolidWorks instance</param>
@@ -84,12 +94,19 @@ namespace AngelSix.SolidDna
             // Setup IoC
             IoCContainer.Ensure();
 
+            //
+            //   NOTE: Do not need to create it here, as we now create it inside PlugInIntegration.Setup in it's own AppDomain
+            //         If we change back to loading directly (not in an app domain) then uncomment this 
+            //
             // Store a reference to the current SolidWorks instance
             // Initialize SolidWorks (SolidDNA class)
-            SolidWorks = new SolidWorksApplication((SldWorks)ThisSW, Cookie);
+            //SolidWorks = new SolidWorksApplication((SldWorks)ThisSW, Cookie);
+
+            // Setup callback info
+            var ok = ((SldWorks)ThisSW).SetAddinCallbackInfo2(0, this, Cookie);
 
             // Setup plug-in app domain
-            PlugInIntegration.Setup(SolidWorks);
+            PlugInIntegration.Setup(((SldWorks)ThisSW).RevisionNumber(), Cookie);
 
             // Any pre-load steps
             PreLoadPlugIns();
@@ -126,8 +143,8 @@ namespace AngelSix.SolidDna
             PlugInIntegration.Teardown();
 
             // Dipose SolidWorks COM
-            SolidWorks?.Dispose();
-            SolidWorks = null;
+            //SolidWorks?.Dispose();
+            //SolidWorks = null;
 
             // Return ok
             return true;

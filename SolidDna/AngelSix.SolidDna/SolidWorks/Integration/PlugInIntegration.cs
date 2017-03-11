@@ -55,12 +55,21 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region Public Events
+
+        /// <summary>
+        /// Called when a SolidWorks callback is fired
+        /// </summary>
+        public static event Action<string> CallbackFired = (name) => { };
+
+        #endregion
+
         #region Setup / Teardown
 
         /// <summary>
         /// Must be called to setup the PlugInIntegration application domain
         /// </summary>
-        public static void Setup(SolidWorksApplication solidWorks)
+        public static void Setup(string revisionNumber, int cookie)
         {
             // Make sure we resolve assemblies in this domain, as it seems to use this domain to resolve
             // assemblies not the appDomain when crossing boundaries
@@ -77,7 +86,7 @@ namespace AngelSix.SolidDna
 
             // Run code on new app-domain to configure
             mCrossDomain = (PlugInIntegrationMarshal)PlugInAppDomain.CreateInstanceAndUnwrap(typeof(PlugInIntegrationMarshal).Assembly.FullName, typeof(PlugInIntegrationMarshal).FullName);
-            mCrossDomain.SetupAppDomain(AddInIntegration.SolidWorks.SolidWorksVersion.RevisionNumber, solidWorks.SolidWorksCookie);
+            mCrossDomain.SetupAppDomain(revisionNumber, cookie);
         }
 
         /// <summary>
@@ -171,6 +180,22 @@ namespace AngelSix.SolidDna
         }
 
         #endregion
+
+        #region SolidWorks Callbacks
+
+        /// <summary>
+        /// Fires a <see cref="CallbackFired"/> event for the given name
+        /// </summary>
+        /// <param name="name">The name of the callback that was fired</param>
+        public static void OnCallback(string name)
+        {
+            // Inform listeners
+            CallbackFired(name);
+        }
+
+        #endregion
+
+        #region Configure Plug Ins
 
         /// <summary>
         /// Discovers all SolidDna plug-ins
@@ -297,5 +322,7 @@ namespace AngelSix.SolidDna
                 }
             }
         }
+
+        #endregion
     }
 }

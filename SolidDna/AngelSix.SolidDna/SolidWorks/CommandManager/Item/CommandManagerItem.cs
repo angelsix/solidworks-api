@@ -1,4 +1,6 @@
-﻿namespace AngelSix.SolidDna
+﻿using System;
+
+namespace AngelSix.SolidDna
 {
     /// <summary>
     /// A command item for the top command bar in SolidWorks
@@ -16,6 +18,11 @@
         /// The command Id of this item (set by the parent)
         /// </summary>
         public int CommandId { get; set; }
+
+        /// <summary>
+        /// The unique Id used for identifying a callback that should be associated with this item
+        /// </summary>
+        public string CallbackId { get; set; } = Guid.NewGuid().ToString("N");
 
         /// <summary>
         /// The name of the item
@@ -68,11 +75,10 @@
         /// </summary>
         public bool VisibleForDrawings { get; set; } = true;
 
-        #endregion
-
-        #region Public Callbacks
-
-
+        /// <summary>
+        /// The action to call when the item is clicked
+        /// </summary>
+        public Action OnClick { get; set; }
 
         #endregion
     }

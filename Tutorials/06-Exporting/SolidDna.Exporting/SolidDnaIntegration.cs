@@ -59,18 +59,28 @@ namespace SolidDna.Exporting
         {
             // Create our command group
             var group1 = Dna.Application.CommandManager.CreateCommands(
-                title: "test",
-                items: new List<CommandManagerItem>(new[] { new CommandManagerItem { Name = "my name", Tooltip = "tool", Hint = "hint" } }),
-                iconListsPath: "",
-                hint: "my hint",
-                tooltip: "my tooltip");
+                title: "Export Part",
+                items: new List<CommandManagerItem>(new[] { new CommandManagerItem {
+                    Name = "my name3",
+                    Tooltip = "tool3",
+                    Hint = "hint2",
+                    VisibleForDrawings = false,
+                    VisibleForAssemblies = false,
+                    OnClick = () =>
+                    {
 
-            //var group2 = Dna.Application.CommandManager.CreateCommands(
-            //    title: "test 2",
-            //    items: new List<CommandManagerItem>(new[] { new CommandManagerItem { } }),
-            //    iconListsPath: "",
-            //    hint: "my hint 2",
-            //    tooltip: "my tooltip 2");
+                    }
+                } }),
+                iconListsPath: "",
+                hint: "Export parts in other formats",
+                tooltip: "Such as DXF, STEP and IGES");
+
+            var group2 = Dna.Application.CommandManager.CreateCommands(
+                title: "Export Assembly",
+                items: new List<CommandManagerItem>(new[] { new CommandManagerItem { Name = "my name3", Tooltip = "tool3", Hint = "hint2", VisibleForDrawings = false, VisibleForParts = false } }),
+                iconListsPath: "",
+                hint: "Export assemblies in other formats",
+                tooltip: "Such as DXF, Step and IGES");
         }
 
         public override void DisconnetedFromSolidWorks()

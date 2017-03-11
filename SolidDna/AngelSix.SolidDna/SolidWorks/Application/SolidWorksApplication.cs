@@ -95,8 +95,12 @@ namespace AngelSix.SolidDna
             // Store cookie Id
             mSwCookie = cookie;
 
+            //
+            //   NOTE: As we are in our own AppDomain, the callback is registered in the main SolidWorks AppDomain
+            //         We then pass that into our domain
+            //
             // Setup callback info
-            var ok = mBaseObject.SetAddinCallbackInfo2(0, this, cookie);
+            //var ok = mBaseObject.SetAddinCallbackInfo2(0, this, cookie);
 
             // Hook into main events
             mBaseObject.ActiveModelDocChangeNotify += ActiveModelChanged;
