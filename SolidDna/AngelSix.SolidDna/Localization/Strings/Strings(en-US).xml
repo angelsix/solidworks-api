@@ -35,4 +35,12 @@
   <!-- Thread Helpers -->
   <String Name="ErrorThreadInvokerNullError">Unable to find UI thread as Thread Invoker Enable was never called on a UI thread</String>
 
+  <!-- SolidWorks Command Manager -->
+  <String Name="ErrorSolidWorksCommandGroupAddError">An error occurred adding a SolidWorks Command Group</String>
+  <String Name="ErrorSolidWorksCommandTabGetError">An error occurred adding a SolidWorks Command Group and trying to get the Command Tab</String>
+  <String Name="ErrorSolidWorksCommandGroupReCreateError">An error occurred activating a SolidWorks Command Group. It was already activated so must be removed before re-activating</String>
+  <String Name="ErrorSolidWorksCommandGroupIconListInvalidPathError">An error occurred setting a SolidWorks Command Group Icon list path. The string was an invalid format</String>
+  <String Name="ErrorSolidWorksCommandGroupActivateError">An error occurred activating a SolidWorks Command Group</String>
+  <String Name="ErrorSolidWorksCommandCreateTabError">An error occurred creating a SolidWorks Command Group Tab</String>
+  
 </Strings>

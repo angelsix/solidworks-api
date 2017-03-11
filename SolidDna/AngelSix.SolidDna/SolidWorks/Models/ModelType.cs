@@ -38,6 +38,6 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Imported Part
         /// </summary>
-        ImportedPart = 7
+        ImportedPart = 7,
     }
 }

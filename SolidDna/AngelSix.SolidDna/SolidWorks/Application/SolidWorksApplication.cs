@@ -12,7 +12,7 @@ namespace AngelSix.SolidDna
     /// <summary>
     /// Represents the current SolidWorks application
     /// </summary>
-    public partial class SolidWorksApplication : SolidDnaObject<SldWorks>
+    public partial class SolidWorksApplication : SharedSolidDnaObject<SldWorks>
     {
         #region Protected Members
 
@@ -56,6 +56,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         public int SolidWorksCookie {  get { return mSwCookie; } }
 
+        /// <summary>
+        /// The command manager
+        /// </summary>
+        public CommandManager CommandManager { get; private set; }
+
         #endregion
 
         #region Public Events
@@ -97,6 +102,9 @@ namespace AngelSix.SolidDna
             mBaseObject.ActiveModelDocChangeNotify += ActiveModelChanged;
             mBaseObject.FileOpenPreNotify += FileOpenPreNotify;
             mBaseObject.FileOpenPostNotify += FileOpenPostNotify;
+
+            // Get command manager
+            this.CommandManager = new CommandManager(UnsafeObject.GetCommandManager(mSwCookie));
         }
 
         #endregion
@@ -528,7 +536,11 @@ namespace AngelSix.SolidDna
             // Clean active model
             this.ActiveModel?.Dispose();
 
-            base.Dispose();
+            // Dispose command manager
+            this.CommandManager?.Dispose();
+
+            // NOTE: Don't dispose the application, SolidWorks does that itself
+            //base.Dispose();
         }
 
         #endregion

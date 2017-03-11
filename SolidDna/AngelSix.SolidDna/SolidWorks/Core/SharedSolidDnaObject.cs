@@ -34,7 +34,10 @@ namespace AngelSix.SolidDna
             if (mBaseObject == null)
                 return;
 
-            // Release object
+            // Do any specific disposal
+            SolidDnaObjectDisposal.Dispose<T>(mBaseObject);
+
+            // COM release object
             Marshal.ReleaseComObject(mBaseObject);
 
             // Clear reference

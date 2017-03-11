@@ -107,6 +107,14 @@
     <Compile Include="Reflection\TypeHelpers.cs" />
     <Compile Include="SolidWorks\Application\SolidWorksApplicationPreferences.cs" />
     <Compile Include="SolidWorks\Application\SolidWorksVersion.cs" />
+    <Compile Include="SolidWorks\CommandManager\Item\CommandItemType.cs" />
+    <Compile Include="SolidWorks\CommandManager\Group\CommandManagerGroup.cs" />
+    <Compile Include="SolidWorks\CommandManager\CommandManager.cs" />
+    <Compile Include="SolidWorks\CommandManager\Tab\CommandManagerTabBox.cs" />
+    <Compile Include="SolidWorks\CommandManager\Tab\CommandManagerTab.cs" />
+    <Compile Include="SolidWorks\CommandManager\Item\CommandManagerItem.cs" />
+    <Compile Include="SolidWorks\CommandManager\Item\CommandManagerItemTabView.cs" />
+    <Compile Include="SolidWorks\CommandManager\Tab\CommandManagerTabKey.cs" />
     <Compile Include="SolidWorks\Core\SharedSolidDnaObject.cs" />
     <Compile Include="SolidWorks\Core\SolidDnaObject.cs" />
     <Compile Include="SolidWorks\Core\SolidDnaObjectDisposal.cs" />
@@ -277,6 +285,7 @@
     <Compile Include="SolidWorks\Models\Model.cs" />
     <Compile Include="SolidWorks\Models\ModelExtension.cs" />
     <Compile Include="SolidWorks\Models\Configuration\ModelConfiguration.cs" />
+    <Compile Include="SolidWorks\Models\ModelTemplateType.cs" />
     <Compile Include="SolidWorks\Models\ModelType.cs" />
     <Compile Include="SolidWorks\Models\SelectionManager\ModelSelectionManager.cs" />
     <Compile Include="SolidWorks\Models\SelectedObject.cs" />
