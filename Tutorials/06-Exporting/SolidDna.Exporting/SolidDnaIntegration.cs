@@ -48,32 +48,85 @@ namespace SolidDna.Exporting
 
         public override void ConnectedToSolidWorks()
         {
-            // Create our command group
-            var group1 = Dna.Application.CommandManager.CreateCommands(
+            // Part commands
+            var partGroup = Dna.Application.CommandManager.CreateCommands(
                 title: "Export Part",
-                items: new List<CommandManagerItem>(new[] { new CommandManagerItem {
-                    Name = "DXF",
-                    Tooltip = "DXF",
-                    Hint = "Export part as DXF",
-                    VisibleForDrawings = false,
-                    VisibleForAssemblies = false,
-                    OnClick = () =>
-                    {
-                        FileExporting.ExportPartAsDxf();
-                    }
-                } }),
+                items: new List<CommandManagerItem>(new[] {
+
+                    new CommandManagerItem {
+                        Name = "DXF",
+                        Tooltip = "DXF",
+                        Hint = "Export part as DXF",
+                        VisibleForDrawings = false,
+                        VisibleForAssemblies = false,
+                        OnClick = () =>
+                        {
+                            FileExporting.ExportPartAsDxf();
+                        }
+                    },
+
+                    new CommandManagerItem {
+                        Name = "STEP",
+                        Tooltip = "STEP",
+                        Hint = "Export part as STEP",
+                        VisibleForDrawings = false,
+                        VisibleForAssemblies = false,
+                        OnClick = () =>
+                        {
+                            FileExporting.ExportModelAsStep();
+                        }
+                    },
+
+                }),
                 iconListsPath: "",
                 hint: "Export parts in other formats",
                 tooltip: "Such as DXF, STEP and IGES");
 
-            var group2 = Dna.Application.CommandManager.CreateCommands(
+            // Assembly commands
+            var assemblyGroup = Dna.Application.CommandManager.CreateCommands(
                 title: "Export Assembly",
-                items: new List<CommandManagerItem>(new[] { new CommandManagerItem { Name = "my name3", Tooltip = "tool3", Hint = "hint2", VisibleForDrawings = false, VisibleForParts = false } }),
+                items: new List<CommandManagerItem>(new[] {
+
+                    new CommandManagerItem {
+                        Name = "STEP",
+                        Tooltip = "STEP",
+                        Hint = "Export assembly as STEP",
+                        VisibleForDrawings = false,
+                        VisibleForAssemblies = false,
+                        OnClick = () =>
+                        {
+                            FileExporting.ExportModelAsStep();
+                        }
+                    },
+
+                }),
                 iconListsPath: "",
                 hint: "Export assemblies in other formats",
-                tooltip: "Such as DXF, Step and IGES");
+                tooltip: "Such as Step");
+
+            // Drawing commands
+            var drawingGroup = Dna.Application.CommandManager.CreateCommands(
+                title: "Export Drawing",
+                items: new List<CommandManagerItem>(new[] {
+
+                    new CommandManagerItem {
+                        Name = "PDF",
+                        Tooltip = "PDF",
+                        Hint = "Export drawing as PDF",
+                        VisibleForParts = false,
+                        VisibleForAssemblies = false,
+                        OnClick = () =>
+                        {
+                            FileExporting.ExportDrawingAsPdf();
+                        }
+                    },
+
+                }),
+                iconListsPath: "",
+                hint: "Export drawing to other formats",
+                tooltip: "Such as PDF");
         }
-        
+
         public override void DisconnetedFromSolidWorks()
         {
 

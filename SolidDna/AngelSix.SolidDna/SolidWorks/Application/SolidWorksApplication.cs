@@ -109,6 +109,9 @@ namespace AngelSix.SolidDna
 
             // Get command manager
             this.CommandManager = new CommandManager(UnsafeObject.GetCommandManager(mSwCookie));
+
+            // Get whatever the current model is on load
+            this.ReloadActiveModelInformation();
         }
 
         #endregion
