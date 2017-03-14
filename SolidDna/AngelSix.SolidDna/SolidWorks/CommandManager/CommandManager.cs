@@ -163,7 +163,7 @@ namespace AngelSix.SolidDna
                 return null;
 
             // If we want to remove any previous tabs...
-            if (clearExistingItems && unsafeTab != null)
+            while (clearExistingItems && unsafeTab != null)
             {
                 // Remove it
                 mBaseObject.RemoveCommandTab(unsafeTab);
@@ -171,8 +171,8 @@ namespace AngelSix.SolidDna
                 // Clean COM object
                 Marshal.ReleaseComObject(unsafeTab);
 
-                // Set to null
-                unsafeTab = null;
+                // Try and get another
+                unsafeTab = mBaseObject.GetCommandTab((int)type, title);
             }
 
             // Create it if it doesn't exist

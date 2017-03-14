@@ -1,9 +1,10 @@
 ﻿using SolidWorks.Interop.sldworks;
+using SolidWorks.Interop.swconst;
 
 namespace AngelSix.SolidDna
 {
     /// <summary>
-    /// The type of SolidWorks model the <see cref="ModelDoc2"/> is
+    /// The type of SolidWorks model the <see cref="ModelDoc2"/> is, from <see cref="swDocumentTypes_e"/>
     /// </summary>
     public enum ModelType
     {

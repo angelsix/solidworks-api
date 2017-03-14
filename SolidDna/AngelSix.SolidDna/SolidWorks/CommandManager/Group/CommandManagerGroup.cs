@@ -350,7 +350,7 @@ namespace AngelSix.SolidDna
             var icons = GetIconListPaths();
 
             // 2016+ support
-            mBaseObject.IconList = icons;
+            mBaseObject.IconList = icons.ToArray();
 
             // <2016 support
             if (icons.Count > 0)
@@ -358,11 +358,11 @@ namespace AngelSix.SolidDna
                 // Largest icon for this one
                 mBaseObject.LargeIconList = icons.Last();
 
-                // Second largest for this one
-                mBaseObject.MainIconList = icons.Count == 0 ? null : icons[Math.Max(0, icons.Count - 2)];
+                // The list of icons
+                mBaseObject.MainIconList = icons.ToArray();
 
-                // Smallest for this
-                mBaseObject.SmallIconList = icons.First();
+                // Use the largest available image for small icons too
+                mBaseObject.SmallIconList = icons.Last();
             }
 
             #endregion

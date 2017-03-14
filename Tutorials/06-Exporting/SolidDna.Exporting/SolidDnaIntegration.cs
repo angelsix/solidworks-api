@@ -56,6 +56,7 @@ namespace SolidDna.Exporting
                     new CommandManagerItem {
                         Name = "DXF",
                         Tooltip = "DXF",
+                        ImageIndex = 0,
                         Hint = "Export part as DXF",
                         VisibleForDrawings = false,
                         VisibleForAssemblies = false,
@@ -68,6 +69,7 @@ namespace SolidDna.Exporting
                     new CommandManagerItem {
                         Name = "STEP",
                         Tooltip = "STEP",
+                        ImageIndex = 2,
                         Hint = "Export part as STEP",
                         VisibleForDrawings = false,
                         VisibleForAssemblies = false,
@@ -78,7 +80,7 @@ namespace SolidDna.Exporting
                     },
 
                 }),
-                iconListsPath: "",
+                iconListsPath: "icons{0}.png",
                 hint: "Export parts in other formats",
                 tooltip: "Such as DXF, STEP and IGES");
 
@@ -90,9 +92,10 @@ namespace SolidDna.Exporting
                     new CommandManagerItem {
                         Name = "STEP",
                         Tooltip = "STEP",
+                        ImageIndex = 2,
                         Hint = "Export assembly as STEP",
                         VisibleForDrawings = false,
-                        VisibleForAssemblies = false,
+                        VisibleForParts = false,
                         OnClick = () =>
                         {
                             FileExporting.ExportModelAsStep();
@@ -100,7 +103,7 @@ namespace SolidDna.Exporting
                     },
 
                 }),
-                iconListsPath: "",
+                iconListsPath: "icons{0}.png",
                 hint: "Export assemblies in other formats",
                 tooltip: "Such as Step");
 
@@ -113,6 +116,7 @@ namespace SolidDna.Exporting
                         Name = "PDF",
                         Tooltip = "PDF",
                         Hint = "Export drawing as PDF",
+                        ImageIndex = 1,
                         VisibleForParts = false,
                         VisibleForAssemblies = false,
                         OnClick = () =>
@@ -122,7 +126,7 @@ namespace SolidDna.Exporting
                     },
 
                 }),
-                iconListsPath: "",
+                iconListsPath: "icons{0}.png",
                 hint: "Export drawing to other formats",
                 tooltip: "Such as PDF");
         }
