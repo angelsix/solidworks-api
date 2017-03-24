@@ -131,7 +131,7 @@ namespace SolidDna.Exporting
                 tooltip: "Such as PDF");
         }
 
-        public override void DisconnetedFromSolidWorks()
+        public override void DisconnectedFromSolidWorks()
         {
 
         }
