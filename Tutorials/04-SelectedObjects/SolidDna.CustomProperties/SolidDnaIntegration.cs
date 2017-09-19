@@ -26,7 +26,7 @@ namespace SolidDna.CustomProperties
     }
 
     /// <summary>
-    /// Register as SolidDna Plguin
+    /// Register as SolidDna Plugin
     /// </summary>
     public class CustomPropertiesSolidDnaPlugin : SolidPlugIn
     {
@@ -68,7 +68,7 @@ namespace SolidDna.CustomProperties
             mTaskpane.AddToTaskpane();
         }
 
-        public override void DisconnetedFromSolidWorks()
+        public override void DisconnectedFromSolidWorks()
         {
 
         }
