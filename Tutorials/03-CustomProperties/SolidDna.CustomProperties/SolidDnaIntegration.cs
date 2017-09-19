@@ -12,17 +12,25 @@ namespace SolidDna.CustomProperties
         /// <summary>
         /// Specific application start-up code
         /// </summary>
-        /// <param name="solidWorks"></param>
         public override void ApplicationStartup()
+        {
+
+        }
+
+        /// <summary>
+        /// Steps to take before any add-ins load
+        /// </summary>
+        /// <returns></returns>
+        public override void PreLoadPlugIns()
         {
 
         }
     }
 
     /// <summary>
-    /// Register as SolidDna Plguin
+    /// Register as SolidDna Plugin
     /// </summary>
-    public class CustomPropertiesSolidDnaPlugin : ISolidPlugIn
+    public class CustomPropertiesSolidDnaPlugin : SolidPlugIn
     {
         #region Private Members
 
@@ -38,18 +46,18 @@ namespace SolidDna.CustomProperties
         /// <summary>
         /// My Add-in description
         /// </summary>
-        public string AddInDescription {  get { return "An example of manipulating Custom Properties inside a SolidWorks model"; } }
+        public override string AddInDescription {  get { return "An example of manipulating Custom Properties inside a SolidWorks model"; } }
 
         /// <summary>
         /// My Add-in title
         /// </summary>
-        public string AddInTitle { get { return "SolidDNA Custom Properties"; } }
+        public override string AddInTitle { get { return "SolidDNA Custom Properties"; } }
 
         #endregion
 
         #region Connect To SolidWorks
 
-        public void ConnectedToSolidWorks()
+        public override void ConnectedToSolidWorks()
         {
             // Create our taskpane
             mTaskpane = new TaskpaneIntegration<TaskpaneUserControlHost>()
@@ -62,7 +70,7 @@ namespace SolidDna.CustomProperties
             Task.Run(() => mTaskpane.AddToTaskpane());
         }
 
-        public void DisconnetedFromSolidWorks()
+        public override void DisconnectedFromSolidWorks()
         {
 
         }
