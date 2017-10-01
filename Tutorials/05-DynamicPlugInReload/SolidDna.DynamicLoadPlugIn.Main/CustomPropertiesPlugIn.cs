@@ -4,7 +4,7 @@ using System.IO;
 namespace SolidDna.DynamicLoadPlugIn
 {
     /// <summary>
-    /// Register as SolidDna Plguin
+    /// Register as SolidDna Plugin
     /// </summary>
     public class CustomPropertiesSolidDnaPlugin : SolidPlugIn
     {
@@ -46,7 +46,7 @@ namespace SolidDna.DynamicLoadPlugIn
             mTaskpane.AddToTaskpane();
         }
 
-        public override void DisconnetedFromSolidWorks()
+        public override void DisconnetecdFromSolidWorks()
         {
 
         }
