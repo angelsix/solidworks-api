@@ -140,8 +140,7 @@ namespace AngelSix.SolidDna
             });
 
             // Inform listeners
-            if (NewLog != null)
-                NewLog(message, level);
+            NewLog?.Invoke(message, level);
         }
 
         #endregion
