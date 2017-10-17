@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Permissions;
 
 namespace AngelSix.SolidDna
 {
@@ -107,6 +108,20 @@ namespace AngelSix.SolidDna
 
                 return Assembly.LoadFrom(File);
             }
+        }
+
+        #endregion
+
+        #region Lifecycle Management
+
+        /// <summary>
+        /// Make this cross domain object last forever so GC doesn't dispose of it during inactivity
+        /// </summary>
+        /// <returns></returns>
+        [SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
+        public override object InitializeLifetimeService()
+        {
+            return null;
         }
 
         #endregion
