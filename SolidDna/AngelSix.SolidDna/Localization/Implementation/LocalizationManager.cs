@@ -26,13 +26,13 @@ namespace AngelSix.SolidDna
         /// </summary>
         public LocalizationManager()
         {
-            this.DefaultCulture = "en-US";
+            DefaultCulture = "en-US";
 
             // Add the providers we want to use by default
-            this.Providers = new List<IResourceFormatProvider>();
+            Providers = new List<IResourceFormatProvider>();
 
             // Support XML format
-            this.Providers.Add(new XmlFormatProvider());
+            Providers.Add(new XmlFormatProvider());
         }
 
         #endregion

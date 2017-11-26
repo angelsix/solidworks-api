@@ -29,11 +29,11 @@ namespace AngelSix.SolidDna
         {
             get
             {
-                return mEditor.GetCustomProperty(this.Name);
+                return mEditor.GetCustomProperty(Name);
             }
             set
             {
-                mEditor.SetCustomProperty(this.Name, value);
+                mEditor.SetCustomProperty(Name, value);
             }
         }
 
@@ -44,7 +44,7 @@ namespace AngelSix.SolidDna
         {
             get
             {
-                return mEditor.GetCustomProperty(this.Name, resolve: true);
+                return mEditor.GetCustomProperty(Name, resolve: true);
             }
         }
 
@@ -61,7 +61,7 @@ namespace AngelSix.SolidDna
             mEditor = editor;
 
             // Set name
-            this.Name = name;
+            Name = name;
         }
 
         #endregion
@@ -73,7 +73,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         public void Delete()
         {
-            mEditor.DeleteCustomProperty(this.Name);
+            mEditor.DeleteCustomProperty(Name);
         }
 
         #endregion

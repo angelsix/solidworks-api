@@ -63,6 +63,12 @@ namespace AngelSix.SolidDna
         public abstract void ApplicationStartup();
 
         /// <summary>
+        /// Run immediately when <see cref="ConnectToSW(object, int)"/> is called
+        /// to do any pre-setup such as <see cref="PlugInIntegration.UseDetachedAppDomain"/>
+        /// </summary>
+        public abstract void PreConnectToSolidWorks();
+
+        /// <summary>
         /// Run before loading plug-ins
         /// This call should be used to add plug-ins to be loaded, via <see cref="PlugInIntegration.AddPlugIn{T}"/>
         /// </summary>
@@ -79,8 +85,7 @@ namespace AngelSix.SolidDna
         /// <param name="arg"></param>
         public void Callback(string arg)
         {
-            // Inform plug-in domain of event
-            PlugInIntegration.CrossDomain?.OnCallback(arg);
+            PlugInIntegration.OnCallback(arg);
         }
         
         /// <summary>
@@ -91,6 +96,8 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public bool ConnectToSW(object ThisSW, int Cookie)
         {
+            PreConnectToSolidWorks();
+
             // Setup IoC
             IoCContainer.Ensure();
 
@@ -105,7 +112,7 @@ namespace AngelSix.SolidDna
             // Setup callback info
             var ok = ((SldWorks)ThisSW).SetAddinCallbackInfo2(0, this, Cookie);
 
-            // Setup plug-in app domain
+            // Setup plug-in application domain
             PlugInIntegration.Setup(((SldWorks)ThisSW).RevisionNumber(), Cookie);
 
             // Any pre-load steps

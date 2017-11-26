@@ -17,7 +17,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         public XmlFormatProvider()
         {
-            this.CacheResourceFiles = true;
+            CacheResourceFiles = true;
         }
 
         #endregion

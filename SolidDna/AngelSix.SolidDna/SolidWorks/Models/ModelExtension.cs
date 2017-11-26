@@ -25,7 +25,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         public ModelExtension(ModelDocExtension model, Model parent) : base(model)
         {
-            this.Parent = parent;
+            Parent = parent;
         }
 
         #endregion
@@ -62,7 +62,7 @@ namespace AngelSix.SolidDna
             return SolidDnaErrors.Wrap(() =>
             {
                 // Make sure we are a part
-                if (!this.Parent.IsPart && !this.Parent.IsAssembly)
+                if (!Parent.IsPart && !Parent.IsAssembly)
                 {
                     if (dontThrowOnError)
                         return new MassProperties();
@@ -112,7 +112,7 @@ namespace AngelSix.SolidDna
         public override void Dispose()
         {
             // Clear reference to be safe
-            this.Parent = null;
+            Parent = null;
 
             base.Dispose();
         }
