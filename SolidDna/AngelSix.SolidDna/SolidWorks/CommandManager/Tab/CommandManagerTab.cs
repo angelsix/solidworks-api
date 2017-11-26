@@ -24,7 +24,7 @@ namespace AngelSix.SolidDna
         public CommandManagerTab(ICommandTab tab) : base(tab)
         {
             // Add's the command tab box on creation
-            this.Box = new CommandManagerTabBox(mBaseObject.AddCommandTabBox());
+            Box = new CommandManagerTabBox(mBaseObject.AddCommandTabBox());
         }
 
         #endregion
@@ -43,7 +43,7 @@ namespace AngelSix.SolidDna
         public override void Dispose()
         {
             // Dispose of box
-            this.Box?.Dispose();
+            Box?.Dispose();
 
             base.Dispose();
         }

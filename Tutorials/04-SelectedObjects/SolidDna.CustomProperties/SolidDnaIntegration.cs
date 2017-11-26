@@ -23,6 +23,15 @@ namespace SolidDna.CustomProperties
         {
 
         }
+
+        public override void PreConnectToSolidWorks()
+        {
+            // NOTE: To run in our own AppDomain do the following
+            //       Be aware doing so sometimes causes API's to fail
+            //       when they try to load dll's
+            //
+            // PlugInIntegration.UseDetachedAppDomain = true;
+        }
     }
 
     /// <summary>

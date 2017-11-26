@@ -28,7 +28,7 @@ namespace SolidDna.Exporting
             // Ask the user where to export the file
             var location = GetSaveLocation("DXF Flat Pattern|*.dxf", "Save Part as DXF");
 
-            // If the user cancelled, return
+            // If the user canceled, return
             if (string.IsNullOrEmpty(location))
                 return;
 
@@ -56,7 +56,7 @@ namespace SolidDna.Exporting
             // Ask the user where to export the file
             var location = GetSaveLocation("STEP File|*.step", "Save Part as STEP");
 
-            // If the user cancelled, return
+            // If the user canceled, return
             if (string.IsNullOrEmpty(location))
                 return;
 
@@ -101,12 +101,12 @@ namespace SolidDna.Exporting
             // Ask the user where to export the file
             var location = GetSaveLocation("PDF File|*.pdf", "Save Part as PDF");
 
-            // If the user cancelled, return
+            // If the user canceled, return
             if (string.IsNullOrEmpty(location))
                 return;
 
             // Get sheet names
-            string[] sheetNames = (string[])Dna.Application.ActiveModel.AsDrawing().GetSheetNames();
+            var sheetNames = (string[])Dna.Application.ActiveModel.AsDrawing().GetSheetNames();
 
             // Set PDF sheet settings
             var exportData = (ExportPdfData)Dna.Application.UnsafeObject.GetExportFileData((int)swExportDataFileType_e.swExportPdfData);

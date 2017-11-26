@@ -87,18 +87,18 @@ namespace AngelSix.SolidDna
         /// <param name="properties">The properties from the SolidWorks GetMassProperties calls. The array should be at least 12 in length</param>
         public MassProperties(double[] properties)
         {
-            this.CenterOfMassX = properties[0];
-            this.CenterOfMassY = properties[1];
-            this.CenterOfMassZ = properties[2];
-            this.Volume = properties[3];
-            this.Area = properties[4];
-            this.Mass = properties[5];
-            this.MomentOfInertiaXX = properties[6];
-            this.MomentOfInertiaYY = properties[7];
-            this.MomentOfInertiaZZ = properties[8];
-            this.MomentOfInertiaXY = properties[9];
-            this.MomentOfInertiaZX = properties[10];
-            this.MomentOfInertiaYZ = properties[11];
+            CenterOfMassX = properties[0];
+            CenterOfMassY = properties[1];
+            CenterOfMassZ = properties[2];
+            Volume = properties[3];
+            Area = properties[4];
+            Mass = properties[5];
+            MomentOfInertiaXX = properties[6];
+            MomentOfInertiaYY = properties[7];
+            MomentOfInertiaZZ = properties[8];
+            MomentOfInertiaXY = properties[9];
+            MomentOfInertiaZX = properties[10];
+            MomentOfInertiaYZ = properties[11];
         }
 
         #endregion
@@ -111,11 +111,11 @@ namespace AngelSix.SolidDna
         public string MassInMetric(int decimalPlaces = 2)
         {
             // If it's small, show grams
-            if (this.Mass < 1)
-                return $"{Math.Round(this.Mass * 1000, decimalPlaces)} grams";
+            if (Mass < 1)
+                return $"{Math.Round(Mass * 1000, decimalPlaces)} grams";
 
             // Otherwise show kg
-            return $"{Math.Round(this.Mass, decimalPlaces)} kg";
+            return $"{Math.Round(Mass, decimalPlaces)} kg";
         }
     }
 }

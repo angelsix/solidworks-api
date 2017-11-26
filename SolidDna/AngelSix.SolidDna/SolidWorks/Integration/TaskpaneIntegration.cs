@@ -75,7 +75,7 @@ namespace AngelSix.SolidDna
         public async void AddToTaskpane()
         {
             // Create our Taskpane
-            mTaskpaneView = await AddInIntegration.SolidWorks.CreateTaskpane(this.Icon, AddInIntegration.SolidWorksAddInTitle);
+            mTaskpaneView = await AddInIntegration.SolidWorks.CreateTaskpaneAsync(Icon, AddInIntegration.SolidWorksAddInTitle);
 
             // Load our UI into the taskpane
             mHostControl = await mTaskpaneView.AddControl<ITaskpaneControl>(mHostProgId, string.Empty);
@@ -87,7 +87,7 @@ namespace AngelSix.SolidDna
             AddInIntegration.DisconnectedFromSolidWorks += () => RemoveFromTaskpane();
 
             // Add WPF control if we have one
-            if (this.WpfControl != null)
+            if (WpfControl != null)
             {
                 // NOTE: ElementHost must be created on UI thread
                 // Create a new ElementHost to host the Wpf control

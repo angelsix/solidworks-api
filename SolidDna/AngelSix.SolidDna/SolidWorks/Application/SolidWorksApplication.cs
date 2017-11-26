@@ -39,7 +39,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// The currently active model
         /// </summary>
-        public Model ActiveModel { get { return mActiveModel; } }
+        public Model ActiveModel => mActiveModel;
 
         /// <summary>
         /// Various preferences for SolidWorks
@@ -49,12 +49,12 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Gets the current SolidWorks version information
         /// </summary>
-        public SolidWorksVersion SolidWorksVersion {  get { return GetSolidWorksVersion(); } }
+        public SolidWorksVersion SolidWorksVersion => GetSolidWorksVersion();
 
         /// <summary>
         /// The SolidWorks instance cookie
         /// </summary>
-        public int SolidWorksCookie {  get { return mSwCookie; } }
+        public int SolidWorksCookie => mSwCookie;
 
         /// <summary>
         /// The command manager
@@ -90,7 +90,7 @@ namespace AngelSix.SolidDna
         public SolidWorksApplication(SldWorks solidWorks, int cookie) : base(solidWorks)
         {
             // Set preferences
-            this.Preferences = new SolidWorksPreferences();
+            Preferences = new SolidWorksPreferences();
 
             // Store cookie Id
             mSwCookie = cookie;
@@ -100,7 +100,7 @@ namespace AngelSix.SolidDna
             //         We then pass that into our domain
             //
             // Setup callback info
-            //var ok = mBaseObject.SetAddinCallbackInfo2(0, this, cookie);
+            // var ok = mBaseObject.SetAddinCallbackInfo2(0, this, cookie);
 
             // Hook into main events
             mBaseObject.ActiveModelDocChangeNotify += ActiveModelChanged;
@@ -108,10 +108,10 @@ namespace AngelSix.SolidDna
             mBaseObject.FileOpenPostNotify += FileOpenPostNotify;
 
             // Get command manager
-            this.CommandManager = new CommandManager(UnsafeObject.GetCommandManager(mSwCookie));
+            CommandManager = new CommandManager(UnsafeObject.GetCommandManager(mSwCookie));
 
             // Get whatever the current model is on load
-            this.ReloadActiveModelInformation();
+            ReloadActiveModelInformation();
         }
 
         #endregion
@@ -131,15 +131,9 @@ namespace AngelSix.SolidDna
                 var revisionNumber = mBaseObject.RevisionNumber();
 
                 // Get revision string (such as sw2015_SP20)
-                string revisionString;
-
                 // Get build number (such as d150130.002)
-                string buildNumber;
-
-                // Get the hotfix string
-                string hotfixString;
-
-                mBaseObject.GetBuildNumbers2(out revisionString, out buildNumber, out hotfixString);
+                // Get the hot fix string
+                mBaseObject.GetBuildNumbers2(out var revisionString, out var buildNumber, out var hotfixString);
 
                 return new SolidWorksVersion
                 {
@@ -178,10 +172,10 @@ namespace AngelSix.SolidDna
                     mFileLoading = null;
 
                     // And update all properties and models
-                    this.ReloadActiveModelInformation();
+                    ReloadActiveModelInformation();
 
                     // Inform listeners
-                    this.FileOpened(filename, mActiveModel);
+                    FileOpened(filename, mActiveModel);
                 }
 
             },
@@ -247,7 +241,7 @@ namespace AngelSix.SolidDna
                 }
 
                 // If we got here, it isn't the current document so reload the data
-                this.ReloadActiveModelInformation();
+                ReloadActiveModelInformation();
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksApplicationActiveModelChangedError,
@@ -269,7 +263,7 @@ namespace AngelSix.SolidDna
         private void ReloadActiveModelInformation()
         {
             // First clean-up any previous SW data
-            this.CleanActiveModelData();
+            CleanActiveModelData();
 
             // Now get the new data
             if (mBaseObject.IActiveDoc2 == null)
@@ -338,7 +332,7 @@ namespace AngelSix.SolidDna
 
                     // Now if we have none open, reload information
                     if (mBaseObject?.GetDocumentCount() == 0)
-                        this.ReloadActiveModelInformation();
+                        ReloadActiveModelInformation();
                 });
         }
 
@@ -511,7 +505,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="iconPath">An absolute path to an icon to use for the taskpane (ideally 37x37px)</param>
         /// <param name="toolTip">The title text to show at the top of the taskpane</param>
-        public async Task<Taskpane> CreateTaskpane(string iconPath, string toolTip)
+        public async Task<Taskpane> CreateTaskpaneAsync(string iconPath, string toolTip)
         {
             // Wrap any error creating the taskpane in a SolidDna exception
             return SolidDnaErrors.Wrap<Taskpane>(() =>
@@ -555,10 +549,10 @@ namespace AngelSix.SolidDna
         public override void Dispose()
         {
             // Clean active model
-            this.ActiveModel?.Dispose();
+            ActiveModel?.Dispose();
 
             // Dispose command manager
-            this.CommandManager?.Dispose();
+            CommandManager?.Dispose();
 
             // NOTE: Don't dispose the application, SolidWorks does that itself
             //base.Dispose();

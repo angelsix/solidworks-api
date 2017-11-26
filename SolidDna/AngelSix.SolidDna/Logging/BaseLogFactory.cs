@@ -66,13 +66,13 @@ namespace AngelSix.SolidDna
         public BaseLogFactory()
         {
             // Set default level to log everything 
-            this.LogLevel = LogFactoryLevel.Verbose;
+            LogLevel = LogFactoryLevel.Verbose;
 
             // By default output the name of the function that called the Log method
-            this.LogMethodName = true;
+            LogMethodName = true;
 
             // Default string format placing method name at end
-            this.LogMethodNameFormat = "{0} --{1}";
+            LogMethodNameFormat = "{0} --{1}";
 
             // Add the Debug, Console and TraceLogger by default
             mLoggers.Add(new DebugLogger());
@@ -122,8 +122,8 @@ namespace AngelSix.SolidDna
         public void Log(string message, LogFactoryLevel level = LogFactoryLevel.Information, [CallerMemberName]string origin = "")
         {
             // Add method name if specified
-            if (this.LogMethodName)
-                message = string.Format(this.LogMethodNameFormat, message, origin);
+            if (LogMethodName)
+                message = string.Format(LogMethodNameFormat, message, origin);
 
             // Send message to all loggers
             mLoggers.ForEach(f => f.Log(level, message));

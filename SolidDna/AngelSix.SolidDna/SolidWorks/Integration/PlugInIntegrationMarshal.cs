@@ -14,15 +14,6 @@ namespace AngelSix.SolidDna
     /// </summary>
     public class PlugInIntegrationMarshal : MarshalByRefObject
     {
-        #region Private Members
-
-        /// <summary>
-        /// A list of available plug-ins loaded once SolidWorks has connected
-        /// </summary>
-        private static List<SolidPlugIn> mPlugIns = new List<SolidPlugIn>();
-
-        #endregion
-
         #region AppDomain setup
 
         /// <summary>
@@ -32,30 +23,19 @@ namespace AngelSix.SolidDna
         /// <param name="cookie">The cookie Id of the SolidWorks instance</param>
         public void SetupAppDomain(string version, int cookie)
         {
-            // Setup IoC
-            IoCContainer.Ensure();
+            PlugInIntegration.Setup(version, cookie);
 
-            // Get the version number (such as 25 for 2016)
-            var postFix = "";
-            if (version != null && version.Contains("."))
-                postFix = "." + version.Substring(0, version.IndexOf('.'));
-
-            // Store a reference to the current SolidWorks instance
-            // Initialize SolidWorks (SolidDNA class)
-            AddInIntegration.SolidWorks = new SolidWorksApplication((SldWorks)Activator.CreateInstance(Type.GetTypeFromProgID("SldWorks.Application" + postFix)), cookie);
-
-            // And hook into the resolver
+            // Make sure we resolve assemblies in this domain, as it seems to use this domain to resolve
+            // assemblies not the appDomain when crossing boundaries
             AppDomain.CurrentDomain.AssemblyResolve += AppDomain_AssemblyResolve;
         }
 
         /// <summary>
         /// Tears down the app-domain that the plug-ins run inside of
         /// </summary>
-        public void TeardownAppDomain()
+        public void Teardown()
         {
-            // Dipose SolidWorks COM
-            AddInIntegration.SolidWorks?.Dispose();
-            AddInIntegration.SolidWorks = null;
+            PlugInIntegration.Teardown();
         }
 
         /// <summary>
@@ -88,7 +68,7 @@ namespace AngelSix.SolidDna
                 if (!found)
                     return null;
 
-                Assembly assembly = Assembly.Load(args.Name);
+                var assembly = Assembly.Load(args.Name);
                 if (assembly != null)
                     return assembly;
 
@@ -103,8 +83,8 @@ namespace AngelSix.SolidDna
                 // NOTE: this doesn't account for special search paths but then that never
                 //       worked before either
                 //
-                string[] Parts = args.Name.Split(',');
-                string File = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + Parts[0].Trim() + ".dll";
+                var Parts = args.Name.Split(',');
+                var File = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + Parts[0].Trim() + ".dll";
 
                 return Assembly.LoadFrom(File);
             }
@@ -112,13 +92,13 @@ namespace AngelSix.SolidDna
 
         #endregion
 
-        #region Lifecycle Management
+        #region Life-cycle Management
 
         /// <summary>
         /// Make this cross domain object last forever so GC doesn't dispose of it during inactivity
         /// </summary>
         /// <returns></returns>
-        [SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
         public override object InitializeLifetimeService()
         {
             return null;
@@ -133,10 +113,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         public void ConnectedToSolidWorks()
         {
-            AddInIntegration.OnConnectedToSolidWorks();
-
-            // Inform plug-ins
-            mPlugIns.ForEach(plugin => plugin.ConnectedToSolidWorks());
+            PlugInIntegration.ConnectedToSolidWorks();
         }
 
         /// <summary>
@@ -144,10 +121,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         public void DisconnectedFromSolidWorks()
         {
-            AddInIntegration.OnDisconnectedFromSolidWorks();
-
-            // Inform plug-ins
-            mPlugIns.ForEach(plugin => plugin.DisconnectedFromSolidWorks());
+            PlugInIntegration.DisconnectedFromSolidWorks();
         }
 
         #endregion
@@ -180,16 +154,7 @@ namespace AngelSix.SolidDna
 
         public void ConfigurePlugIns()
         {
-            // Try and find the title from the first plug-in found
-            var plugins = PlugInIntegration.SolidDnaPlugIns();
-            if (plugins.Count > 0)
-            {
-                AddInIntegration.SolidWorksAddInTitle = plugins.First().AddInTitle;
-                AddInIntegration.SolidWorksAddInDescription = plugins.First().AddInDescription;
-            }
-
-            // Load all plug-in's at this stage for faster lookup
-            mPlugIns = PlugInIntegration.SolidDnaPlugIns();
+            PlugInIntegration.ConfigurePlugIns();
         }
 
         /// <summary>

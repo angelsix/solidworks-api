@@ -25,10 +25,18 @@ namespace SolidDna.WpfAddIn
         {
 
         }
+        public override void PreConnectToSolidWorks()
+        {
+            // NOTE: To run in our own AppDomain do the following
+            //       Be aware doing so sometimes causes API's to fail
+            //       when they try to load dll's
+            //
+            // PlugInIntegration.UseDetachedAppDomain = true;
+        }
     }
 
     /// <summary>
-    /// My first SolidDna Plguin
+    /// My first SolidDna Plug-in
     /// </summary>
     public class MySolidDnaPlguin : SolidPlugIn
     {
@@ -46,12 +54,12 @@ namespace SolidDna.WpfAddIn
         /// <summary>
         /// My Add-in description
         /// </summary>
-        public override string AddInDescription {  get { return "My Addin Description"; } }
+        public override string AddInDescription => "My Addin Description";
 
         /// <summary>
         /// My Add-in title
         /// </summary>
-        public override string AddInTitle { get { return "My Addin Title"; } }
+        public override string AddInTitle => "My Addin Title";
 
         #endregion
 

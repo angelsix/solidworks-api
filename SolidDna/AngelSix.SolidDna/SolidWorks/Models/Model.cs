@@ -67,7 +67,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// The mass properties of the part
         /// </summary>
-        public MassProperties MassProperties {  get { return this.Extension.GetMassProperties(); } }
+        public MassProperties MassProperties {  get { return Extension.GetMassProperties(); } }
 
         #endregion
 
@@ -122,28 +122,28 @@ namespace AngelSix.SolidDna
                 return;
 
             // Get the file path
-            this.FilePath = mBaseObject.GetPathName();
+            FilePath = mBaseObject.GetPathName();
 
             // If no path is retrieved, the file hasn't been saved
-            this.HasBeenSaved = !string.IsNullOrEmpty(this.FilePath);
+            HasBeenSaved = !string.IsNullOrEmpty(FilePath);
 
             // Get the models type
-            this.ModelType = (ModelType)mBaseObject.GetType();
+            ModelType = (ModelType)mBaseObject.GetType();
 
             // Get the extension
-            this.Extension = new ModelExtension(mBaseObject.Extension, this);
+            Extension = new ModelExtension(mBaseObject.Extension, this);
 
             // Get the active configuration
-            this.ActiveConfiguration = new ModelConfiguration(mBaseObject.IGetActiveConfiguration());
+            ActiveConfiguration = new ModelConfiguration(mBaseObject.IGetActiveConfiguration());
 
             // Get the selection manager
-            this.SelectionManager = new ModelSelectionManager(mBaseObject.ISelectionManager);
+            SelectionManager = new ModelSelectionManager(mBaseObject.ISelectionManager);
 
             // Re-attach event handlers
-            this.SetupModelEventHandlers();
+            SetupModelEventHandlers();
 
             // Inform listeners
-            this.ModelInformationChanged();
+            ModelInformationChanged();
         }
 
         /// <summary>
@@ -152,27 +152,27 @@ namespace AngelSix.SolidDna
         protected void SetupModelEventHandlers()
         {
             // Based on the type of model this is...
-            switch (this.ModelType)
+            switch (ModelType)
             {
                 // Hook into the save and destroy events to keep data fresh
                 case ModelType.Assembly:
-                    this.AsAssembly().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
-                    this.AsAssembly().DestroyNotify += FileDestroyedNotify;
-                    this.AsAssembly().FileSavePostNotify += FileSaveNotify;
-                    this.AsAssembly().UserSelectionPostNotify += UserSelectionPostNotify;
-                    this.AsAssembly().ClearSelectionsNotify += UserSelectionPostNotify;
+                    AsAssembly().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
+                    AsAssembly().DestroyNotify += FileDestroyedNotify;
+                    AsAssembly().FileSavePostNotify += FileSaveNotify;
+                    AsAssembly().UserSelectionPostNotify += UserSelectionPostNotify;
+                    AsAssembly().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
                 case ModelType.Part:
-                    this.AsPart().DestroyNotify += FileDestroyedNotify;
-                    this.AsPart().FileSavePostNotify += FileSaveNotify;
-                    this.AsPart().UserSelectionPostNotify += UserSelectionPostNotify;
-                    this.AsPart().ClearSelectionsNotify += UserSelectionPostNotify;
+                    AsPart().DestroyNotify += FileDestroyedNotify;
+                    AsPart().FileSavePostNotify += FileSaveNotify;
+                    AsPart().UserSelectionPostNotify += UserSelectionPostNotify;
+                    AsPart().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
                 case ModelType.Drawing:
-                    this.AsDrawing().DestroyNotify += FileDestroyedNotify;
-                    this.AsDrawing().FileSavePostNotify += FileSaveNotify;
-                    this.AsDrawing().UserSelectionPostNotify += UserSelectionPostNotify;
-                    this.AsDrawing().ClearSelectionsNotify += UserSelectionPostNotify;
+                    AsDrawing().DestroyNotify += FileDestroyedNotify;
+                    AsDrawing().FileSavePostNotify += FileSaveNotify;
+                    AsDrawing().UserSelectionPostNotify += UserSelectionPostNotify;
+                    AsDrawing().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
             }
         }
@@ -206,7 +206,7 @@ namespace AngelSix.SolidDna
         protected int UserSelectionPostNotify()
         {
             // Inform Listenes
-            this.SelectionChanged();
+            SelectionChanged();
 
             return 0;
         }
@@ -220,11 +220,11 @@ namespace AngelSix.SolidDna
         protected int FileSaveNotify(int saveType, string filename)
         {
             // If the current model was not saved before this event, update the state
-            if (!this.HasBeenSaved)
-                this.ReloadModelData();
+            if (!HasBeenSaved)
+                ReloadModelData();
 
             // Inform listeners
-            this.ModelSaved();
+            ModelSaved();
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -238,10 +238,10 @@ namespace AngelSix.SolidDna
         protected int FileDestroyedNotify()
         {
             // This is a pre-notify so just clear our data don't reload state
-            this.DisposeChildren();
+            DisposeChildren();
 
             // Inform listeners
-            this.ModelClosing();
+            ModelClosing();
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -287,7 +287,7 @@ namespace AngelSix.SolidDna
         public void SetCustomProperty(string name, string value, string configuration = null)
         {
             // Get the custom property editor
-            using (var editor = this.Extension.CustomPropertyEditor(configuration))
+            using (var editor = Extension.CustomPropertyEditor(configuration))
             {
                 // Set the property
                 editor.SetCustomProperty(name, value);
@@ -304,7 +304,7 @@ namespace AngelSix.SolidDna
         public string GetCustomProperty(string name, string configuration = null, bool resolved = false)
         {
             // Get the custom property editor
-            using (var editor = this.Extension.CustomPropertyEditor(configuration))
+            using (var editor = Extension.CustomPropertyEditor(configuration))
             {
                 // Get the property
                 return editor.GetCustomProperty(name, resolve: resolved);
@@ -321,7 +321,7 @@ namespace AngelSix.SolidDna
         public void CustomProperties(Action<List<CustomProperty>> action, string configuration = null)
         {
             // Get the custom property editor
-            using (var editor = this.Extension.CustomPropertyEditor(configuration))
+            using (var editor = Extension.CustomPropertyEditor(configuration))
             {
                 // Get the properties
                 var properties = editor.GetCustomProperties();
@@ -400,15 +400,15 @@ namespace AngelSix.SolidDna
             SolidDnaErrors.Wrap(() =>
             {
                 // Make sure we are a part
-                if (!this.IsPart)
+                if (!IsPart)
                     throw new InvalidOperationException(Localization.GetString("SolidWorksModelSetMaterialModelNotPartError"));
 
                 // If the material is null, remove the material
                 if (material == null || !material.DatabaseFileFound)
-                    this.AsPart().SetMaterialPropertyName2(string.Empty, string.Empty, string.Empty);
+                    AsPart().SetMaterialPropertyName2(string.Empty, string.Empty, string.Empty);
                 // Otherwise set the material
                 else
-                    this.AsPart().SetMaterialPropertyName2(configuration, material.Database, material.Name);
+                    AsPart().SetMaterialPropertyName2(configuration, material.Database, material.Name);
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelSetMaterialError,
@@ -426,7 +426,7 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public void SelectedObjects(Action<List<SelectedObject>> action)
         {
-             this.SelectionManager?.SelectedObjects(action);
+             SelectionManager?.SelectedObjects(action);
         }
 
         #endregion
@@ -439,16 +439,16 @@ namespace AngelSix.SolidDna
         protected void DisposeChildren()
         {
             // Tidy up embedded SolidDNA objects
-            this.Extension?.Dispose();
-            this.Extension = null;
+            Extension?.Dispose();
+            Extension = null;
 
             // Release the active configuration
-            this.ActiveConfiguration?.Dispose();
-            this.ActiveConfiguration = null;
+            ActiveConfiguration?.Dispose();
+            ActiveConfiguration = null;
 
             // Selection manager
-            this.SelectionManager?.Dispose();
-            this.SelectionManager = null;
+            SelectionManager?.Dispose();
+            SelectionManager = null;
         }
 
         public override void Dispose()
