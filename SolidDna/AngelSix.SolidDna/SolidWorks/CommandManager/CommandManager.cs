@@ -44,10 +44,10 @@ namespace AngelSix.SolidDna
         /// <param name="position">Position of the CommandGroup in the CommandManager for all document templates.
         /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandMananger, or specify -1 to add it to the end of the CommandManager.
         /// NOTE: You can also use ICommandGroup::MenuPosition to control the position of the CommandGroup in specific document templates.</param>
-        /// <param name="ignorePreviosVersion">True to remove all previously saved customization and toolbar information before creating a new CommandGroup, false to not.
+        /// <param name="ignorePreviousVersion">True to remove all previously saved customization and toolbar information before creating a new CommandGroup, false to not.
         /// Call CommandManager.GetGroupDataFromRegistry before calling this method to determine how to set IgnorePreviousVersion. Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
         /// <returns></returns>
-        public CommandManagerGroup CreateCommands(string title, List<CommandManagerItem> items, string iconListsPath = "", string tooltip = "", string hint = "", int position = -1, bool ignorePreviosVersion = true)
+        public CommandManagerGroup CreateCommands(string title, List<CommandManagerItem> items, string iconListsPath = "", string tooltip = "", string hint = "", int position = -1, bool ignorePreviousVersion = true)
         {
             // Wrap any error creating the taskpane in a SolidDna exception
             return SolidDnaErrors.Wrap(() =>
@@ -56,7 +56,7 @@ namespace AngelSix.SolidDna
                 lock (mCommandGroups)
                 {
                     // Create the command group
-                    var group = CreateCommandGroup(title, items, tooltip, hint, position, ignorePreviosVersion);
+                    var group = CreateCommandGroup(title, items, tooltip, hint, position, ignorePreviousVersion);
 
                     // Set icon list
                     group.SetIconLists(iconListsPath);
@@ -86,10 +86,10 @@ namespace AngelSix.SolidDna
         /// <param name="position">Position of the CommandGroup in the CommandManager for all document templates.
         /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandMananger, or specify -1 to add it to the end of the CommandManager.
         /// NOTE: You can also use ICommandGroup::MenuPosition to control the position of the CommandGroup in specific document templates.</param>
-        /// <param name="ignorePreviosVersion">True to remove all previously saved customization and toolbar information before creating a new CommandGroup, false to not.
+        /// <param name="ignorePreviousVersion">True to remove all previously saved customization and toolbar information before creating a new CommandGroup, false to not.
         /// Call CommandManager.GetGroupDataFromRegistry before calling this method to determine how to set IgnorePreviousVersion. Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
         /// <returns></returns>
-        private CommandManagerGroup CreateCommandGroup(string title, List<CommandManagerItem> items, string tooltip = "", string hint = "", int position = -1, bool ignorePreviosVersion = true)
+        private CommandManagerGroup CreateCommandGroup(string title, List<CommandManagerItem> items, string tooltip = "", string hint = "", int position = -1, bool ignorePreviousVersion = true)
         {
             // NOTE: We may need to look carefully at this Id if things get removed and re-added based on this SolidWorks note:
             //     
@@ -105,7 +105,7 @@ namespace AngelSix.SolidDna
             int errors = -1;
 
             // Attempt to create the command group
-            var unsafeCommandGroup = mBaseObject.CreateCommandGroup2(id, title, tooltip, hint, position, ignorePreviosVersion, ref errors);
+            var unsafeCommandGroup = mBaseObject.CreateCommandGroup2(id, title, tooltip, hint, position, ignorePreviousVersion, ref errors);
 
             // Check for errors
             if (errors != (int)swCreateCommandGroupErrors.swCreateCommandGroup_Success)
@@ -149,7 +149,6 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="type">The type of document to get the tab for. Use only Part, Assembly or Drawing one at a time, otherwise the first found tab gets returned</param>
         /// <param name="title">The title of the command tab to get</param>
-        /// <param name="onGot">Called if we got the tab</param>
         /// <param name="createIfNotExist">True to create the tab if it does not exist</param>
         /// <param name="clearExistingItems">Removes any existing items on the tab if true</param>
         /// <returns></returns>

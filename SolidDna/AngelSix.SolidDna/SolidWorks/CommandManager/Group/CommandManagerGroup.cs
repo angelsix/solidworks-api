@@ -152,11 +152,12 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Default constructor
         /// </summary>
+        /// <param name="commandGroup">The SolidWorks command group</param>
+        /// <param name="items">The command items to add</param>
         /// <param name="userId">The unique Id this group was assigned with when created</param>
         /// <param name="title">The title</param>
-        /// <param name="items">The command items to add</param>
-        /// <param name="tooltip">The tool tip</param>
         /// <param name="hint">The hint</param>
+        /// <param name="tooltip">The tool tip</param>
         public CommandManagerGroup(ICommandGroup commandGroup, List<CommandManagerItem> items, int userId, string title, string hint, string tooltip) : base(commandGroup)
         {
             // Store user Id, used to remove the command group
