@@ -333,16 +333,27 @@ namespace AngelSix.SolidDna
         public static void GetPlugIns(string pluginFullPath, Action<SolidPlugIn> onFound)
         {
             // Load the assembly
-            var ass = Assembly.LoadFile(pluginFullPath);
+            var assembly = Assembly.LoadFile(pluginFullPath);
 
             // If we didn't succeed, ignore
-            if (ass == null)
+            if (assembly == null)
                 return;
 
             var type = typeof(SolidPlugIn);
 
-            // Now look through all types and see if any are of SolidPlugIn
-            ass.GetTypes().Where(p => type.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract).ToList().ForEach(p =>
+            // Find all types in an assembly. Catch assemblies that don't allow this.
+            Type[] types;
+            try
+            {
+                types = assembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException)
+            {
+                return;
+            }
+
+            // See if any of the type are of SolidPlugIn
+            types.Where(p => type.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract).ToList().ForEach(p =>
             {
                 // Create SolidDna plugin class instance
                 if (Activator.CreateInstance(p) is SolidPlugIn inter)
