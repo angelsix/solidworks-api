@@ -46,8 +46,10 @@ namespace AngelSix.SolidDna
         /// NOTE: You can also use ICommandGroup::MenuPosition to control the position of the CommandGroup in specific document templates.</param>
         /// <param name="ignorePreviousVersion">True to remove all previously saved customization and toolbar information before creating a new CommandGroup, false to not.
         /// Call CommandManager.GetGroupDataFromRegistry before calling this method to determine how to set IgnorePreviousVersion. Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
+        /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
+        /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
         /// <returns></returns>
-        public CommandManagerGroup CreateCommands(string title, List<CommandManagerItem> items, string iconListsPath = "", string tooltip = "", string hint = "", int position = -1, bool ignorePreviousVersion = true)
+        public CommandManagerGroup CreateCommands(string title, List<CommandManagerItem> items, string iconListsPath = "", string tooltip = "", string hint = "", int position = -1, bool ignorePreviousVersion = true, bool hasMenu = true, bool hasToolbar = true)
         {
             // Wrap any error creating the taskpane in a SolidDna exception
             return SolidDnaErrors.Wrap(() =>
@@ -56,7 +58,7 @@ namespace AngelSix.SolidDna
                 lock (mCommandGroups)
                 {
                     // Create the command group
-                    var group = CreateCommandGroup(title, items, tooltip, hint, position, ignorePreviousVersion);
+                    var group = CreateCommandGroup(title, items, tooltip, hint, position, ignorePreviousVersion, hasMenu, hasToolbar);
 
                     // Set icon list
                     group.SetIconLists(iconListsPath);
@@ -88,8 +90,10 @@ namespace AngelSix.SolidDna
         /// NOTE: You can also use ICommandGroup::MenuPosition to control the position of the CommandGroup in specific document templates.</param>
         /// <param name="ignorePreviousVersion">True to remove all previously saved customization and toolbar information before creating a new CommandGroup, false to not.
         /// Call CommandManager.GetGroupDataFromRegistry before calling this method to determine how to set IgnorePreviousVersion. Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
+        /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
+        /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
         /// <returns></returns>
-        private CommandManagerGroup CreateCommandGroup(string title, List<CommandManagerItem> items, string tooltip = "", string hint = "", int position = -1, bool ignorePreviousVersion = true)
+        private CommandManagerGroup CreateCommandGroup(string title, List<CommandManagerItem> items, string tooltip = "", string hint = "", int position = -1, bool ignorePreviousVersion = true, bool hasMenu = true, bool hasToolbar = true)
         {
             // NOTE: We may need to look carefully at this Id if things get removed and re-added based on this SolidWorks note:
             //     
@@ -121,7 +125,7 @@ namespace AngelSix.SolidDna
             }
 
             // Otherwise we got the command group
-            var group = new CommandManagerGroup(unsafeCommandGroup, items, id, title, tooltip, hint);
+            var group = new CommandManagerGroup(unsafeCommandGroup, items, id, title, tooltip, hint, hasMenu, hasToolbar);
 
             // Return it
             return group;
