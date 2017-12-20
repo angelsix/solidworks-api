@@ -158,7 +158,9 @@ namespace AngelSix.SolidDna
         /// <param name="title">The title</param>
         /// <param name="hint">The hint</param>
         /// <param name="tooltip">The tool tip</param>
-        public CommandManagerGroup(ICommandGroup commandGroup, List<CommandManagerItem> items, int userId, string title, string hint, string tooltip) : base(commandGroup)
+        /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
+        /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
+        public CommandManagerGroup(ICommandGroup commandGroup, List<CommandManagerItem> items, int userId, string title, string hint, string tooltip, bool hasMenu, bool hasToolbar) : base(commandGroup)
         {
             // Store user Id, used to remove the command group
             UserId = userId;
@@ -181,10 +183,10 @@ namespace AngelSix.SolidDna
             MenuVisibleInDocumentTypes = ModelTemplateType.Assembly | ModelTemplateType.Part | ModelTemplateType.Drawing;
 
             // Have a menu
-            HasMenu = true;
+            HasMenu = hasMenu;
 
             // Have a toolbar
-            HasToolbar = true;
+            HasToolbar = hasToolbar;
 
             // Listen out for callbacks
             PlugInIntegration.CallbackFired += PlugInIntegration_CallbackFired;
