@@ -19,7 +19,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// An error occured while working with a file on the file system
         /// </summary>
-        File = 10,
+        File = 2,
 
         /// <summary>
         /// An error occured trying to perform a SolidWorks API call on the Taskpane
