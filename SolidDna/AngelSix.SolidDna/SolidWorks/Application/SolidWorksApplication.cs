@@ -323,17 +323,18 @@ namespace AngelSix.SolidDna
             //
             //
 
-            // If we currently only have this one document open...
-            if (mBaseObject.GetDocumentCount() == 1)
-                Task.Run(async () =>
-                {
-                    // Wait for it to close
-                    await Task.Delay(200);
+            // Check for every file if it may have been the last one.
+            Task.Run(async () =>
+            {
+                // Wait for it to close
+                await Task.Delay(200);
 
-                    // Now if we have none open, reload information
-                    if (mBaseObject?.GetDocumentCount() == 0)
-                        ReloadActiveModelInformation();
-                });
+                // Now if we have none open, reload information
+                // ActiveDoc is quickly set to null after the last document is closed
+                // GetDocumentCount takes longer to go to zero for big assemblies, but it might be a more reliable indicator.
+                if (mBaseObject?.ActiveDoc == null || mBaseObject?.GetDocumentCount() == 0)
+                    ReloadActiveModelInformation();
+            });
         }
 
         /// <summary>
