@@ -181,6 +181,7 @@ namespace AngelSix.SolidDna
                     AsAssembly().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
                 case ModelType.Part:
+                    AsPart().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
                     AsPart().DestroyNotify += FileDestroyedNotify;
                     AsPart().FileSavePostNotify += FileSaveNotify;
                     AsPart().UserSelectionPostNotify += UserSelectionPostNotify;
@@ -204,7 +205,7 @@ namespace AngelSix.SolidDna
         #region Model Event Methods
 
         /// <summary>
-        /// Called when an assembly has it's active configuration changed
+        /// Called when a part or assembly has its active configuration changed
         /// </summary>
         /// <returns></returns>
         protected int ActiveConfigChangePostNotify()
