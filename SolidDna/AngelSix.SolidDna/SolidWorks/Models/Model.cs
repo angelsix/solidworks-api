@@ -272,14 +272,17 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Called when a model has been saved
         /// </summary>
-        /// <param name="filename">The name of the file that has been saved</param>
-        /// <param param name="saveType">The type of file that has been saved</param>
+        /// <param name="saveType">The type of file that has been saved</param>
+        /// <param name="fileName">The name of the file that has been saved</param>
         /// <returns></returns>
-        protected int FileSaveNotify(int saveType, string filename)
+        protected int FileSaveNotify(int saveType, string fileName)
         {
             // If the current model was not saved before this event, update the state
             if (!HasBeenSaved)
-                ReloadModelData();
+            {
+                FilePath = mBaseObject.GetPathName();
+                HasBeenSaved = !string.IsNullOrEmpty(FilePath);
+            }
 
             // Inform listeners
             ModelSaved();
