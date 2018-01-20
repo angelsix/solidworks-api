@@ -85,6 +85,11 @@ namespace AngelSix.SolidDna
         public event Action<string> DrawingActiveSheetChanged = (sheetName) => { };
 
         /// <summary>
+        /// Called before the active drawing sheet changes
+        /// </summary>
+        public event Action<string> DrawingActiveSheetChanging = (sheetName) => { };
+        
+        /// <summary>
         /// Called after the a drawing sheet was deleted
         /// </summary>
         public event Action<string> DrawingSheetDeleted = (sheetName) => { };
@@ -186,6 +191,7 @@ namespace AngelSix.SolidDna
                     break;
                 case ModelType.Drawing:
                     AsDrawing().ActivateSheetPostNotify += SheetActivatePostNotify;
+                    AsDrawing().ActivateSheetPreNotify += SheetActivatePreNotify;
                     AsDrawing().AddItemNotify += DrawingItemAddNotify;
                     AsDrawing().DeleteItemNotify += DrawingDeleteItemNotify;
                     AsDrawing().DestroyNotify += FileDestroyedNotify;
@@ -318,12 +324,18 @@ namespace AngelSix.SolidDna
             // NOTE: 0 is success, anything else is an error
             return 0;
         }
+
+        /// <summary>
+        /// Called before the active drawing sheet changes
+        /// </summary>
+        protected int SheetActivatePreNotify(string sheetName)
         {
             // Inform listeners
-            DrawingSheetChanged();
+            DrawingActiveSheetChanging(sheetName);
 
             // NOTE: 0 is success, anything else is an error
             return 0;
+
         }
 
         /// <summary>
