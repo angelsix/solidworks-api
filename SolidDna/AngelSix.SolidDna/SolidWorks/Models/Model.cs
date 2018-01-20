@@ -202,11 +202,6 @@ namespace AngelSix.SolidDna
             }
         }
 
-        private int Model_ClearSelectionsNotify()
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
 
         #region Model Event Methods
