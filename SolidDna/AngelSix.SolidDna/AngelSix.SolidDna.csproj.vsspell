@@ -6,13 +6,16 @@
   <SelectedLanguages />
   <InheritIgnoredWords>True</InheritIgnoredWords>
   <IgnoredWords>
+    <Ignore>dll</Ignore>
     <Ignore>plugin</Ignore>
     <Ignore>Taskpane</Ignore>
     <Ignore>untrim</Ignore>
     <Ignore>Weldment</Ignore>
-    <Ignore>dll</Ignore>
   </IgnoredWords>
   <InheritExclusionExpressions>True</InheritExclusionExpressions>
   <InheritIgnoredFilePatterns>True</InheritIgnoredFilePatterns>
   <InheritXmlSettings>True</InheritXmlSettings>
+  <IgnoredFilePatterns>
+    <FilePattern>pdf</FilePattern>
+  </IgnoredFilePatterns>
 </SpellCheckerConfiguration>

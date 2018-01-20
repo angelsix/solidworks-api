@@ -231,7 +231,7 @@ namespace AngelSix.SolidDna
                 // If we are currently loading a file...
                 if (mFileLoading != null)
                 {
-                    // Chcek the active document
+                    // Check the active document
                     using (var activeDoc = new Model((ModelDoc2)mBaseObject.ActiveDoc))
                     {
                         // If this is the same file that is currently being loaded, ignore this event
@@ -347,6 +347,23 @@ namespace AngelSix.SolidDna
         }
 
         #endregion
+
+        #endregion
+
+        #region Save Data
+
+        /// <summary>
+        /// Gets an <see cref="IExportPdfData"/> object for use with a <see cref="PdfExportData"/>
+        /// object used in <see cref="Model.SaveAs(string, SaveAsVersion, SaveAsOptions, PdfExportData)"/> call
+        /// </summary>
+        /// <returns></returns>
+        public IExportPdfData GetPdfExportData()
+        {
+            // NOTE: No point making our own enumerator for the export file type
+            //       as right now and for many years it's only ever been
+            //       1 for PDF. I do not see this ever changing
+            return mBaseObject.GetExportFileData((int)swExportDataFileType_e.swExportPdfData) as IExportPdfData;
+        }
 
         #endregion
 

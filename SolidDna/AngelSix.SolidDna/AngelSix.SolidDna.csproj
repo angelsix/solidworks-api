@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AngelSix.SolidDna</RootNamespace>
     <AssemblyName>AngelSix.SolidDna</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -94,6 +95,7 @@
     <Compile Include="DependencyInjection\Interfaces\Localization\ILocalizationManager.cs" />
     <Compile Include="DependencyInjection\Interfaces\Localization\IResourceFormatProvider.cs" />
     <Compile Include="DependencyInjection\IoCContainer.cs" />
+    <Compile Include="Enumerators\EnumHelpers.cs" />
     <Compile Include="Errors\SolidDnaError.cs" />
     <Compile Include="Errors\SolidDnaErrorCode.cs" />
     <Compile Include="Errors\SolidDnaErrors.cs" />
@@ -286,6 +288,13 @@
     <Compile Include="SolidWorks\Models\Configuration\ModelConfiguration.cs" />
     <Compile Include="SolidWorks\Models\ModelTemplateType.cs" />
     <Compile Include="SolidWorks\Models\ModelType.cs" />
+    <Compile Include="SolidWorks\Models\Saving\Results\ModelSaveResult.cs" />
+    <Compile Include="SolidWorks\Models\Saving\Pdf\PdfExportData.cs" />
+    <Compile Include="SolidWorks\Models\Saving\Options\SaveAsOptions.cs" />
+    <Compile Include="SolidWorks\Models\Saving\Options\SaveAsVersion.cs" />
+    <Compile Include="SolidWorks\Models\Saving\Pdf\PdfSheetsToExport.cs" />
+    <Compile Include="SolidWorks\Models\Saving\Results\SaveAsErrors.cs" />
+    <Compile Include="SolidWorks\Models\Saving\Results\SaveAsWarnings.cs" />
     <Compile Include="SolidWorks\Models\SelectionManager\ModelSelectionManager.cs" />
     <Compile Include="SolidWorks\Models\SelectedObject.cs" />
     <Compile Include="SolidWorks\SolidDnaEnvironment.cs" />
@@ -294,7 +303,9 @@
     <Compile Include="Threading\ThreadHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Localization\Strings\Strings%28en-US%29.xml" />
+    <EmbeddedResource Include="Localization\Strings\Strings%28en-US%29.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="AngelSix.SolidDna.csproj.vsspell" />

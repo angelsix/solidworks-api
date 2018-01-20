@@ -110,9 +110,14 @@ namespace AngelSix.SolidDna
         /// </summary>
         SolidWorksModelSelectedObjectCastError = 11004,
 
+        /// <summary>
+        /// There was an error saving a model using the SaveAs call
+        /// </summary>
+        SolidWorksModelSaveAsError = 11005,
+
         #endregion
 
-        #region SolidWorks Command Manager
+        #region SolidWorks Command Manager (12,000)
 
         /// <summary>
         /// There was an unknown error while running a SolidWorks API call related to the Command Manager
@@ -149,6 +154,25 @@ namespace AngelSix.SolidDna
         /// </summary>
         SolidWorksCommandGroupCreateTabError = 12006,
 
+
+        #endregion
+
+        #region Export Data (13,000)
+
+        /// <summary>
+        /// There was an unknown error while running a SolidWorks API call on an export data object
+        /// </summary>
+        SolidWorksExportDataError = 13000,
+
+        /// <summary>
+        /// There was an error calling SldWorks.GetExportFileData(1) to get the Pdf Export Data
+        /// </summary>
+        SolidWorksExportDataGetPdfExportDataError = 13001,
+
+        /// <summary>
+        /// There was an error calling the SetSheets option on the export data object
+        /// </summary>
+        SolidWorksExportDataPdfSetSheetsError = 13001,
 
         #endregion
 
