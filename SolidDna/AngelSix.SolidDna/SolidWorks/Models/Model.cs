@@ -77,17 +77,17 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Called after the a drawing sheet was added
         /// </summary>
-        public event Action DrawingSheetAdded = () => { };
+        public event Action<string> DrawingSheetAdded = (sheetName) => { };
 
         /// <summary>
         /// Called after the active drawing sheet has changed
         /// </summary>
-        public event Action DrawingSheetChanged = () => { };
+        public event Action<string> DrawingActiveSheetChanged = (sheetName) => { };
 
         /// <summary>
         /// Called after the a drawing sheet was deleted
         /// </summary>
-        public event Action DrawingSheetDeleted = () => { };
+        public event Action<string> DrawingSheetDeleted = (sheetName) => { };
 
         /// <summary>
         /// Called as the model is about to be closed
@@ -221,17 +221,17 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Called when a drawing item is added to the feature tree
         /// </summary>
-        /// <param name="entitytype"></param>
-        /// <param name="itemname"></param>
+        /// <param name="entityType">Type of entity that is changed</param>
+        /// <param name="itemName">Name of entity that is changed</param>
         /// <returns></returns>
-        protected int DrawingItemAddNotify(int entitytype, string itemname)
+        protected int DrawingItemAddNotify(int entityType, string itemName)
         {
             // Check if a sheet is added.
             // SolidWorks always activates the new sheet, but the sheet activate events aren't fired.
-            if (EntityIsDrawingSheet(entitytype))
+            if (EntityIsDrawingSheet(entityType))
             {
-                SheetAddedNotify(itemname);
-                SheetActivatePostNotify(itemname);
+                SheetAddedNotify(itemName);
+                SheetActivatePostNotify(itemName);
             }
 
             // NOTE: 0 is success, anything else is an error
@@ -241,16 +241,16 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Called when a drawing item is removed from the feature tree
         /// </summary>
-        /// <param name="entitytype"></param>
-        /// <param name="itemname"></param>
+        /// <param name="entityType">Type of entity that is changed</param>
+        /// <param name="itemName">Name of entity that is changed</param>
         /// <returns></returns>
-        protected int DrawingDeleteItemNotify(int entitytype, string itemname)
+        protected int DrawingDeleteItemNotify(int entityType, string itemName)
         {
             // Check if the removed items is a sheet
-            if (EntityIsDrawingSheet(entitytype))
+            if (EntityIsDrawingSheet(entityType))
             {
                 // Inform listeners
-                DrawingSheetDeleted();
+                DrawingSheetDeleted(itemName);
             }
 
             // NOTE: 0 is success, anything else is an error
@@ -308,9 +308,16 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Called after the active drawing sheet is changed.
         /// </summary>
-        /// <param name="sheetname"></param>
+        /// <param name="sheetName">Name of the sheet that is activated</param>
         /// <returns></returns>
-        protected int SheetActivatePostNotify(string sheetname)
+        protected int SheetActivatePostNotify(string sheetName)
+        {
+            // Inform listeners
+            DrawingActiveSheetChanged(sheetName);
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
         {
             // Inform listeners
             DrawingSheetChanged();
@@ -322,12 +329,12 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Called after a sheet is added.
         /// </summary>
-        /// <param name="sheetname"></param>
+        /// <param name="sheetName">Name of the new sheet</param>
         /// <returns></returns>
-        protected int SheetAddedNotify(string sheetname)
+        protected int SheetAddedNotify(string sheetName)
         {
             // Inform listeners
-            DrawingSheetAdded();
+            DrawingSheetAdded(sheetName);
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -422,13 +429,13 @@ namespace AngelSix.SolidDna
         #region Drawings
 
         /// <summary>
-        /// Check if an entity that was added or removed is a drawing sheet.
+        /// Check if an entity that was added, changed or removed is a drawing sheet.
         /// </summary>
-        /// <param name="entitytype"></param>
+        /// <param name="entityType">Type of the entity</param>
         /// <returns></returns>
-        private static bool EntityIsDrawingSheet(int entitytype)
+        private static bool EntityIsDrawingSheet(int entityType)
         {
-            return entitytype == (int)swNotifyEntityType_e.swNotifyDrawingSheet;
+            return entityType == (int)swNotifyEntityType_e.swNotifyDrawingSheet;
         }
 
         #endregion
