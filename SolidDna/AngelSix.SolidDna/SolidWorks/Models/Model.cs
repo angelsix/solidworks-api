@@ -1,5 +1,6 @@
 ﻿using System;
 using SolidWorks.Interop.sldworks;
+using SolidWorks.Interop.swconst;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -72,6 +73,21 @@ namespace AngelSix.SolidDna
         #endregion
 
         #region Public Events
+        
+        /// <summary>
+        /// Called after the a drawing sheet was added
+        /// </summary>
+        public event Action DrawingSheetAdded = () => { };
+
+        /// <summary>
+        /// Called after the active drawing sheet has changed
+        /// </summary>
+        public event Action DrawingSheetChanged = () => { };
+
+        /// <summary>
+        /// Called after the a drawing sheet was deleted
+        /// </summary>
+        public event Action DrawingSheetDeleted = () => { };
 
         /// <summary>
         /// Called as the model is about to be closed
@@ -166,6 +182,9 @@ namespace AngelSix.SolidDna
                     AsPart().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
                 case ModelType.Drawing:
+                    AsDrawing().ActivateSheetPostNotify += SheetActivatePostNotify;
+                    AsDrawing().AddItemNotify += DrawingItemAddNotify;
+                    AsDrawing().DeleteItemNotify += DrawingDeleteItemNotify;
                     AsDrawing().DestroyNotify += FileDestroyedNotify;
                     AsDrawing().FileSavePostNotify += FileSaveNotify;
                     AsDrawing().UserSelectionPostNotify += UserSelectionPostNotify;
@@ -186,6 +205,45 @@ namespace AngelSix.SolidDna
         {
             // Refresh data
             ReloadModelData();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called when a drawing item is added to the feature tree
+        /// </summary>
+        /// <param name="entitytype"></param>
+        /// <param name="itemname"></param>
+        /// <returns></returns>
+        protected int DrawingItemAddNotify(int entitytype, string itemname)
+        {
+            // Check if a sheet is added.
+            // SolidWorks always activates the new sheet, but the sheet activate events aren't fired.
+            if (EntityIsDrawingSheet(entitytype))
+            {
+                SheetAddedNotify(itemname);
+                SheetActivatePostNotify(itemname);
+            }
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called when a drawing item is removed from the feature tree
+        /// </summary>
+        /// <param name="entitytype"></param>
+        /// <param name="itemname"></param>
+        /// <returns></returns>
+        protected int DrawingDeleteItemNotify(int entitytype, string itemname)
+        {
+            // Check if the removed items is a sheet
+            if (EntityIsDrawingSheet(entitytype))
+            {
+                // Inform listeners
+                DrawingSheetDeleted();
+            }
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -230,6 +288,34 @@ namespace AngelSix.SolidDna
 
             // Inform listeners
             ModelClosing();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called after the active drawing sheet is changed.
+        /// </summary>
+        /// <param name="sheetname"></param>
+        /// <returns></returns>
+        protected int SheetActivatePostNotify(string sheetname)
+        {
+            // Inform listeners
+            DrawingSheetChanged();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called after a sheet is added.
+        /// </summary>
+        /// <param name="sheetname"></param>
+        /// <returns></returns>
+        protected int SheetAddedNotify(string sheetname)
+        {
+            // Inform listeners
+            DrawingSheetAdded();
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -317,6 +403,20 @@ namespace AngelSix.SolidDna
                 // Let the action use them
                 action(properties);
             }
+        }
+
+        #endregion
+
+        #region Drawings
+
+        /// <summary>
+        /// Check if an entity that was added or removed is a drawing sheet.
+        /// </summary>
+        /// <param name="entitytype"></param>
+        /// <returns></returns>
+        private static bool EntityIsDrawingSheet(int entitytype)
+        {
+            return entitytype == (int)swNotifyEntityType_e.swNotifyDrawingSheet;
         }
 
         #endregion
