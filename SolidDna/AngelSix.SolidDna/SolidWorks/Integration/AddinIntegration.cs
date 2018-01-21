@@ -149,7 +149,7 @@ namespace AngelSix.SolidDna
             // Clean up plug-in app domain
             PlugInIntegration.Teardown();
 
-            // Dipose SolidWorks COM
+            // Dispose SolidWorks COM
             //SolidWorks?.Dispose();
             //SolidWorks = null;
 

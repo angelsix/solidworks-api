@@ -61,6 +61,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         public CommandManager CommandManager { get; private set; }
 
+        /// <summary>
+        /// True if the application is disposing
+        /// </summary>
+        public bool Disposing { get; private set; }
+
         #endregion
 
         #region Public Events
@@ -326,6 +331,11 @@ namespace AngelSix.SolidDna
             // Check for every file if it may have been the last one.
             Task.Run(async () =>
             {
+                // If we are disposing...
+                if (Disposing)
+                    // Ignore
+                    return;
+
                 // Wait for it to close
                 await Task.Delay(200);
 
@@ -566,6 +576,9 @@ namespace AngelSix.SolidDna
         /// </summary>
         public override void Dispose()
         {
+            // Flag as disposing
+            Disposing = true;
+
             // Clean active model
             ActiveModel?.Dispose();
 
