@@ -318,32 +318,36 @@ namespace AngelSix.SolidDna
             // 
             //       So, each model that is closing (not closed) wait 200ms 
             //       then check on the current number of active documents
+            //       or if ActiveDoc is already set to null.
             //
-            //       If the document count is 0 at that moment in time
-            //       do an active model information refresh
+            //       If ActiveDoc is null or the document count is 0 at that 
+            //       moment in time, do an active model information refresh.
             //
             //       If another document opens in the meantime it won't fire
             //       but that's fine as the active doc changed event will fire
             //       in that case anyway
             //
-            //
 
             // Check for every file if it may have been the last one.
             Task.Run(async () =>
             {
-                // If we are disposing...
-                if (Disposing)
-                    // Ignore
-                    return;
-
                 // Wait for it to close
                 await Task.Delay(200);
 
-                // Now if we have none open, reload information
-                // ActiveDoc is quickly set to null after the last document is closed
-                // GetDocumentCount takes longer to go to zero for big assemblies, but it might be a more reliable indicator.
-                if (mBaseObject?.ActiveDoc == null || mBaseObject?.GetDocumentCount() == 0)
-                    ReloadActiveModelInformation();
+                // Lock to prevent Disposing to change while this section is running.
+                lock (_disposingLock)
+                {
+                    if (Disposing)
+                        // If we are disposing SolidWorks, there is no need to reload active model info.
+                        return;
+                    
+                    // Now if we have none open, reload information
+                    // ActiveDoc is quickly set to null after the last document is closed
+                    // GetDocumentCount takes longer to go to zero for big assemblies, but it might be a more reliable indicator.
+                    if (mBaseObject?.ActiveDoc == null || mBaseObject?.GetDocumentCount() == 0)
+                        ReloadActiveModelInformation();
+                    
+                }
             });
         }
 
@@ -572,21 +576,30 @@ namespace AngelSix.SolidDna
         #region Dispose
 
         /// <summary>
+        /// Locking object for synchronizing the disposing of SolidWorks and reloading active model info.
+        /// </summary>
+        private readonly object _disposingLock = new object();
+
+        /// <summary>
         /// Disposing
         /// </summary>
         public override void Dispose()
         {
-            // Flag as disposing
-            Disposing = true;
+            lock (_disposingLock)
+            {
 
-            // Clean active model
-            ActiveModel?.Dispose();
+                // Flag as disposing
+                Disposing = true;
 
-            // Dispose command manager
-            CommandManager?.Dispose();
+                // Clean active model
+                ActiveModel?.Dispose();
 
-            // NOTE: Don't dispose the application, SolidWorks does that itself
-            //base.Dispose();
+                // Dispose command manager
+                CommandManager?.Dispose();
+
+                // NOTE: Don't dispose the application, SolidWorks does that itself
+                //base.Dispose();
+            }
         }
 
         #endregion
