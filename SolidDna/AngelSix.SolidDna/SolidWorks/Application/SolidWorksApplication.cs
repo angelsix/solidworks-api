@@ -34,6 +34,15 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region Private members
+
+        /// <summary>
+        /// Locking object for synchronizing the disposing of SolidWorks and reloading active model info.
+        /// </summary>
+        private readonly object mDisposingLock = new object();
+
+        #endregion
+
         #region Public Properties
 
         /// <summary>
@@ -335,7 +344,7 @@ namespace AngelSix.SolidDna
                 await Task.Delay(200);
 
                 // Lock to prevent Disposing to change while this section is running.
-                lock (_disposingLock)
+                lock (mDisposingLock)
                 {
                     if (Disposing)
                         // If we are disposing SolidWorks, there is no need to reload active model info.
@@ -576,16 +585,11 @@ namespace AngelSix.SolidDna
         #region Dispose
 
         /// <summary>
-        /// Locking object for synchronizing the disposing of SolidWorks and reloading active model info.
-        /// </summary>
-        private readonly object _disposingLock = new object();
-
-        /// <summary>
         /// Disposing
         /// </summary>
         public override void Dispose()
         {
-            lock (_disposingLock)
+            lock (mDisposingLock)
             {
 
                 // Flag as disposing
