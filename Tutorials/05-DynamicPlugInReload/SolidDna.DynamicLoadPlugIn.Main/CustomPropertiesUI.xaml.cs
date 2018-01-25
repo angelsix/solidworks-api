@@ -13,28 +13,28 @@ namespace SolidDna.DynamicLoadPlugIn
     {
         #region Private Members
 
-        private const string mCustomPropertyDescription = "Description";
-        private const string mCustomPropertyStatus = "Status";
-        private const string mCustomPropertyRevision = "Revision";
-        private const string mCustomPropertyPartNumber = "PartNo";
-        private const string mCustomPropertyManufacturingInformation = "Manufacturing Information";
-        private const string mCustomPropertyLength = "Length";
-        private const string mCustomPropertyFinish = "Finish";
-        private const string mCustomPropertyPurchaseInformation = "Purchase Information";
-        private const string mCustomPropertySupplierName = "Supplier";
-        private const string mCustomPropertySupplierCode = "Supplier Number / Code";
-        private const string mCustomPropertyNote = "Note";
+        private const string CustomPropertyDescription = "Description";
+        private const string CustomPropertyStatus = "Status";
+        private const string CustomPropertyRevision = "Revision";
+        private const string CustomPropertyPartNumber = "PartNo";
+        private const string CustomPropertyManufacturingInformation = "Manufacturing Information";
+        private const string CustomPropertyLength = "Length";
+        private const string CustomPropertyFinish = "Finish";
+        private const string CustomPropertyPurchaseInformation = "Purchase Information";
+        private const string CustomPropertySupplierName = "Supplier";
+        private const string CustomPropertySupplierCode = "Supplier Number / Code";
+        private const string CustomPropertyNote = "Note";
 
-        private const string mManufacturingWeld = "WELD";
-        private const string mManufacturingAssembly = "ASSEMBLY";
-        private const string mManufacturingPlasma = "PLASMA";
-        private const string mManufacturingLaser = "LASER";
-        private const string mManufacturingPurchase = "PURCHASE";
-        private const string mManufacturingLathe = "LATHE";
-        private const string mManufacturingDrill = "DRILL";
-        private const string mManufacturingFold = "FOLD";
-        private const string mManufacturingRoll = "ROLL";
-        private const string mManufacturingSaw = "SAW";
+        private const string ManufacturingWeld = "WELD";
+        private const string ManufacturingAssembly = "ASSEMBLY";
+        private const string ManufacturingPlasma = "PLASMA";
+        private const string ManufacturingLaser = "LASER";
+        private const string ManufacturingPurchase = "PURCHASE";
+        private const string ManufacturingLathe = "LATHE";
+        private const string ManufacturingDrill = "DRILL";
+        private const string ManufacturingFold = "FOLD";
+        private const string ManufacturingRoll = "ROLL";
+        private const string ManufacturingSaw = "SAW";
 
         #endregion
 
@@ -60,8 +60,8 @@ namespace SolidDna.DynamicLoadPlugIn
         private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
             // By default show the No Part open screen
-            this.NoPartContent.Visibility = System.Windows.Visibility.Visible;
-            this.MainContent.Visibility = System.Windows.Visibility.Hidden;
+            NoPartContent.Visibility = System.Windows.Visibility.Visible;
+            MainContent.Visibility = System.Windows.Visibility.Hidden;
 
             // Listen out for the active model changing
             Dna.Application.ActiveModelInformationChanged += Application_ActiveModelInformationChanged;
@@ -99,8 +99,8 @@ namespace SolidDna.DynamicLoadPlugIn
                 if (model == null || (!model.IsPart && !model.IsAssembly))
                 {
                     // Show No Part screen
-                    this.NoPartContent.Visibility = System.Windows.Visibility.Visible;
-                    this.MainContent.Visibility = System.Windows.Visibility.Hidden;
+                    NoPartContent.Visibility = System.Windows.Visibility.Visible;
+                    MainContent.Visibility = System.Windows.Visibility.Hidden;
 
                     return;
                 }
@@ -111,31 +111,31 @@ namespace SolidDna.DynamicLoadPlugIn
                 model.SelectionChanged += Model_SelectionChanged;
 
                 // Show the main content
-                this.NoPartContent.Visibility = System.Windows.Visibility.Hidden;
-                this.MainContent.Visibility = System.Windows.Visibility.Visible;
+                NoPartContent.Visibility = System.Windows.Visibility.Hidden;
+                MainContent.Visibility = System.Windows.Visibility.Visible;
 
                 // Get custom properties
                 // Description
-                this.DescriptionText.Text = model.GetCustomProperty(mCustomPropertyDescription);
+                DescriptionText.Text = model.GetCustomProperty(CustomPropertyDescription);
 
                 // Status
-                this.StatusText.Text = model.GetCustomProperty(mCustomPropertyStatus, resolved: true);
+                StatusText.Text = model.GetCustomProperty(CustomPropertyStatus, resolved: true);
 
                 // Revision
-                this.RevisionText.Text = model.GetCustomProperty(mCustomPropertyRevision, resolved: true);
+                RevisionText.Text = model.GetCustomProperty(CustomPropertyRevision, resolved: true);
 
                 // Part Number
-                this.PartNumberText.Text = model.GetCustomProperty(mCustomPropertyPartNumber, resolved: true);
+                PartNumberText.Text = model.GetCustomProperty(CustomPropertyPartNumber, resolved: true);
 
                 // Manufacturing Information
 
                 // Clear previous checks
-                this.MaterialWeldCheck.IsChecked = this.MaterialAssemblyCheck.IsChecked = this.MaterialPlasmaCheck.IsChecked =
-                    this.MaterialPurchaseCheck.IsChecked = this.MaterialLatheCheck.IsChecked = this.MaterialLaserCheck.IsChecked = this.MaterialDrillCheck.IsChecked =
-                    this.MaterialFoldCheck.IsChecked = this.MaterialRollCheck.IsChecked = this.MaterialSawCheck.IsChecked = false;
+                MaterialWeldCheck.IsChecked = MaterialAssemblyCheck.IsChecked = MaterialPlasmaCheck.IsChecked =
+                    MaterialPurchaseCheck.IsChecked = MaterialLatheCheck.IsChecked = MaterialLaserCheck.IsChecked = MaterialDrillCheck.IsChecked =
+                    MaterialFoldCheck.IsChecked = MaterialRollCheck.IsChecked = MaterialSawCheck.IsChecked = false;
 
                 // Read in value
-                var manufacturingInfo = model.GetCustomProperty(mCustomPropertyManufacturingInformation);
+                var manufacturingInfo = model.GetCustomProperty(CustomPropertyManufacturingInformation);
 
                 // If we have some property, parse it
                 if (!string.IsNullOrWhiteSpace(manufacturingInfo))
@@ -145,43 +145,43 @@ namespace SolidDna.DynamicLoadPlugIn
                     {
                         switch (part)
                         {
-                            case mManufacturingWeld:
-                                this.MaterialWeldCheck.IsChecked = true;
+                            case ManufacturingWeld:
+                                MaterialWeldCheck.IsChecked = true;
                                 break;
-                            case mManufacturingAssembly:
-                                this.MaterialAssemblyCheck.IsChecked = true;
-                                break;
-
-                            case mManufacturingPlasma:
-                                this.MaterialPlasmaCheck.IsChecked = true;
+                            case ManufacturingAssembly:
+                                MaterialAssemblyCheck.IsChecked = true;
                                 break;
 
-                            case mManufacturingLaser:
-                                this.MaterialLaserCheck.IsChecked = true;
+                            case ManufacturingPlasma:
+                                MaterialPlasmaCheck.IsChecked = true;
                                 break;
 
-                            case mManufacturingPurchase:
-                                this.MaterialPurchaseCheck.IsChecked = true;
+                            case ManufacturingLaser:
+                                MaterialLaserCheck.IsChecked = true;
                                 break;
 
-                            case mManufacturingLathe:
-                                this.MaterialLatheCheck.IsChecked = true;
+                            case ManufacturingPurchase:
+                                MaterialPurchaseCheck.IsChecked = true;
                                 break;
 
-                            case mManufacturingDrill:
-                                this.MaterialDrillCheck.IsChecked = true;
+                            case ManufacturingLathe:
+                                MaterialLatheCheck.IsChecked = true;
                                 break;
 
-                            case mManufacturingFold:
-                                this.MaterialFoldCheck.IsChecked = true;
+                            case ManufacturingDrill:
+                                MaterialDrillCheck.IsChecked = true;
                                 break;
 
-                            case mManufacturingRoll:
-                                this.MaterialRollCheck.IsChecked = true;
+                            case ManufacturingFold:
+                                MaterialFoldCheck.IsChecked = true;
                                 break;
 
-                            case mManufacturingSaw:
-                                this.MaterialSawCheck.IsChecked = true;
+                            case ManufacturingRoll:
+                                MaterialRollCheck.IsChecked = true;
+                                break;
+
+                            case ManufacturingSaw:
+                                MaterialSawCheck.IsChecked = true;
                                 break;
                         }
                     }
@@ -189,73 +189,73 @@ namespace SolidDna.DynamicLoadPlugIn
 
 
                 // Length
-                this.SheetMetalLengthText.Text = model.GetCustomProperty(mCustomPropertyLength);
-                this.SheetMetalLengthEvaluatedText.Text = model.GetCustomProperty(mCustomPropertyLength, resolved: true);
+                SheetMetalLengthText.Text = model.GetCustomProperty(CustomPropertyLength);
+                SheetMetalLengthEvaluatedText.Text = model.GetCustomProperty(CustomPropertyLength, resolved: true);
 
                 // Finish
-                var finish = model.GetCustomProperty(mCustomPropertyFinish);
+                var finish = model.GetCustomProperty(CustomPropertyFinish);
 
                 // Clear the selection first
-                this.FinishList.SelectedIndex = -1;
+                FinishList.SelectedIndex = -1;
 
                 // Try and find matching item
-                foreach (var item in this.FinishList.Items)
+                foreach (var item in FinishList.Items)
                 {
                     // Check if the combo box item has the same name
                     if ((string)((ComboBoxItem)item).Content == finish)
                     {
                         // If so select it
-                        this.FinishList.SelectedItem = item;
+                        FinishList.SelectedItem = item;
                         break;
                     }
                 }
 
                 // Purchase Information
-                var purchaseInfo = model.GetCustomProperty(mCustomPropertyPurchaseInformation);
+                var purchaseInfo = model.GetCustomProperty(CustomPropertyPurchaseInformation);
 
                 // Clear the selection first
-                this.PurchaseInformationList.SelectedIndex = -1;
+                PurchaseInformationList.SelectedIndex = -1;
 
                 // Try and find matching item
-                foreach (var item in this.PurchaseInformationList.Items)
+                foreach (var item in PurchaseInformationList.Items)
                 {
                     // Check if the combo box item has the same name
                     if ((string)((ComboBoxItem)item).Content == purchaseInfo)
                     {
                         // If so select it
-                        this.PurchaseInformationList.SelectedItem = item;
+                        PurchaseInformationList.SelectedItem = item;
                         break;
                     }
                 }
 
                 // Supplier Name
-                this.SupplierNameText.Text = model.GetCustomProperty(mCustomPropertySupplierName);
+                SupplierNameText.Text = model.GetCustomProperty(CustomPropertySupplierName);
 
                 // Supplier Code
-                this.SupplierCodeText.Text = model.GetCustomProperty(mCustomPropertySupplierCode);
+                SupplierCodeText.Text = model.GetCustomProperty(CustomPropertySupplierCode);
 
                 // Note
-                this.NoteText.Text = model.GetCustomProperty(mCustomPropertyNote);
+                NoteText.Text = model.GetCustomProperty(CustomPropertyNote);
 
                 // Mass
-                this.MassText.Text = model.MassProperties?.MassInMetric();
+                MassText.Text = model.MassProperties?.MassInMetric();
 
                 // Get all materials
                 var materials = Dna.Application.GetMaterials();
                 materials.Insert(0, new Material { Name = "Remove Material", Classification = "Not specified", DatabaseFileFound = false });
 
-                this.RawMaterialList.ItemsSource = materials;
-                this.RawMaterialList.DisplayMemberPath = "DisplayName";
+                RawMaterialList.ItemsSource = materials;
+                RawMaterialList.DisplayMemberPath = "DisplayName";
 
                 // Clear selection
-                this.RawMaterialList.SelectedIndex = -1;
+                RawMaterialList.SelectedIndex = -1;
 
                 // Select existing material
                 var existingMaterial = model.GetMaterial();
 
                 // If we have a material
                 if (existingMaterial != null)
-                    this.RawMaterialList.SelectedItem = materials?.FirstOrDefault(f => f.Database == existingMaterial.Database && f.Name == existingMaterial.Name);
+                    RawMaterialList.SelectedItem = materials?.FirstOrDefault(f => f.Database == existingMaterial.Database && f.Name == existingMaterial.Name);
             });
         }
 
@@ -267,7 +267,7 @@ namespace SolidDna.DynamicLoadPlugIn
 
                 ThreadHelpers.RunOnUIThread(() =>
                 {
-                    this.LengthButton.IsEnabled = haveDimension;
+                    LengthButton.IsEnabled = haveDimension;
                 });
             });
         }
@@ -288,59 +288,59 @@ namespace SolidDna.DynamicLoadPlugIn
                 return;
 
             // Description
-            model.SetCustomProperty(mCustomPropertyDescription, this.DescriptionText.Text);
+            model.SetCustomProperty(CustomPropertyDescription, DescriptionText.Text);
 
             // If user doesn't have a material selected, clear it
-            if (this.RawMaterialList.SelectedIndex < 0)
+            if (RawMaterialList.SelectedIndex < 0)
                 model.SetMaterial(null);
             // Otherwise set the material to the selected one
             else
-                model.SetMaterial((Material)this.RawMaterialList.SelectedItem);
+                model.SetMaterial((Material)RawMaterialList.SelectedItem);
 
             // Manufacturing Info
             var manufacturingInfo = new List<string>();
 
-            if (this.MaterialWeldCheck.IsChecked.Value)
-                manufacturingInfo.Add(mManufacturingWeld);
-            if (this.MaterialAssemblyCheck.IsChecked.Value)
-                manufacturingInfo.Add(mManufacturingAssembly);
-            if (this.MaterialPlasmaCheck.IsChecked.Value)
-                manufacturingInfo.Add(mManufacturingPlasma);
-            if (this.MaterialLaserCheck.IsChecked.Value)
-                manufacturingInfo.Add(mManufacturingLaser);
-            if (this.MaterialPurchaseCheck.IsChecked.Value)
-                manufacturingInfo.Add(mManufacturingPurchase);
-            if (this.MaterialLatheCheck.IsChecked.Value)
-                manufacturingInfo.Add(mManufacturingLathe);
-            if (this.MaterialDrillCheck.IsChecked.Value)
-                manufacturingInfo.Add(mManufacturingDrill);
-            if (this.MaterialFoldCheck.IsChecked.Value)
-                manufacturingInfo.Add(mManufacturingFold);
-            if (this.MaterialRollCheck.IsChecked.Value)
-                manufacturingInfo.Add(mManufacturingRoll);
-            if (this.MaterialSawCheck.IsChecked.Value)
-                manufacturingInfo.Add(mManufacturingSaw);
+            if (MaterialWeldCheck.IsChecked.Value)
+                manufacturingInfo.Add(ManufacturingWeld);
+            if (MaterialAssemblyCheck.IsChecked.Value)
+                manufacturingInfo.Add(ManufacturingAssembly);
+            if (MaterialPlasmaCheck.IsChecked.Value)
+                manufacturingInfo.Add(ManufacturingPlasma);
+            if (MaterialLaserCheck.IsChecked.Value)
+                manufacturingInfo.Add(ManufacturingLaser);
+            if (MaterialPurchaseCheck.IsChecked.Value)
+                manufacturingInfo.Add(ManufacturingPurchase);
+            if (MaterialLatheCheck.IsChecked.Value)
+                manufacturingInfo.Add(ManufacturingLathe);
+            if (MaterialDrillCheck.IsChecked.Value)
+                manufacturingInfo.Add(ManufacturingDrill);
+            if (MaterialFoldCheck.IsChecked.Value)
+                manufacturingInfo.Add(ManufacturingFold);
+            if (MaterialRollCheck.IsChecked.Value)
+                manufacturingInfo.Add(ManufacturingRoll);
+            if (MaterialSawCheck.IsChecked.Value)
+                manufacturingInfo.Add(ManufacturingSaw);
 
             // Set manufacturing info
-            model.SetCustomProperty(mCustomPropertyManufacturingInformation, string.Join(",", manufacturingInfo));
+            model.SetCustomProperty(CustomPropertyManufacturingInformation, string.Join(",", manufacturingInfo));
 
             // Length
-            model.SetCustomProperty(mCustomPropertyLength, this.SheetMetalLengthText.Text);
+            model.SetCustomProperty(CustomPropertyLength, SheetMetalLengthText.Text);
 
             // Finish
-            model.SetCustomProperty(mCustomPropertyFinish, (string)((ComboBoxItem)this.FinishList.SelectedValue)?.Content);
+            model.SetCustomProperty(CustomPropertyFinish, (string)((ComboBoxItem)FinishList.SelectedValue)?.Content);
 
             // Purchase Info
-            model.SetCustomProperty(mCustomPropertyPurchaseInformation, (string)((ComboBoxItem)this.PurchaseInformationList.SelectedValue)?.Content);
+            model.SetCustomProperty(CustomPropertyPurchaseInformation, (string)((ComboBoxItem)PurchaseInformationList.SelectedValue)?.Content);
 
             // Suppler Name
-            model.SetCustomProperty(mCustomPropertySupplierName, this.SupplierNameText.Text);
+            model.SetCustomProperty(CustomPropertySupplierName, SupplierNameText.Text);
 
             // Supplier Code
-            model.SetCustomProperty(mCustomPropertySupplierCode, this.SupplierCodeText.Text);
+            model.SetCustomProperty(CustomPropertySupplierCode, SupplierCodeText.Text);
 
             // Note
-            model.SetCustomProperty(mCustomPropertyNote, this.NoteText.Text);
+            model.SetCustomProperty(CustomPropertyNote, NoteText.Text);
 
             // Re-read details to confirm they are correct
             ReadDetails();
@@ -368,26 +368,26 @@ namespace SolidDna.DynamicLoadPlugIn
         private void ResetButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             // Clear all values
-            this.DescriptionText.Text = string.Empty;
-            this.StatusText.Text = string.Empty;
-            this.RevisionText.Text = string.Empty;
-            this.PartNumberText.Text = string.Empty;
+            DescriptionText.Text = string.Empty;
+            StatusText.Text = string.Empty;
+            RevisionText.Text = string.Empty;
+            PartNumberText.Text = string.Empty;
 
-            this.RawMaterialList.SelectedIndex = -1;
+            RawMaterialList.SelectedIndex = -1;
 
-            this.MaterialWeldCheck.IsChecked = this.MaterialAssemblyCheck.IsChecked = this.MaterialPlasmaCheck.IsChecked =
-                this.MaterialPurchaseCheck.IsChecked = this.MaterialLatheCheck.IsChecked = this.MaterialLaserCheck.IsChecked = this.MaterialDrillCheck.IsChecked =
-                this.MaterialFoldCheck.IsChecked = this.MaterialRollCheck.IsChecked = this.MaterialSawCheck.IsChecked = false;
+            MaterialWeldCheck.IsChecked = MaterialAssemblyCheck.IsChecked = MaterialPlasmaCheck.IsChecked =
+                MaterialPurchaseCheck.IsChecked = MaterialLatheCheck.IsChecked = MaterialLaserCheck.IsChecked = MaterialDrillCheck.IsChecked =
+                MaterialFoldCheck.IsChecked = MaterialRollCheck.IsChecked = MaterialSawCheck.IsChecked = false;
 
-            this.SheetMetalLengthText.Text = string.Empty;
-            this.SheetMetalLengthEvaluatedText.Text = string.Empty;
+            SheetMetalLengthText.Text = string.Empty;
+            SheetMetalLengthEvaluatedText.Text = string.Empty;
 
-            this.FinishList.SelectedIndex = -1;
-            this.PurchaseInformationList.SelectedIndex = -1;
+            FinishList.SelectedIndex = -1;
+            PurchaseInformationList.SelectedIndex = -1;
 
-            this.SupplierNameText.Text = string.Empty;
-            this.SupplierCodeText.Text = string.Empty;
-            this.NoteText.Text = string.Empty;
+            SupplierNameText.Text = string.Empty;
+            SupplierCodeText.Text = string.Empty;
+            NoteText.Text = string.Empty;
         }
 
         /// <summary>
@@ -405,13 +405,13 @@ namespace SolidDna.DynamicLoadPlugIn
         private void MaterialAssemblyCheck_Checked(object sender, System.Windows.RoutedEventArgs e)
         {
             // Unckech plasma
-            this.MaterialPlasmaCheck.IsChecked = false;
+            MaterialPlasmaCheck.IsChecked = false;
         }
 
         private void MaterialPlasmaCheck_Checked(object sender, System.Windows.RoutedEventArgs e)
         {
             // Uncheck assembly
-            this.MaterialAssemblyCheck.IsChecked = false;
+            MaterialAssemblyCheck.IsChecked = false;
         }
 
         private void LengthButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -433,7 +433,7 @@ namespace SolidDna.DynamicLoadPlugIn
                 // Set the length button text
                 ThreadHelpers.RunOnUIThread(() =>
                 {
-                    this.SheetMetalLengthText.Text = $"\"{dimensionSelectionName}\"";
+                    SheetMetalLengthText.Text = $"\"{dimensionSelectionName}\"";
                 });
             });
         }

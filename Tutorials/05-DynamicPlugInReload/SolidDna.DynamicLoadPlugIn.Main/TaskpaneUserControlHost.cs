@@ -18,7 +18,7 @@ namespace SolidDna.DynamicLoadPlugIn
 
         #region Public Properties
 
-        public string ProgId { get { return MyProgId; } }
+        public string ProgId => MyProgId;
 
         #endregion
     }
