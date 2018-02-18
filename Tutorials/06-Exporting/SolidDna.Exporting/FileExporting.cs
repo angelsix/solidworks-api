@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System;
+using System.Collections.Generic;
 
 namespace SolidDna.Exporting
 {
@@ -60,23 +61,15 @@ namespace SolidDna.Exporting
             if (string.IsNullOrEmpty(location))
                 return;
 
-            // Now export as STEP
-            var errors = -1;
-            var warnings = -1;
+            // Try and save the file...
+            var result = Dna.Application.ActiveModel.SaveAs(
+                // Save as location
+                location,
+                // Do it silently and as a copy, updating anything thats needed before saving
+                options: SaveAsOptions.Silent | SaveAsOptions.Copy | SaveAsOptions.UpdateInactiveViews);
 
-            // Save as current version
-            var version = (int)swSaveAsVersion_e.swSaveAsCurrentVersion;
 
-            // Do it silently and as a copy, updating anything thats needed before saving
-            var options = (int)(swSaveAsOptions_e.swSaveAsOptions_Copy | swSaveAsOptions_e.swSaveAsOptions_Silent | swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews);
-
-            Dna.Application.ActiveModel.Extension.UnsafeObject.SaveAs(location, version, options, null, ref errors, ref warnings);
-
-            // If this fails, try another way
-            if (errors != 0)
-                Dna.Application.ActiveModel.UnsafeObject.SaveAs4(location, version, options, ref errors, ref warnings);
-
-            if (errors != 0)
+            if (!result.Successful)
                 // Tell user failed
                 Dna.Application.ShowMessageBox("Failed to save model as STEP");
             else
@@ -106,49 +99,31 @@ namespace SolidDna.Exporting
                 return;
 
             // Get sheet names
-            var sheetNames = (string[])Dna.Application.ActiveModel.AsDrawing().GetSheetNames();
+            var sheetNames = new List<string>((string[])Dna.Application.ActiveModel.AsDrawing().GetSheetNames());
 
             // Set PDF sheet settings
-            var exportData = (ExportPdfData)Dna.Application.UnsafeObject.GetExportFileData((int)swExportDataFileType_e.swExportPdfData);
-            exportData.SetSheets((int)swExportDataSheetsToExport_e.swExportData_ExportSpecifiedSheets, sheetNames);
+            var exportData = new PdfExportData();
+            exportData.SetSheets(PdfSheetsToExport.ExportSpecifiedSheets, sheetNames);
 
-            if (!SaveModelAs(location, exportData))
+            // Try and save the file...
+            var result = Dna.Application.ActiveModel.SaveAs(
+                // Save as location
+                location,
+                // Do it silently and as a copy, updating anything thats needed before saving
+                options: SaveAsOptions.Silent | SaveAsOptions.Copy | SaveAsOptions.UpdateInactiveViews,
+                // Pass in PDF export data
+                pdfExportData: exportData);
+
+            if (!result.Successful)
                 // Tell user failed
-                Dna.Application.ShowMessageBox("Failed to save drawing as STEP");
+                Dna.Application.ShowMessageBox("Failed to save drawing as PDF");
             else
                 // Tell user success
-                Dna.Application.ShowMessageBox("Successfully saved drawing as STEP");
+                Dna.Application.ShowMessageBox("Successfully saved drawing as PDF");
         }
 
         #region Private Helpers
-
-        /// <summary>
-        /// Attempts to save a model as a different format
-        /// </summary>
-        /// <param name="location">The absolute location to save the file</param>
-        /// <param name="exportData">The export data, if any</param>
-        /// <returns></returns>
-        private static bool SaveModelAs(string location, object exportData = null)
-        {
-            var errors = -1;
-            var warnings = -1;
-
-            // Save as current version
-            var version = (int)swSaveAsVersion_e.swSaveAsCurrentVersion;
-
-            // Do it silently and as a copy, updating anything thats needed before saving
-            var options = (int)(swSaveAsOptions_e.swSaveAsOptions_Copy | swSaveAsOptions_e.swSaveAsOptions_Silent | swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews);
-
-            Dna.Application.ActiveModel.Extension.UnsafeObject.SaveAs(location, version, options, null, ref errors, ref warnings);
-
-            // If this fails, try another way
-            if (errors != 0)
-                Dna.Application.ActiveModel.UnsafeObject.SaveAs4(location, version, options, ref errors, ref warnings);
-
-            // Return if we succeeded
-            return errors == 0;
-        }
-
+        
         /// <summary>
         /// Asks the user for a save filename and location
         /// </summary>

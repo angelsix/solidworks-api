@@ -17,29 +17,34 @@ namespace AngelSix.SolidDna
         Unexpected = 1,
 
         /// <summary>
-        /// An error occured while working with a file on the file system
+        /// An error occurred while working with a file on the file system
         /// </summary>
-        File = 10,
+        File = 2,
 
         /// <summary>
-        /// An error occured trying to perform a SolidWorks API call on the Taskpane
+        /// An error occurred trying to perform a SolidWorks API call on the Taskpane
         /// </summary>
         SolidWorksTaskpane = 10,
 
         /// <summary>
-        /// An error occured trying to perform a top level SolidWorks API call
+        /// An error occurred trying to perform a top level SolidWorks API call
         /// </summary>
         SolidWorksApplication = 11,
 
         /// <summary>
-        /// An error occured trying to perform a SolidWorks API call on a Model
+        /// An error occurred trying to perform a SolidWorks API call on a Model
         /// </summary>
         SolidWorksModel = 12,
 
         /// <summary>
-        /// An error occured trying to perform a SolidWorks API call on the Command Manager
+        /// An error occurred trying to perform a SolidWorks API call on the Command Manager
         /// </summary>
         SolidWorksCommandManager = 13,
+
+        /// <summary>
+        /// An error occurred trying to perform a SolidWorks API call on export data
+        /// </summary>
+        ExportData = 14,
 
     }
 }

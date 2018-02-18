@@ -1,7 +1,5 @@
 ﻿using AngelSix.SolidDna;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace SolidDna.Exporting
 {
@@ -44,12 +42,12 @@ namespace SolidDna.Exporting
         /// <summary>
         /// My Add-in description
         /// </summary>
-        public override string AddInDescription {  get { return "An example of Command Items and exporting"; } }
+        public override string AddInDescription => "An example of Command Items and exporting";
 
         /// <summary>
         /// My Add-in title
         /// </summary>
-        public override string AddInTitle { get { return "SolidDNA Exporting"; } }
+        public override string AddInTitle => "SolidDNA Exporting";
 
         #endregion
 

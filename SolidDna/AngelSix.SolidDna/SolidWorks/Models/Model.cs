@@ -1,5 +1,6 @@
 ﻿using System;
 using SolidWorks.Interop.sldworks;
+using SolidWorks.Interop.swconst;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -22,7 +23,7 @@ namespace AngelSix.SolidDna
         /// Indicates if this file has been saved (so exists on disk)
         /// If not, it's a new model currently only in-memory and will not have a file path
         /// </summary>
-        public bool HasBeenSaved { get; protected set; }
+        public bool HasBeenSaved => !string.IsNullOrEmpty(UnsafeObject?.GetPathName());
 
         /// <summary>
         /// The type of document such as a part, assembly or drawing
@@ -32,17 +33,17 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// True if this model is a part
         /// </summary>
-        public bool IsPart { get { return ModelType == ModelType.Part; } }
+        public bool IsPart => ModelType == ModelType.Part;
 
         /// <summary>
         /// True if this model is an assembly
         /// </summary>
-        public bool IsAssembly { get { return ModelType == ModelType.Assembly; } }
+        public bool IsAssembly => ModelType == ModelType.Assembly;
 
         /// <summary>
         /// True if this model is a drawing
         /// </summary>
-        public bool IsDrawing { get { return ModelType == ModelType.Drawing; } }
+        public bool IsDrawing => ModelType == ModelType.Drawing;
 
         /// <summary>
         /// Contains extended information about the model
@@ -62,16 +63,36 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Get the number of configurations
         /// </summary>
-        public int ConfigurationCount { get { return mBaseObject.GetConfigurationCount(); } }
+        public int ConfigurationCount => mBaseObject.GetConfigurationCount();
 
         /// <summary>
         /// The mass properties of the part
         /// </summary>
-        public MassProperties MassProperties {  get { return Extension.GetMassProperties(); } }
+        public MassProperties MassProperties => Extension.GetMassProperties();
 
         #endregion
 
         #region Public Events
+        
+        /// <summary>
+        /// Called after the a drawing sheet was added
+        /// </summary>
+        public event Action<string> DrawingSheetAdded = (sheetName) => { };
+
+        /// <summary>
+        /// Called after the active drawing sheet has changed
+        /// </summary>
+        public event Action<string> DrawingActiveSheetChanged = (sheetName) => { };
+
+        /// <summary>
+        /// Called before the active drawing sheet changes
+        /// </summary>
+        public event Action<string> DrawingActiveSheetChanging = (sheetName) => { };
+        
+        /// <summary>
+        /// Called after the a drawing sheet was deleted
+        /// </summary>
+        public event Action<string> DrawingSheetDeleted = (sheetName) => { };
 
         /// <summary>
         /// Called as the model is about to be closed
@@ -124,9 +145,6 @@ namespace AngelSix.SolidDna
             // Get the file path
             FilePath = mBaseObject.GetPathName();
 
-            // If no path is retrieved, the file hasn't been saved
-            HasBeenSaved = !string.IsNullOrEmpty(FilePath);
-
             // Get the models type
             ModelType = (ModelType)mBaseObject.GetType();
 
@@ -163,12 +181,17 @@ namespace AngelSix.SolidDna
                     AsAssembly().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
                 case ModelType.Part:
+                    AsPart().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
                     AsPart().DestroyNotify += FileDestroyedNotify;
                     AsPart().FileSavePostNotify += FileSaveNotify;
                     AsPart().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsPart().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
                 case ModelType.Drawing:
+                    AsDrawing().ActivateSheetPostNotify += SheetActivatePostNotify;
+                    AsDrawing().ActivateSheetPreNotify += SheetActivatePreNotify;
+                    AsDrawing().AddItemNotify += DrawingItemAddNotify;
+                    AsDrawing().DeleteItemNotify += DrawingDeleteItemNotify;
                     AsDrawing().DestroyNotify += FileDestroyedNotify;
                     AsDrawing().FileSavePostNotify += FileSaveNotify;
                     AsDrawing().UserSelectionPostNotify += UserSelectionPostNotify;
@@ -177,23 +200,57 @@ namespace AngelSix.SolidDna
             }
         }
 
-        private int Model_ClearSelectionsNotify()
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
 
         #region Model Event Methods
 
         /// <summary>
-        /// Called when an assembly has it's active configuration changed
+        /// Called when a part or assembly has its active configuration changed
         /// </summary>
         /// <returns></returns>
         protected int ActiveConfigChangePostNotify()
         {
             // Refresh data
             ReloadModelData();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called when a drawing item is added to the feature tree
+        /// </summary>
+        /// <param name="entityType">Type of entity that is changed</param>
+        /// <param name="itemName">Name of entity that is changed</param>
+        /// <returns></returns>
+        protected int DrawingItemAddNotify(int entityType, string itemName)
+        {
+            // Check if a sheet is added.
+            // SolidWorks always activates the new sheet, but the sheet activate events aren't fired.
+            if (EntityIsDrawingSheet(entityType))
+            {
+                SheetAddedNotify(itemName);
+                SheetActivatePostNotify(itemName);
+            }
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called when a drawing item is removed from the feature tree
+        /// </summary>
+        /// <param name="entityType">Type of entity that is changed</param>
+        /// <param name="itemName">Name of entity that is changed</param>
+        /// <returns></returns>
+        protected int DrawingDeleteItemNotify(int entityType, string itemName)
+        {
+            // Check if the removed items is a sheet
+            if (EntityIsDrawingSheet(entityType))
+            {
+                // Inform listeners
+                DrawingSheetDeleted(itemName);
+            }
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -219,10 +276,6 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         protected int FileSaveNotify(int saveType, string filename)
         {
-            // If the current model was not saved before this event, update the state
-            if (!HasBeenSaved)
-                ReloadModelData();
-
             // Inform listeners
             ModelSaved();
 
@@ -242,6 +295,47 @@ namespace AngelSix.SolidDna
 
             // Inform listeners
             ModelClosing();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called after the active drawing sheet is changed.
+        /// </summary>
+        /// <param name="sheetName">Name of the sheet that is activated</param>
+        /// <returns></returns>
+        protected int SheetActivatePostNotify(string sheetName)
+        {
+            // Inform listeners
+            DrawingActiveSheetChanged(sheetName);
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called before the active drawing sheet changes
+        /// </summary>
+        protected int SheetActivatePreNotify(string sheetName)
+        {
+            // Inform listeners
+            DrawingActiveSheetChanging(sheetName);
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+
+        }
+
+        /// <summary>
+        /// Called after a sheet is added.
+        /// </summary>
+        /// <param name="sheetName">Name of the new sheet</param>
+        /// <returns></returns>
+        protected int SheetAddedNotify(string sheetName)
+        {
+            // Inform listeners
+            DrawingSheetAdded(sheetName);
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -329,6 +423,20 @@ namespace AngelSix.SolidDna
                 // Let the action use them
                 action(properties);
             }
+        }
+
+        #endregion
+
+        #region Drawings
+
+        /// <summary>
+        /// Check if an entity that was added, changed or removed is a drawing sheet.
+        /// </summary>
+        /// <param name="entityType">Type of the entity</param>
+        /// <returns></returns>
+        private static bool EntityIsDrawingSheet(int entityType)
+        {
+            return entityType == (int)swNotifyEntityType_e.swNotifyDrawingSheet;
         }
 
         #endregion
@@ -427,6 +535,56 @@ namespace AngelSix.SolidDna
         public void SelectedObjects(Action<List<SelectedObject>> action)
         {
              SelectionManager?.SelectedObjects(action);
+        }
+
+        #endregion
+
+        #region Saving
+
+        /// <summary>
+        /// Saves a file to the specified path, with the specified options
+        /// </summary>
+        /// <param name="savePath">The path of the file to save as</param>
+        /// <param name="version">The version</param>
+        /// <param name="options">Any save as options</param>
+        /// <param name="pdfExportData">The PDF Export data if the save as type is a PDF</param>
+        /// <returns></returns>
+        public ModelSaveResult SaveAs(string savePath, SaveAsVersion version = SaveAsVersion.CurrentVersion, SaveAsOptions options = SaveAsOptions.None, PdfExportData pdfExportData = null)
+        {
+            // Start with a successful result
+            var results = new ModelSaveResult();
+
+            // Set errors and warnings to none to start with
+            var errors = 0;
+            var warnings = 0;
+
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() =>
+            {
+                // Try and save the model using the SaveAs method
+                mBaseObject.Extension.SaveAs(savePath, (int)version, (int)options, pdfExportData?.ExportData, ref errors, ref warnings);
+
+                // If this fails, try another way
+                if (errors != 0)
+                    mBaseObject.SaveAs4(savePath, (int)version, (int)options, ref errors, ref warnings);
+
+                // Add any warnings
+                results.Warnings = (SaveAsWarnings)warnings;
+
+                // Add any errors
+                results.Errors = (SaveAsErrors)errors;
+
+                // If successful...
+                if (results.Successful)
+                    // Reload model data
+                    ReloadModelData();
+
+                // Return result
+                return results;
+            },
+                SolidDnaErrorTypeCode.SolidWorksModel,
+                SolidDnaErrorCode.SolidWorksModelSaveAsError,
+                Localization.GetString("SolidWorksModelGetMaterialError"));
         }
 
         #endregion

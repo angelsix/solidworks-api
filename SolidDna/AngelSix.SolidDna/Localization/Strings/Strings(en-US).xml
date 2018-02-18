@@ -42,5 +42,10 @@
   <String Name="ErrorSolidWorksCommandGroupIconListInvalidPathError">An error occurred setting a SolidWorks Command Group Icon list path. The string was an invalid format</String>
   <String Name="ErrorSolidWorksCommandGroupActivateError">An error occurred activating a SolidWorks Command Group</String>
   <String Name="ErrorSolidWorksCommandCreateTabError">An error occurred creating a SolidWorks Command Group Tab</String>
+
+  <!-- Export Data -->
+  <String Name="SolidWorksExportDataError">An unknown error occurred in the Export Data class</String>
+  <String Name="SolidWorksExportDataGetPdfExportDataError">An error occurred calling SldWorks.GetExportFileData(1) to get PDF Export data</String>
+  <String Name="SolidWorksExportDataPdfSetSheetsError">An error occurred calling SetSheets on the PDF Export Data object</String>
   
 </Strings>

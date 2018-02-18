@@ -10,7 +10,7 @@ namespace AngelSix.SolidDna
             /// <summary>
             /// The scaling factor used when exporting as DXF
             /// </summary>
-            public double DxfOutputScaleFactor { get { return Dna.Application.GetUserPreferencesDouble(swUserPreferenceDoubleValue_e.swDxfOutputScaleFactor); } }
+            public double DxfOutputScaleFactor => Dna.Application.GetUserPreferencesDouble(swUserPreferenceDoubleValue_e.swDxfOutputScaleFactor);
         }
     }
 }
