@@ -574,10 +574,10 @@ namespace AngelSix.SolidDna
         /// Pops up a message box to the user with the given message
         /// </summary>
         /// <param name="message">The message to display to the user</param>
-        public void ShowMessageBox(string message, SolidWorksMessageBoxIcon icon = SolidWorksMessageBoxIcon.Information)
+        public SolidWorksMessageBoxResult ShowMessageBox(string message, SolidWorksMessageBoxIcon icon = SolidWorksMessageBoxIcon.Information, SolidWorksMessageBoxButtons buttons = SolidWorksMessageBoxButtons.Ok)
         {
             // Send message to user
-            mBaseObject.SendMsgToUser2(message, (int)icon, (int)SolidWorksMessageBoxButtons.Ok);
+            return (SolidWorksMessageBoxResult) mBaseObject.SendMsgToUser2(message, (int)icon, (int) buttons);
         }
 
         #endregion
