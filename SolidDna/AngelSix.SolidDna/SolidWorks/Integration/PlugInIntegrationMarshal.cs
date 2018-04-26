@@ -65,28 +65,37 @@ namespace AngelSix.SolidDna
                 if (!found)
                     found = PlugInIntegration.AssembliesToResolve.Any(f => f == args.Name);
 
+                // If not found...
                 if (!found)
+                    // Return null
                     return null;
 
+                // Try and load the assembly
                 var assembly = Assembly.Load(args.Name);
+
+                // If it loaded...
                 if (assembly != null)
+                    // Return it
                     return assembly;
 
+                // Otherwise, throw file not found
                 throw new FileNotFoundException();
             }
             catch
             {
                 //
                 // Try to load by filename - split out the filename of the full assembly name
-                // and append the base path of the original assembly (ie. look in the same directory)
+                // and append the base path of the original assembly (i.e. look in the same directory)
                 //
                 // NOTE: this doesn't account for special search paths but then that never
                 //       worked before either
                 //
-                var Parts = args.Name.Split(',');
-                var File = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + Parts[0].Trim() + ".dll";
+                var parts = args.Name.Split(',');
+                var filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + parts[0].Trim() + ".dll";
 
-                return Assembly.LoadFrom(File);
+                // Try and load assembly at let it throw FileNotFound if not there 
+                // as it's an expected failure if not found
+                return Assembly.LoadFrom(filePath);
             }
         }
 
