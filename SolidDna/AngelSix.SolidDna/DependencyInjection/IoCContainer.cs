@@ -1,5 +1,7 @@
-﻿using Ninject;
+﻿using Dna;
+using Microsoft.Extensions.DependencyInjection;
 using System;
+using static Dna.Framework;
 
 namespace AngelSix.SolidDna
 {
@@ -8,12 +10,12 @@ namespace AngelSix.SolidDna
     /// </summary>
     public static class IoC
     {
-        #region Specific Dependecy shortcuts
+        #region Specific Dependency shortcuts
 
         /// <summary>
         /// Access the <see cref="ILocalizationManager"/>
         /// </summary>
-        public static ILocalizationManager Localization { get { return IoCContainer.Get<ILocalizationManager>(); } }
+        public static ILocalizationManager Localization => Get<ILocalizationManager>();
 
         #endregion
 
@@ -40,6 +42,26 @@ namespace AngelSix.SolidDna
         }
 
         #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Sets up the IoC and injects all required elements
+        /// </summary>
+        /// <param name="configureServices">Provides a callback to inject any services into the Dna.Framework DI system</param>
+        public static void Setup(Action<FrameworkConstruction> configureServices = null)
+        {
+            // Create default construction
+            var construction = new DefaultFrameworkConstruction();
+
+            // Invoke the callback for adding custom services
+            configureServices?.Invoke(construction);
+
+            // Build DI
+            construction.Build();
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -47,50 +69,7 @@ namespace AngelSix.SolidDna
     /// </summary>
     public static class IoCContainer
     {
-        #region Private Members
-
-        /// <summary>
-        /// A flag indicating if the IoC container has been initialized
-        /// </summary>
-        private static bool mInitialized = false;
-
-        #endregion
-
-        #region Public Properties
-
-        /// <summary>
-        /// The underlying kernel of the dependency injection handler
-        /// </summary>
-        public static IKernel Kernel { get; private set; } = new StandardKernel();
-
-        #endregion
-
         #region Public Methods
-
-        /// <summary>
-        /// Should be called to configure and inject all core services into the IoC Container at the very start of the application
-        /// </summary>
-        public static void Ensure()
-        {
-            if (mInitialized)
-                return;
-
-            // Add logger
-            Kernel.Bind<ILogFactory>().ToConstant(new BaseLogFactory());
-
-            // Add localization manager
-            Kernel.Bind<ILocalizationManager>().ToConstant(new LocalizationManager
-            {
-                StringResourceDefinition = new ResourceDefinition
-                {
-                    Type = ResourceDefinitionType.EmbeddedResource,
-                    Location = "AngelSix.SolidDna.Localization.Strings.Strings ({0}).xml",
-                    UseDefaultCultureIfNotFound = true,
-                }
-            });
-
-            mInitialized = true;
-        }
 
         /// <summary>
         /// Attempts to get the injected service of the specified type
@@ -101,14 +80,11 @@ namespace AngelSix.SolidDna
         {
             try
             {
-                // Check we have been initialized
-                Ensure();
-
-                return Kernel.Get<T>();
+                return Framework.Service<T>();
             }
             catch (Exception ex)
             {
-                Logger.Log($"Get '{typeof(T)}' failed. {ex.GetErrorMessage()}");
+                Logger.LogCriticalSource($"Get '{typeof(T)}' failed. {ex.GetErrorMessage()}");
                 return default(T);
             }
         }
@@ -122,14 +98,11 @@ namespace AngelSix.SolidDna
         {
             try
             {
-                // Check we have been initialized
-                Ensure();
-
-                return Kernel.Get(type);
+                return Framework.Provider.GetService(type);
             }
             catch (Exception ex)
             {
-                Logger.Log($"Get '{type}' failed. {ex.GetErrorMessage()}");
+                Logger.LogCriticalSource($"Get '{type}' failed. {ex.GetErrorMessage()}");
                 return null;
             }
         }

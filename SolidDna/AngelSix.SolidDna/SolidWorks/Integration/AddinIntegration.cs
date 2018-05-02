@@ -1,8 +1,9 @@
-﻿using SolidWorks.Interop.sldworks;
+﻿using Dna;
+using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swpublished;
 using System;
-using System.Reflection;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AngelSix.SolidDna
 {
@@ -51,6 +52,10 @@ namespace AngelSix.SolidDna
         /// </summary>
         public static event Action DisconnectedFromSolidWorks = () => { };
 
+        #endregion
+
+        #region Public Abstract Methods
+
         /// <summary>
         /// Specific application startup code when SolidWorks is connected 
         /// and before any plug-ins or listeners are informed
@@ -72,6 +77,12 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <returns></returns>
         public abstract void PreLoadPlugIns();
+
+        /// <summary>
+        /// Add any dependency injection items into the DI provider that you would like to use in your application
+        /// </summary>
+        /// <param name="construction"></param>
+        public abstract void ConfigureServices(FrameworkConstruction construction);
 
         #endregion
 
@@ -99,9 +110,6 @@ namespace AngelSix.SolidDna
 
             PreConnectToSolidWorks();
 
-            // Setup IoC
-            IoCContainer.Ensure();
-
             //
             //   NOTE: Do not need to create it here, as we now create it inside PlugInIntegration.Setup in it's own AppDomain
             //         If we change back to loading directly (not in an app domain) then uncomment this 
@@ -114,7 +122,28 @@ namespace AngelSix.SolidDna
             var ok = ((SldWorks)ThisSW).SetAddinCallbackInfo2(0, this, Cookie);
 
             // Setup plug-in application domain
-            PlugInIntegration.Setup(GetType().Assembly.Location, ((SldWorks)ThisSW).RevisionNumber(), Cookie);
+            PlugInIntegration.Setup(GetType().Assembly.Location, ((SldWorks)ThisSW).RevisionNumber(), Cookie,
+                // Setup IoC
+                (construction) =>
+                {
+                    //  Add SolidDna-specific services
+                    // --------------------------------
+
+                    // Add localization manager
+                    construction.Services.AddSingleton<ILocalizationManager>(new LocalizationManager
+                      {
+                          StringResourceDefinition = new ResourceDefinition
+                          {
+                              Type = ResourceDefinitionType.EmbeddedResource,
+                              Location = "AngelSix.SolidDna.Localization.Strings.Strings-{0}.xml",
+                              UseDefaultCultureIfNotFound = true,
+                          }
+                      });
+
+                    //  Configure any services this class wants to add
+                    // ------------------------------------------------
+                    ConfigureServices(construction);
+                });
 
             // Any pre-load steps
             PreLoadPlugIns();

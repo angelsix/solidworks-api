@@ -24,8 +24,8 @@ namespace AngelSix.SolidDna
         public static TResult RunSync<TResult>(Func<Task<TResult>> func)
         {
             return mTaskFactory
-              .StartNew<Task<TResult>>(func)
-              .Unwrap<TResult>()
+              .StartNew(func)
+              .Unwrap()
               .GetAwaiter()
               .GetResult();
         }
@@ -38,7 +38,7 @@ namespace AngelSix.SolidDna
         public static void RunSync(Func<Task> func)
         {
             mTaskFactory
-              .StartNew<Task>(func)
+              .StartNew(func)
               .Unwrap()
               .GetAwaiter()
               .GetResult();

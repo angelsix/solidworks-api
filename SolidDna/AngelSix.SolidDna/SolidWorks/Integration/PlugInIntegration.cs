@@ -1,4 +1,5 @@
-﻿using SolidWorks.Interop.sldworks;
+﻿using Dna;
+using SolidWorks.Interop.sldworks;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -83,7 +84,8 @@ namespace AngelSix.SolidDna
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
         /// <param name="cookie">The cookie Id of the SolidWorks instance</param>
         /// <param name="version">The version of the currently connected SolidWorks instance</param>
-        public static void Setup(string addinPath, string version, int cookie)
+        /// <param name="configureServices">Provides a callback to inject any services into the Dna.Framework DI system</param>
+        public static void Setup(string addinPath, string version, int cookie, Action<FrameworkConstruction> configureServices = null)
         {
             if (UseDetachedAppDomain)
             {
@@ -104,12 +106,12 @@ namespace AngelSix.SolidDna
                 CrossDomain = (PlugInIntegrationMarshal)PlugInAppDomain.CreateInstanceAndUnwrap(typeof(PlugInIntegrationMarshal).Assembly.FullName, typeof(PlugInIntegrationMarshal).FullName);
 
                 // Setup
-                CrossDomain.SetupAppDomain(addinPath, version, cookie);
+                CrossDomain.SetupAppDomain(addinPath, version, cookie, configureServices);
             }
             else
             {
                 // Setup IoC
-                IoCContainer.Ensure();
+                IoC.Setup(configureServices);
 
                 // Get the version number (such as 25 for 2016)
                 var postFix = "";

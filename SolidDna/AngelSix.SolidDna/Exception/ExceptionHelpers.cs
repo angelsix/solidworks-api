@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Dna;
+using System;
 using System.Diagnostics;
+using static Dna.Framework;
 
 namespace AngelSix.SolidDna
 {
@@ -33,7 +35,7 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public static string GetErrorMessage(this Exception ex)
         {
-            string text = string.Empty;
+            var text = string.Empty;
 
             while (ex != null)
             {
@@ -59,11 +61,11 @@ namespace AngelSix.SolidDna
                     Debugger.Break();
 
                 // Log the error
-                Logger.Log($"Unexpected error at {source}. {ex.GetErrorMessage()}");
+                Logger.LogCriticalSource($"Unexpected error at {source}. {ex.GetErrorMessage()}");
             }
             catch (Exception iex)
             {
-                Logger.Log("GLOBAL EXCEPTION CRASHED ITSELF WITH " + iex.GetErrorMessage());
+                Logger.LogCriticalSource("GLOBAL EXCEPTION CRASHED ITSELF WITH " + iex.GetErrorMessage());
             }
         }
     }
