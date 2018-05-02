@@ -95,15 +95,10 @@ namespace AngelSix.SolidDna
         /// </summary>
         public ModelTemplateType MenuVisibleInDocumentTypes
         {
-            get
-            {
-                return (ModelTemplateType)mBaseObject.ShowInDocumentType;
-            }
-            set
-            {
+            get => (ModelTemplateType)mBaseObject.ShowInDocumentType;
+            set =>
                 // Set base object
                 mBaseObject.ShowInDocumentType = (int)value;
-            }
         }
 
         /// <summary>
@@ -112,15 +107,10 @@ namespace AngelSix.SolidDna
         /// </summary>
         public bool HasMenu
         {
-            get
-            {
-                return mBaseObject.HasMenu;
-            }
-            set
-            {
+            get => mBaseObject.HasMenu;
+            set =>
                 // Set base object
                 mBaseObject.HasMenu = value;
-            }
         }
 
         /// <summary>
@@ -129,15 +119,8 @@ namespace AngelSix.SolidDna
         /// </summary>
         public bool HasToolbar
         {
-            get
-            {
-                return mBaseObject.HasToolbar;
-            }
-            set
-            {
-                // Set base object
-                mBaseObject.HasToolbar = value;
-            }
+            get => mBaseObject.HasToolbar;
+            set => mBaseObject.HasToolbar = value;
         }
 
         /// <summary>

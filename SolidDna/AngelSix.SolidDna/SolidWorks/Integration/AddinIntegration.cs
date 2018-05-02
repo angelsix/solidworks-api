@@ -1,10 +1,8 @@
 ﻿using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swpublished;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading;
 
 namespace AngelSix.SolidDna
 {
@@ -96,6 +94,9 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public bool ConnectToSW(object ThisSW, int Cookie)
         {
+            // Get the path to this actual add-in dll
+            var myPath = this.AssemblyPath();
+
             PreConnectToSolidWorks();
 
             // Setup IoC
@@ -113,13 +114,13 @@ namespace AngelSix.SolidDna
             var ok = ((SldWorks)ThisSW).SetAddinCallbackInfo2(0, this, Cookie);
 
             // Setup plug-in application domain
-            PlugInIntegration.Setup(((SldWorks)ThisSW).RevisionNumber(), Cookie);
+            PlugInIntegration.Setup(GetType().Assembly.Location, ((SldWorks)ThisSW).RevisionNumber(), Cookie);
 
             // Any pre-load steps
             PreLoadPlugIns();
 
             // Perform any plug-in configuration
-            PlugInIntegration.ConfigurePlugIns();
+            PlugInIntegration.ConfigurePlugIns(myPath);
 
             // Call the application startup function for an entry point to the application
             ApplicationStartup();
@@ -196,8 +197,19 @@ namespace AngelSix.SolidDna
                 // Load add-in when SolidWorks opens
                 rk.SetValue(null, 1);
 
+                //
+                // IMPORTANT: 
+                //
+                //   In this special case, COM register won't load the wrong AngelSix.SolidDna.dll file 
+                //   as it isn't loading multiple instances and keeping them in memory
+                //            
+                //   So loading the path of the AngelSix.SolidDna.dll file that should be in the same
+                //   folder as the add-in dll right now will work fine to get the add-in path
+                //
+                var pluginPath = typeof(PlugInIntegration).CodeBaseNormalized();
+
                 // Let plug-ins configure title and descriptions
-                PlugInIntegration.ConfigurePlugIns();
+                PlugInIntegration.ConfigurePlugIns(pluginPath);
 
                 // Set SolidWorks add-in title and description
                 rk.SetValue("Title", SolidWorksAddInTitle);

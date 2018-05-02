@@ -19,11 +19,12 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Configures the app-domain that the plug-ins run inside of
         /// </summary>
-        /// <param name="version">The version of the currently connected SolidWorks instance</param>
+        /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
         /// <param name="cookie">The cookie Id of the SolidWorks instance</param>
-        public void SetupAppDomain(string version, int cookie)
+        /// <param name="version">The version of the currently connected SolidWorks instance</param>
+        public void SetupAppDomain(string addinPath, string version, int cookie)
         {
-            PlugInIntegration.Setup(version, cookie);
+            PlugInIntegration.Setup(addinPath, version, cookie);
 
             // Make sure we resolve assemblies in this domain, as it seems to use this domain to resolve
             // assemblies not the appDomain when crossing boundaries
@@ -161,9 +162,13 @@ namespace AngelSix.SolidDna
 
         #region Plug-Ins
 
-        public void ConfigurePlugIns()
+        /// <summary>
+        /// Runs any initialization code required on plug-ins
+        /// </summary>
+        /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
+        public void ConfigurePlugIns(string addinPath)
         {
-            PlugInIntegration.ConfigurePlugIns();
+            PlugInIntegration.ConfigurePlugIns(addinPath);
         }
 
         /// <summary>
