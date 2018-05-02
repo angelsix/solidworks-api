@@ -4,6 +4,7 @@ using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System;
 using System.Collections.Generic;
+using static AngelSix.SolidDna.Dna;
 
 namespace SolidDna.Exporting
 {
@@ -18,10 +19,10 @@ namespace SolidDna.Exporting
         public static void ExportPartAsDxf()
         {
             // Make sure we have a part
-            if (Dna.Application.ActiveModel?.IsPart != true)
+            if (Application.ActiveModel?.IsPart != true)
             {
                 // Tell user
-                Dna.Application.ShowMessageBox("Active model is not a part", SolidWorksMessageBoxIcon.Stop);
+                Application.ShowMessageBox("Active model is not a part", SolidWorksMessageBoxIcon.Stop);
 
                 return;
             }
@@ -34,10 +35,10 @@ namespace SolidDna.Exporting
                 return;
 
             // Now export as DXF
-            Dna.Application.ActiveModel.AsPart().ExportFlatPatternView(location, (int)swExportFlatPatternViewOptions_e.swExportFlatPatternOption_RemoveBends);
+            Application.ActiveModel.AsPart().ExportFlatPatternView(location, (int)swExportFlatPatternViewOptions_e.swExportFlatPatternOption_RemoveBends);
 
             // Tell user
-            Dna.Application.ShowMessageBox("Successfully saved part as DXF");
+            Application.ShowMessageBox("Successfully saved part as DXF");
         }
 
         /// <summary>
@@ -46,10 +47,10 @@ namespace SolidDna.Exporting
         public static void ExportModelAsStep()
         {
             // Make sure we have a part or assembly
-            if (Dna.Application.ActiveModel?.IsPart != true && Dna.Application.ActiveModel?.IsAssembly != true)
+            if (Application.ActiveModel?.IsPart != true && Application.ActiveModel?.IsAssembly != true)
             {
                 // Tell user
-                Dna.Application.ShowMessageBox("Active model is not a part or assembly", SolidWorksMessageBoxIcon.Stop);
+                Application.ShowMessageBox("Active model is not a part or assembly", SolidWorksMessageBoxIcon.Stop);
 
                 return;
             }
@@ -62,7 +63,7 @@ namespace SolidDna.Exporting
                 return;
 
             // Try and save the file...
-            var result = Dna.Application.ActiveModel.SaveAs(
+            var result = Application.ActiveModel.SaveAs(
                 // Save as location
                 location,
                 // Do it silently and as a copy, updating anything thats needed before saving
@@ -71,10 +72,10 @@ namespace SolidDna.Exporting
 
             if (!result.Successful)
                 // Tell user failed
-                Dna.Application.ShowMessageBox("Failed to save model as STEP");
+                Application.ShowMessageBox("Failed to save model as STEP");
             else
                 // Tell user success
-                Dna.Application.ShowMessageBox("Successfully saved model as STEP");
+                Application.ShowMessageBox("Successfully saved model as STEP");
         }
 
         /// <summary>
@@ -83,10 +84,10 @@ namespace SolidDna.Exporting
         public static void ExportDrawingAsPdf()
         {
             // Make sure we have a part or assembly
-            if (Dna.Application.ActiveModel?.IsDrawing != true)
+            if (Application.ActiveModel?.IsDrawing != true)
             {
                 // Tell user
-                Dna.Application.ShowMessageBox("Active model is not a drawing", SolidWorksMessageBoxIcon.Stop);
+                Application.ShowMessageBox("Active model is not a drawing", SolidWorksMessageBoxIcon.Stop);
 
                 return;
             }
@@ -99,14 +100,14 @@ namespace SolidDna.Exporting
                 return;
 
             // Get sheet names
-            var sheetNames = new List<string>((string[])Dna.Application.ActiveModel.AsDrawing().GetSheetNames());
+            var sheetNames = new List<string>((string[])Application.ActiveModel.AsDrawing().GetSheetNames());
 
             // Set PDF sheet settings
             var exportData = new PdfExportData();
             exportData.SetSheets(PdfSheetsToExport.ExportSpecifiedSheets, sheetNames);
 
             // Try and save the file...
-            var result = Dna.Application.ActiveModel.SaveAs(
+            var result = Application.ActiveModel.SaveAs(
                 // Save as location
                 location,
                 // Do it silently and as a copy, updating anything thats needed before saving
@@ -116,10 +117,10 @@ namespace SolidDna.Exporting
 
             if (!result.Successful)
                 // Tell user failed
-                Dna.Application.ShowMessageBox("Failed to save drawing as PDF");
+                Application.ShowMessageBox("Failed to save drawing as PDF");
             else
                 // Tell user success
-                Dna.Application.ShowMessageBox("Successfully saved drawing as PDF");
+                Application.ShowMessageBox("Successfully saved drawing as PDF");
         }
 
         #region Private Helpers

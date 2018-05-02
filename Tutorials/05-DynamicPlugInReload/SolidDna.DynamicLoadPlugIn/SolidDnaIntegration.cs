@@ -1,4 +1,5 @@
 ﻿using AngelSix.SolidDna;
+using Dna;
 
 namespace SolidDna.DynamicLoadPlugIn
 {
@@ -31,6 +32,11 @@ namespace SolidDna.DynamicLoadPlugIn
             //       when they try to load dll's
             //
             PlugInIntegration.UseDetachedAppDomain = true;
+        }
+
+        public override void ConfigureServices(FrameworkConstruction construction)
+        {
+
         }
     }
 }

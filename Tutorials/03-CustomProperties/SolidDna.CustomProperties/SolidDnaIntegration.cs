@@ -1,4 +1,5 @@
 ﻿using AngelSix.SolidDna;
+using Dna;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -34,6 +35,11 @@ namespace SolidDna.CustomProperties
             //
             // PlugInIntegration.UseDetachedAppDomain = true;
         }
+
+        public override void ConfigureServices(FrameworkConstruction construction)
+        {
+
+        }
     }
 
     /// <summary>
@@ -55,12 +61,12 @@ namespace SolidDna.CustomProperties
         /// <summary>
         /// My Add-in description
         /// </summary>
-        public override string AddInDescription {  get { return "An example of manipulating Custom Properties inside a SolidWorks model"; } }
+        public override string AddInDescription => "An example of manipulating Custom Properties inside a SolidWorks model";
 
         /// <summary>
         /// My Add-in title
         /// </summary>
-        public override string AddInTitle { get { return "SolidDNA Custom Properties"; } }
+        public override string AddInTitle => "SolidDNA Custom Properties";
 
         #endregion
 
@@ -71,12 +77,12 @@ namespace SolidDna.CustomProperties
             // Create our taskpane
             mTaskpane = new TaskpaneIntegration<TaskpaneUserControlHost>()
             {
-                Icon = Path.Combine(PlugInIntegration.PlugInFolder, "logo-small.png"),
+                Icon = Path.Combine(this.AssemblyPath(), "logo-small.png"),
                 WpfControl = new CustomPropertiesUI()
             };
 
             // Add to taskpane
-            Task.Run(() => mTaskpane.AddToTaskpane());
+            Task.Run(() => mTaskpane.AddToTaskpaneAsync());
         }
 
         public override void DisconnectedFromSolidWorks()

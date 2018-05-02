@@ -8,6 +8,6 @@
         /// <summary>
         /// The currently running instance of SolidWorks
         /// </summary>
-        public static SolidWorksApplication Application { get { return AddInIntegration.SolidWorks; } }
+        public static SolidWorksApplication Application => AddInIntegration.SolidWorks;
     }
 }

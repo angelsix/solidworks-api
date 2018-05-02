@@ -38,12 +38,12 @@ namespace SolidDna.DynamicLoadPlugIn
             // Create our taskpane
             mTaskpane = new TaskpaneIntegration<TaskpaneUserControlHost>()
             {
-                Icon = Path.Combine(PlugInIntegration.PlugInFolder, "logo-small.png"),
+                Icon = Path.Combine(this.AssemblyPath(), "logo-small.png"),
                 WpfControl = new CustomPropertiesUI()
             };
 
             // Add to taskpane
-            mTaskpane.AddToTaskpane();
+            mTaskpane.AddToTaskpaneAsync();
         }
 
         public override void DisconnectedFromSolidWorks()
