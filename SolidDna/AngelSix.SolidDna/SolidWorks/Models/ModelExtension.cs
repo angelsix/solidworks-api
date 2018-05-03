@@ -78,7 +78,7 @@ namespace AngelSix.SolidDna
                 //
                 // Tested on 2015 crashes so drop-back to lower version for support
                 //
-                if (Dna.Application.SolidWorksVersion.Version < 2016)
+                if (SolidWorksEnvironment.Application.SolidWorksVersion.Version < 2016)
                     // NOTE: 2 is best accuracy
                     massProps = (double[])mBaseObject.GetMassProperties(2, ref status);
                 else

@@ -3,7 +3,7 @@
     /// <summary>
     /// A class providing shorthand access to commonly used values
     /// </summary>
-    public static class Dna
+    public static class SolidWorksEnvironment
     {
         /// <summary>
         /// The currently running instance of SolidWorks

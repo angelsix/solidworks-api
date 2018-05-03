@@ -422,10 +422,12 @@ namespace AngelSix.SolidDna
                 
                 // Try and find the title from the first plug-in found
                 var plugins = SolidDnaPlugIns(addinPath, loadAll: true);
-                if (plugins.Count > 0)
+                var firstPlugInWithTitle = plugins.FirstOrDefault(f => !string.IsNullOrEmpty(f.AddInTitle));
+
+                if (firstPlugInWithTitle != null)
                 {
-                    AddInIntegration.SolidWorksAddInTitle = plugins.First().AddInTitle;
-                    AddInIntegration.SolidWorksAddInDescription = plugins.First().AddInDescription;
+                    AddInIntegration.SolidWorksAddInTitle = firstPlugInWithTitle.AddInTitle;
+                    AddInIntegration.SolidWorksAddInDescription = firstPlugInWithTitle.AddInDescription;
                 }
 
                 // Load all plug-in's at this stage for faster lookup

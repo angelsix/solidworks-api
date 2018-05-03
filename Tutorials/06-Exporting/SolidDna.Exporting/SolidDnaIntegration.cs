@@ -1,7 +1,7 @@
 ﻿using Dna;
 using AngelSix.SolidDna;
 using System.Collections.Generic;
-using static AngelSix.SolidDna.Dna;
+using static AngelSix.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDna.Exporting
 {

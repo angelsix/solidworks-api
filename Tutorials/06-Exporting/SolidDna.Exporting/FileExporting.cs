@@ -1,10 +1,8 @@
 ﻿using AngelSix.SolidDna;
 using Microsoft.Win32;
-using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
-using System;
 using System.Collections.Generic;
-using static AngelSix.SolidDna.Dna;
+using static AngelSix.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDna.Exporting
 {

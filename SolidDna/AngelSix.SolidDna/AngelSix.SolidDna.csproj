@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.0.3</Version>
+    <Version>1.0.0.5</Version>
     <Authors>Luke Malpass</Authors>
     <Company>AngelSix Ltd</Company>
     <Description>The new SolidDNA SDK, making the SolidWorks API easier, well behaved and modern</Description>
@@ -12,6 +12,14 @@
     <PackageProjectUrl>https://github.com/angelsix/solidworks-api</PackageProjectUrl>
     <RepositoryUrl>https://github.com/angelsix/solidworks-api</RepositoryUrl>
     <PackageTags>soliddna solidworks angelsix luke malpass api</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\net471\AngelSix.SolidDna.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
