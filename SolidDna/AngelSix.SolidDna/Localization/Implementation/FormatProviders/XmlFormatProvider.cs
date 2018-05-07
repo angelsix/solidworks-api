@@ -43,17 +43,17 @@ namespace AngelSix.SolidDna
         ///       a synchronous version of this call, so the method cannot sync back with
         ///       it's calling context without risk of deadlock
         /// </summary>
-        public async Task<bool> GetString(ResourceDefinition resource, string name, string culture, Action<string> onResult)
+        public async Task<bool> GetStringAsync(ResourceDefinition resource, string name, string culture, Action<string> onResult)
         {
             // Get string document for this culture
-            var document = await GetResourceDocument<XDocument>(resource, (stream) => { return XDocument.Load(stream); }, culture).ConfigureAwait(false);
+            var document = await GetResourceDocumentAsync(resource, (stream) => { return XDocument.Load(stream); }, culture).ConfigureAwait(false);
 
             // If it is null, try and find the default culture if specified
             if (document == null)
             {
                 if (resource.UseDefaultCultureIfNotFound)
 
-                    document = await GetResourceDocument<XDocument>(resource, (stream) => { return XDocument.Load(stream); }).ConfigureAwait(false);
+                    document = await GetResourceDocumentAsync<XDocument>(resource, (stream) => { return XDocument.Load(stream); }).ConfigureAwait(false);
 
                 // Document not found so return false
                 if (document == null)

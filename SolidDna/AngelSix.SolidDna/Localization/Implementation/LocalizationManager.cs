@@ -29,10 +29,11 @@ namespace AngelSix.SolidDna
             DefaultCulture = "en-US";
 
             // Add the providers we want to use by default
-            Providers = new List<IResourceFormatProvider>();
-
-            // Support XML format
-            Providers.Add(new XmlFormatProvider());
+            Providers = new List<IResourceFormatProvider>
+            {
+                // Support XML format
+                new XmlFormatProvider()
+            };
         }
 
         #endregion
@@ -50,7 +51,7 @@ namespace AngelSix.SolidDna
         /// <param name="name">The name of the resource to find</param>
         /// <param name="culture">The culture information to use</param>
         /// <returns>Returns the string if found, or null if not found</returns>
-        public async Task<string> GetString(string name, string culture = null)
+        public async Task<string> GetStringAsync(string name, string culture = null)
         {
             // Make sure we have a string format 
             if (StringResourceDefinition == null)
@@ -75,7 +76,7 @@ namespace AngelSix.SolidDna
 
             foreach (var provider in supportedProviders)
             {
-                if (await provider.GetString(StringResourceDefinition, name, culture, (result) => { value = result; }).ConfigureAwait(false))
+                if (await provider.GetStringAsync(StringResourceDefinition, name, culture, (result) => { value = result; }).ConfigureAwait(false))
                     break;
             }
 
@@ -99,7 +100,7 @@ namespace AngelSix.SolidDna
         {
             // NOTE: No null check because it should always be injected or throw if not as the expected result would be the actual resource string
             //       We do not want to fail silently
-            return await IoC.Localization.GetString(name, culture);
+            return await IoC.Localization.GetStringAsync(name, culture);
         }
 
         /// <summary>
@@ -112,7 +113,7 @@ namespace AngelSix.SolidDna
         {
             // NOTE: No null check because it should always be injected or throw if not as the expected result would be the actual resource string
             //       We do not want to fail silently
-            return AsyncHelpers.RunSync<string>(() => IoC.Localization.GetString(name, culture));
+            return AsyncHelpers.RunSync(() => IoC.Localization.GetStringAsync(name, culture));
         }
     }
 }

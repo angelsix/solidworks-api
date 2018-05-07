@@ -1,8 +1,9 @@
-﻿using AngelSix.SolidDna;
+﻿using Dna;
+using AngelSix.SolidDna;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
-using System;
+using static AngelSix.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDna.DynamicLoadPlugIn
 {
@@ -64,7 +65,7 @@ namespace SolidDna.DynamicLoadPlugIn
             MainContent.Visibility = System.Windows.Visibility.Hidden;
 
             // Listen out for the active model changing
-            Dna.Application.ActiveModelInformationChanged += Application_ActiveModelInformationChanged;
+            Application.ActiveModelInformationChanged += Application_ActiveModelInformationChanged;
         }
 
         #endregion
@@ -92,7 +93,7 @@ namespace SolidDna.DynamicLoadPlugIn
             ThreadHelpers.RunOnUIThread(() =>
             {
                 // Get the active model
-                var model = Dna.Application.ActiveModel;
+                var model = Application.ActiveModel;
 
                 // If we have no model, or the model is not a part
                 // then show the No Part screen and return
@@ -241,7 +242,7 @@ namespace SolidDna.DynamicLoadPlugIn
                 MassText.Text = model.MassProperties?.MassInMetric();
 
                 // Get all materials
-                var materials = Dna.Application.GetMaterials();
+                var materials = Application.GetMaterials();
                 materials.Insert(0, new Material { Name = "Remove Material", Classification = "Not specified", DatabaseFileFound = false });
 
                 RawMaterialList.ItemsSource = materials;
@@ -261,7 +262,7 @@ namespace SolidDna.DynamicLoadPlugIn
 
         private void Model_SelectionChanged()
         {
-            Dna.Application?.ActiveModel?.SelectedObjects((objects) =>
+            Application?.ActiveModel?.SelectedObjects((objects) =>
             {
                 var haveDimension = objects.Any(f => f.IsDimension);
 
@@ -281,7 +282,7 @@ namespace SolidDna.DynamicLoadPlugIn
         /// </summary>
         public void SetDetails()
         {
-            var model = Dna.Application.ActiveModel;
+            var model = Application.ActiveModel;
 
             // Check we have a part
             if (model == null || !model.IsPart)
@@ -416,7 +417,7 @@ namespace SolidDna.DynamicLoadPlugIn
 
         private void LengthButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            Dna.Application.ActiveModel?.SelectedObjects((objects) =>
+            Application.ActiveModel?.SelectedObjects((objects) =>
             {
                 // Get the newest dimension
                 var lastDimension = objects.LastOrDefault(f => f.IsDimension);

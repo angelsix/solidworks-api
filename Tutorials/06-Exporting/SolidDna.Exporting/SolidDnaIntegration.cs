@@ -1,5 +1,7 @@
-﻿using AngelSix.SolidDna;
+﻿using Dna;
+using AngelSix.SolidDna;
 using System.Collections.Generic;
+using static AngelSix.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDna.Exporting
 {
@@ -30,6 +32,11 @@ namespace SolidDna.Exporting
             //
             // PlugInIntegration.UseDetachedAppDomain = true;
         }
+
+        public override void ConfigureServices(FrameworkConstruction construction)
+        {
+
+        }
     }
 
     /// <summary>
@@ -56,7 +63,7 @@ namespace SolidDna.Exporting
         public override void ConnectedToSolidWorks()
         {
             // Part commands
-            var partGroup = Dna.Application.CommandManager.CreateCommands(
+            var partGroup = Application.CommandManager.CreateCommands(
                 title: "Export Part",
                 items: new List<CommandManagerItem>(new[] {
 
@@ -92,7 +99,7 @@ namespace SolidDna.Exporting
                 tooltip: "Such as DXF, STEP and IGES");
 
             // Assembly commands
-            var assemblyGroup = Dna.Application.CommandManager.CreateCommands(
+            var assemblyGroup = Application.CommandManager.CreateCommands(
                 title: "Export Assembly",
                 items: new List<CommandManagerItem>(new[] {
 
@@ -115,7 +122,7 @@ namespace SolidDna.Exporting
                 tooltip: "Such as Step");
 
             // Drawing commands
-            var drawingGroup = Dna.Application.CommandManager.CreateCommands(
+            var drawingGroup = Application.CommandManager.CreateCommands(
                 title: "Export Drawing",
                 items: new List<CommandManagerItem>(new[] {
 

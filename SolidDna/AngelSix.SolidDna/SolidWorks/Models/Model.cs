@@ -472,13 +472,13 @@ namespace AngelSix.SolidDna
                 var materialName = ids[1];
 
                 // See if we have a database file with the same name
-                var fullPath = Dna.Application.GetMaterials()?.FirstOrDefault(f => string.Equals(databaseName, Path.GetFileNameWithoutExtension(f.Database), StringComparison.InvariantCultureIgnoreCase));
+                var fullPath = SolidWorksEnvironment.Application.GetMaterials()?.FirstOrDefault(f => string.Equals(databaseName, Path.GetFileNameWithoutExtension(f.Database), StringComparison.InvariantCultureIgnoreCase));
                 var found = fullPath != null;
 
                 // Now we have the file, try and find the material from it
                 if (found)
                 {
-                    var foundMaterial = Dna.Application.FindMaterial(fullPath.Database, materialName);
+                    var foundMaterial = SolidWorksEnvironment.Application.FindMaterial(fullPath.Database, materialName);
                     if (foundMaterial != null)
                         return foundMaterial;
                 }

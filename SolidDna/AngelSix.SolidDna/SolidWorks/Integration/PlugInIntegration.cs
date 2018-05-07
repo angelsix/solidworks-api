@@ -1,4 +1,5 @@
-﻿using SolidWorks.Interop.sldworks;
+﻿using Dna;
+using SolidWorks.Interop.sldworks;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -60,11 +61,6 @@ namespace AngelSix.SolidDna
         public static Dictionary<string, List<PlugInDetails>> PlugInDetails { get; private set; } = new Dictionary<string, List<PlugInDetails>>();
 
         /// <summary>
-        /// The location of the SolidDna dll file and any plug-in's
-        /// </summary>
-        public static string PlugInFolder => typeof(PlugInIntegration).CodeBaseNormalized();
-
-        /// <summary>
         /// The cross-domain marshal to use for the plug-in Application domain calls
         /// </summary>
         public static PlugInIntegrationMarshal PluginCrossDomain => CrossDomain;
@@ -85,7 +81,11 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Must be called to setup the PlugInIntegration
         /// </summary>
-        public static void Setup(string revisionNumber, int cookie)
+        /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
+        /// <param name="cookie">The cookie Id of the SolidWorks instance</param>
+        /// <param name="version">The version of the currently connected SolidWorks instance</param>
+        /// <param name="configureServices">Provides a callback to inject any services into the Dna.Framework DI system</param>
+        public static void Setup(string addinPath, string version, int cookie, Action<FrameworkConstruction> configureServices = null)
         {
             if (UseDetachedAppDomain)
             {
@@ -96,7 +96,7 @@ namespace AngelSix.SolidDna
                 PlugInAppDomain = AppDomain.CreateDomain("SolidDnaPlugInDomain", null, new AppDomainSetup
                 {
                     // Use plug-in folder for resolving plug-ins
-                    ApplicationBase = PlugInFolder,
+                    ApplicationBase = addinPath,
                 });
 
                 // Make sure we load our own marshal
@@ -106,17 +106,17 @@ namespace AngelSix.SolidDna
                 CrossDomain = (PlugInIntegrationMarshal)PlugInAppDomain.CreateInstanceAndUnwrap(typeof(PlugInIntegrationMarshal).Assembly.FullName, typeof(PlugInIntegrationMarshal).FullName);
 
                 // Setup
-                CrossDomain.SetupAppDomain(revisionNumber, cookie);
+                CrossDomain.SetupAppDomain(addinPath, version, cookie, configureServices);
             }
             else
             {
                 // Setup IoC
-                IoCContainer.Ensure();
+                IoC.Setup(configureServices);
 
                 // Get the version number (such as 25 for 2016)
                 var postFix = "";
-                if (revisionNumber != null && revisionNumber.Contains("."))
-                    postFix = "." + revisionNumber.Substring(0, revisionNumber.IndexOf('.'));
+                if (version != null && version.Contains("."))
+                    postFix = "." + version.Substring(0, version.IndexOf('.'));
 
                 // Store a reference to the current SolidWorks instance
                 // Initialize SolidWorks (SolidDNA class)
@@ -262,9 +262,10 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Discovers all SolidDna plug-ins
         /// </summary>
+        /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
         /// <param name="loadAll">True to find all plug-ins in the same folder as the SolidDna dll</param>
         /// <returns></returns>
-        public static List<SolidPlugIn> SolidDnaPlugIns(bool loadAll = true)
+        public static List<SolidPlugIn> SolidDnaPlugIns(string addinPath, bool loadAll = true)
         {
             // Create new empty list
             var assemblies = new List<SolidPlugIn>();
@@ -283,7 +284,7 @@ namespace AngelSix.SolidDna
                 PlugInDetails = new Dictionary<string, List<PlugInDetails>>();
 
                 // Add new based on if found
-                foreach (var path in Directory.GetFiles(PlugInFolder, "*.dll", SearchOption.TopDirectoryOnly))
+                foreach (var path in Directory.GetFiles(addinPath, "*.dll", SearchOption.TopDirectoryOnly))
                     GetPlugIns(path, (plugin) => assemblies.Add(plugin));
             }
             // Or load explicit ones
@@ -384,24 +385,53 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Runs any initialization code required on plug-ins
         /// </summary>
-        public static void ConfigurePlugIns()
+        /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
+        public static void ConfigurePlugIns(string addinPath)
         {
             if (UseDetachedAppDomain)
-                CrossDomain.ConfigurePlugIns();
+                CrossDomain.ConfigurePlugIns(addinPath);
             else
             {
                 // This is usually run for the ComRegister function
 
+                // *********************************************************************************
+                //
+                // WARNING: 
+                // 
+                //   If SolidWorks is loading our add-ins and we have multiple that use SolidDna
+                //   it loads and makes use of the existing AngelSix.SolidDna.dll file from
+                //   the first add-in loaded and shares it for all future add-ins
+                //
+                //   This results in any static instances being shared and only one version 
+                //   of SolidDna being usable on an individual SolidWorks instance 
+                //
+                //   I am not sure of the reason for this but I feel it is a bug in SolidWorks
+                //   as changing the GUID of the AngelSix.SolidDna.dll assembly and its 
+                //   Assembly and File versions doesn't change what gets loaded by SolidWorks
+                //
+                //   Perhaps when we make this a NuGet package the way it references may
+                //   make it work. Until then the only thing to keep in mind is any
+                //   static values inside the AngelSix.SolidDna class could be shared between
+                //   add-ins so things like PlugIns list will come in here initially at this 
+                //   point with the last PlugIns list from the previous add-in. This is not an
+                //   issue here as we override it straight away before making use of it,
+                //   but it is something to bare in mind until we find a better solution
+                //          
+                //
+                // *********************************************************************************
+                
                 // Try and find the title from the first plug-in found
-                var plugins = SolidDnaPlugIns(loadAll: true);
-                if (plugins.Count > 0)
+                var plugins = SolidDnaPlugIns(addinPath, loadAll: true);
+                var firstPlugInWithTitle = plugins.FirstOrDefault(f => !string.IsNullOrEmpty(f.AddInTitle));
+
+                if (firstPlugInWithTitle != null)
                 {
-                    AddInIntegration.SolidWorksAddInTitle = plugins.First().AddInTitle;
-                    AddInIntegration.SolidWorksAddInDescription = plugins.First().AddInDescription;
+                    AddInIntegration.SolidWorksAddInTitle = firstPlugInWithTitle.AddInTitle;
+                    AddInIntegration.SolidWorksAddInDescription = firstPlugInWithTitle.AddInDescription;
                 }
 
                 // Load all plug-in's at this stage for faster lookup
-                PlugIns = SolidDnaPlugIns();
+                PlugIns = SolidDnaPlugIns(addinPath);
             }
         }
 

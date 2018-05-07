@@ -72,7 +72,7 @@ namespace AngelSix.SolidDna
         /// 
         /// NOTE: This call MUST be run on the UI thread
         /// </summary>
-        public async void AddToTaskpane()
+        public async void AddToTaskpaneAsync()
         {
             // Create our Taskpane
             mTaskpaneView = await AddInIntegration.SolidWorks.CreateTaskpaneAsync(Icon, AddInIntegration.SolidWorksAddInTitle);

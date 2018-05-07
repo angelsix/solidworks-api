@@ -28,6 +28,6 @@ namespace AngelSix.SolidDna
         /// <param name="culture">The culture information to use</param>
         /// <param name="onResult">Called with the value if successful</param>
         /// <returns>Returns true if fetching the value was successful</returns>
-        Task<bool> GetString(ResourceDefinition resource, string name, string culture, Action<string> onResult);
+        Task<bool> GetStringAsync(ResourceDefinition resource, string name, string culture, Action<string> onResult);
     }
 }

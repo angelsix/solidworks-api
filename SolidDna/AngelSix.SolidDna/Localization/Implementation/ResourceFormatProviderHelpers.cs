@@ -21,7 +21,7 @@ namespace AngelSix.SolidDna
         /// <param name="type">The type of resource</param>
         /// <param name="resourcePath">The location of the resource</param>
         /// <returns></returns>
-        public static async Task<Stream> GetStream(ResourceDefinitionType type, string resourcePath)
+        public static async Task<Stream> GetStreamAsync(ResourceDefinitionType type, string resourcePath)
         {
             switch (type)
             {
@@ -44,7 +44,7 @@ namespace AngelSix.SolidDna
                 case ResourceDefinitionType.Url:
 
                     // Get document from the web
-                    HttpClient webClient = new HttpClient();
+                    var webClient = new HttpClient();
                     return await webClient.GetStreamAsync(resourcePath).ConfigureAwait(false);
 
                 default:

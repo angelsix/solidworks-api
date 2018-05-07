@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Dna;
+using System;
 using System.Threading.Tasks;
+using static Dna.Framework;
 
 namespace AngelSix.SolidDna
 {
@@ -61,9 +63,9 @@ namespace AngelSix.SolidDna
                 if (SolidDnaEnvironment.LogAndIgnoreUncaughtExceptions)
                 {
                     // Log the error
-                    Logger.Log($"SolidDNA Exception created. {error.SolidDnaError?.ToString()}");
+                    Logger.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError?.ToString()}");
                     if (error.InnerException != null)
-                        Logger.Log($"Inner Exception: { error.InnerException.GetErrorMessage()}");
+                        Logger.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
                 }
                 // Otherwise, throw 
                 else
@@ -97,9 +99,9 @@ namespace AngelSix.SolidDna
                 if (SolidDnaEnvironment.LogAndIgnoreUncaughtExceptions)
                 {
                     // Log the error
-                    Logger.Log($"SolidDNA Exception created. {error.SolidDnaError?.ToString()}");
+                    Logger.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError?.ToString()}");
                     if (error.InnerException != null)
-                        Logger.Log($"Inner Exception: { error.InnerException.GetErrorMessage()}");
+                        Logger.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
 
                     return default(T);
                 }
@@ -117,7 +119,7 @@ namespace AngelSix.SolidDna
         /// <param name="errorTypeCode">The <see cref="SolidDnaErrorTypeCode"/> to wrap the exception in</param>
         /// <param name="errorCode">The <see cref="SolidDnaErrorCode"/> to wrap the exception in</param>
         /// <param name="errorDescription">The description of the error if thrown</param>
-        public static async Task WrapAwait(Func<Task> task, SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDescription)
+        public static async Task WrapAwaitAsync(Func<Task> task, SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDescription)
         {
             try
             {
@@ -135,9 +137,9 @@ namespace AngelSix.SolidDna
                 if (SolidDnaEnvironment.LogAndIgnoreUncaughtExceptions)
                 {
                     // Log the error
-                    Logger.Log($"SolidDNA Exception created. {error.SolidDnaError?.ToString()}");
+                    Logger.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError?.ToString()}");
                     if (error.InnerException != null)
-                        Logger.Log($"Inner Exception: { error.InnerException.GetErrorMessage()}");
+                        Logger.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
                 }
                 // Otherwise, throw 
                 else
@@ -155,7 +157,7 @@ namespace AngelSix.SolidDna
         /// <param name="errorTypeCode">The <see cref="SolidDnaErrorTypeCode"/> to wrap the exception in</param>
         /// <param name="errorCode">The <see cref="SolidDnaErrorCode"/> to wrap the exception in</param>
         /// <param name="errorDescription">The description of the error if thrown</param>
-        public static async Task<T> WrapAwait<T>(Func<Task<T>> task, SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDescription)
+        public static async Task<T> WrapAwaitAsync<T>(Func<Task<T>> task, SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDescription)
         {
             try
             {
@@ -173,9 +175,9 @@ namespace AngelSix.SolidDna
                 if (SolidDnaEnvironment.LogAndIgnoreUncaughtExceptions)
                 {
                     // Log the error
-                    Logger.Log($"SolidDNA Exception created. {error.SolidDnaError?.ToString()}");
+                    Logger.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError?.ToString()}");
                     if (error.InnerException != null)
-                        Logger.Log($"Inner Exception: { error.InnerException.GetErrorMessage()}");
+                        Logger.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
 
                     // Return a default object
                     return default(T);

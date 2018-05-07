@@ -72,7 +72,7 @@ namespace AngelSix.SolidDna
             SolidDnaErrors.Wrap(() =>
             {
                 // Try and get export data object
-                mExportData = Dna.Application.GetPdfExportData();
+                mExportData = SolidWorksEnvironment.Application.GetPdfExportData();
             },
                 SolidDnaErrorTypeCode.ExportData,
                 SolidDnaErrorCode.SolidWorksExportDataGetPdfExportDataError,

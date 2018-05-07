@@ -36,6 +36,6 @@ namespace AngelSix.SolidDna
         /// <param name="name">The name of the resource to find</param>
         /// <param name="culture">The culture information to use</param>
         /// <returns>Returns the string if found, or null if not found</returns>
-        Task<string> GetString(string name, string culture = null);
+        Task<string> GetStringAsync(string name, string culture = null);
     }
 }

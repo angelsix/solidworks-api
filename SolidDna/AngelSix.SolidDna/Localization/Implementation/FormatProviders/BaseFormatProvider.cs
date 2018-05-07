@@ -44,7 +44,7 @@ namespace AngelSix.SolidDna
         /// <param name="constructData">The function that takes the file data and converts it into the format required by the provider</param>
         /// <param name="culture">The culture to use. If not specified, the default culture is used</param>
         /// <returns></returns>
-        protected async Task<T> GetResourceDocument<T>(ResourceDefinition pathFormat, Func<Stream, T> constructData, string culture = null)
+        protected async Task<T> GetResourceDocumentAsync<T>(ResourceDefinition pathFormat, Func<Stream, T> constructData, string culture = null)
         {
             try
             {
@@ -62,12 +62,12 @@ namespace AngelSix.SolidDna
                     return (T)Cache[resourcePath];
 
                 // Otherwise try and get it
-                T resourceDocument = default(T);
+                var resourceDocument = default(T);
 
                 try
                 {
                     // Try to get the stream for this resource
-                    using (var stream = await ResourceFormatProviderHelpers.GetStream(pathFormat.Type, resourcePath).ConfigureAwait(false))
+                    using (var stream = await ResourceFormatProviderHelpers.GetStreamAsync(pathFormat.Type, resourcePath).ConfigureAwait(false))
                     {
                         // If successfully try and convert that data into a usable resource object
                         if (stream != null)

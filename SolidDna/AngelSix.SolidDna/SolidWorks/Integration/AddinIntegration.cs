@@ -1,10 +1,9 @@
-﻿using SolidWorks.Interop.sldworks;
+﻿using Dna;
+using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swpublished;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AngelSix.SolidDna
 {
@@ -53,6 +52,10 @@ namespace AngelSix.SolidDna
         /// </summary>
         public static event Action DisconnectedFromSolidWorks = () => { };
 
+        #endregion
+
+        #region Public Abstract Methods
+
         /// <summary>
         /// Specific application startup code when SolidWorks is connected 
         /// and before any plug-ins or listeners are informed
@@ -75,6 +78,12 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public abstract void PreLoadPlugIns();
 
+        /// <summary>
+        /// Add any dependency injection items into the DI provider that you would like to use in your application
+        /// </summary>
+        /// <param name="construction"></param>
+        public abstract void ConfigureServices(FrameworkConstruction construction);
+
         #endregion
 
         #region SolidWorks Add-in Callbacks
@@ -96,10 +105,10 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public bool ConnectToSW(object ThisSW, int Cookie)
         {
-            PreConnectToSolidWorks();
+            // Get the path to this actual add-in dll
+            var myPath = this.AssemblyPath();
 
-            // Setup IoC
-            IoCContainer.Ensure();
+            PreConnectToSolidWorks();
 
             //
             //   NOTE: Do not need to create it here, as we now create it inside PlugInIntegration.Setup in it's own AppDomain
@@ -113,13 +122,34 @@ namespace AngelSix.SolidDna
             var ok = ((SldWorks)ThisSW).SetAddinCallbackInfo2(0, this, Cookie);
 
             // Setup plug-in application domain
-            PlugInIntegration.Setup(((SldWorks)ThisSW).RevisionNumber(), Cookie);
+            PlugInIntegration.Setup(GetType().Assembly.Location, ((SldWorks)ThisSW).RevisionNumber(), Cookie,
+                // Setup IoC
+                (construction) =>
+                {
+                    //  Add SolidDna-specific services
+                    // --------------------------------
+
+                    // Add localization manager
+                    construction.Services.AddSingleton<ILocalizationManager>(new LocalizationManager
+                      {
+                          StringResourceDefinition = new ResourceDefinition
+                          {
+                              Type = ResourceDefinitionType.EmbeddedResource,
+                              Location = "AngelSix.SolidDna.Localization.Strings.Strings-{0}.xml",
+                              UseDefaultCultureIfNotFound = true,
+                          }
+                      });
+
+                    //  Configure any services this class wants to add
+                    // ------------------------------------------------
+                    ConfigureServices(construction);
+                });
 
             // Any pre-load steps
             PreLoadPlugIns();
 
             // Perform any plug-in configuration
-            PlugInIntegration.ConfigurePlugIns();
+            PlugInIntegration.ConfigurePlugIns(myPath);
 
             // Call the application startup function for an entry point to the application
             ApplicationStartup();
@@ -196,8 +226,19 @@ namespace AngelSix.SolidDna
                 // Load add-in when SolidWorks opens
                 rk.SetValue(null, 1);
 
+                //
+                // IMPORTANT: 
+                //
+                //   In this special case, COM register won't load the wrong AngelSix.SolidDna.dll file 
+                //   as it isn't loading multiple instances and keeping them in memory
+                //            
+                //   So loading the path of the AngelSix.SolidDna.dll file that should be in the same
+                //   folder as the add-in dll right now will work fine to get the add-in path
+                //
+                var pluginPath = typeof(PlugInIntegration).CodeBaseNormalized();
+
                 // Let plug-ins configure title and descriptions
-                PlugInIntegration.ConfigurePlugIns();
+                PlugInIntegration.ConfigurePlugIns(pluginPath);
 
                 // Set SolidWorks add-in title and description
                 rk.SetValue("Title", SolidWorksAddInTitle);
