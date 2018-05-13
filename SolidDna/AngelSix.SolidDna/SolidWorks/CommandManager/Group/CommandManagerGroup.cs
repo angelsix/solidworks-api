@@ -347,8 +347,8 @@ namespace AngelSix.SolidDna
                 // The list of icons
                 mBaseObject.MainIconList = icons.ToArray();
 
-                // Use the largest available image for small icons too
-                mBaseObject.SmallIconList = icons.Last();
+                // Smallest icon for this one
+                mBaseObject.SmallIconList = icons.First();
             }
 
             #endregion
