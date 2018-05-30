@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="2e5da9bc-29dd-438c-887e-92db06a86d7c" Version="1.0" Language="en-US" Publisher="AngelSix" />
+        <Identity Id="2e5da9bc-29dd-438c-887e-92db06a86d7c" Version="1.0.1" Language="en-US" Publisher="AngelSix" />
         <DisplayName>SolidDNA Templates</DisplayName>
         <Description xml:space="preserve">SolidDNA Templates for easy creation of SolidWorks API Add-Ins using C#</Description>
         <MoreInfo>http://www.github.com/angelsix/solidworks-api</MoreInfo>

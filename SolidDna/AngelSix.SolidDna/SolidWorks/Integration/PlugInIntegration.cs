@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using static Dna.FrameworkDI;
 
 namespace AngelSix.SolidDna
 {
@@ -84,11 +85,13 @@ namespace AngelSix.SolidDna
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
         /// <param name="cookie">The cookie Id of the SolidWorks instance</param>
         /// <param name="version">The version of the currently connected SolidWorks instance</param>
-        /// <param name="configureServices">Provides a callback to inject any services into the Dna.Framework DI system</param>
-        public static void Setup(string addinPath, string version, int cookie, Action<FrameworkConstruction> configureServices = null)
+        public static void Setup(string addinPath, string version, int cookie)
         {
             if (UseDetachedAppDomain)
             {
+                // Log it
+                Logger.LogDebugSource($"Detached AppDomain PlugIn Setup...");
+
                 // Make sure we resolve assemblies in this domain, as it seems to use this domain to resolve
                 // assemblies not the appDomain when crossing boundaries
                 AppDomain.CurrentDomain.AssemblyResolve += PlugInIntegrationMarshal.AppDomain_AssemblyResolve;
@@ -106,12 +109,12 @@ namespace AngelSix.SolidDna
                 CrossDomain = (PlugInIntegrationMarshal)PlugInAppDomain.CreateInstanceAndUnwrap(typeof(PlugInIntegrationMarshal).Assembly.FullName, typeof(PlugInIntegrationMarshal).FullName);
 
                 // Setup
-                CrossDomain.SetupAppDomain(addinPath, version, cookie, configureServices);
+                CrossDomain.SetupAppDomain(addinPath, version, cookie);
             }
             else
             {
-                // Setup IoC
-                IoC.Setup(configureServices);
+                // Log it
+                Logger.LogDebugSource($"PlugIn Setup...");
 
                 // Get the version number (such as 25 for 2016)
                 var postFix = "";
@@ -121,6 +124,9 @@ namespace AngelSix.SolidDna
                 // Store a reference to the current SolidWorks instance
                 // Initialize SolidWorks (SolidDNA class)
                 AddInIntegration.SolidWorks = new SolidWorksApplication((SldWorks)Activator.CreateInstance(Type.GetTypeFromProgID("SldWorks.Application" + postFix)), cookie);
+
+                // Log it
+                Logger.LogDebugSource($"SolidWorks Instance Created? {AddInIntegration.SolidWorks != null}");
             }
         }
 
@@ -135,11 +141,17 @@ namespace AngelSix.SolidDna
                 // Tear down
                 CrossDomain.Teardown();
 
+                // Log it
+                Logger.LogDebugSource($"Unloading cross-domain...");
+
                 // Unload our domain
                 AppDomain.Unload(PlugInAppDomain);
             }
             else
             {
+                // Log it
+                Logger.LogDebugSource($"Disposing SolidWorks COM reference...");
+
                 // Dispose SolidWorks COM
                 AddInIntegration.SolidWorks?.Dispose();
                 AddInIntegration.SolidWorks = null;
@@ -162,7 +174,13 @@ namespace AngelSix.SolidDna
                 AddInIntegration.OnConnectedToSolidWorks();
 
                 // Inform plug-ins
-                PlugIns.ForEach(plugin => plugin.ConnectedToSolidWorks());
+                PlugIns.ForEach(plugin =>
+                {
+                    // Log it
+                    Logger.LogDebugSource($"Firing ConnectedToSolidWorks event for plugin `{plugin.AddInTitle}`...");
+
+                    plugin.ConnectedToSolidWorks();
+                });
             }
         }
 
@@ -178,7 +196,13 @@ namespace AngelSix.SolidDna
                 AddInIntegration.OnDisconnectedFromSolidWorks();
 
                 // Inform plug-ins
-                PlugIns.ForEach(plugin => plugin.DisconnectedFromSolidWorks());
+                PlugIns.ForEach(plugin =>
+                {
+                    // Log it
+                    Logger.LogDebugSource($"Firing DisconnectedFromSolidWorks event for plugin `{plugin.AddInTitle}`...");
+
+                    plugin.DisconnectedFromSolidWorks();
+                });
             }
         }
 
@@ -264,15 +288,20 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
         /// <param name="loadAll">True to find all plug-ins in the same folder as the SolidDna dll</param>
+        /// <param name="log">True to log the output of the loading. Use false when registering for COM</param>
         /// <returns></returns>
-        public static List<SolidPlugIn> SolidDnaPlugIns(string addinPath, bool loadAll = true)
+        public static List<SolidPlugIn> SolidDnaPlugIns(string addinPath, bool log, bool loadAll = true)
         {
             // Create new empty list
             var assemblies = new List<SolidPlugIn>();
 
             // Find all dll's in the same directory
             if (loadAll)
-            { 
+            {
+                // Log it
+                if (log)
+                    Logger.LogDebugSource($"Loading all PlugIns...");
+
                 if (UseDetachedAppDomain)
                 {
                     // Invalid combination... cannot load all from cross domain
@@ -285,11 +314,22 @@ namespace AngelSix.SolidDna
 
                 // Add new based on if found
                 foreach (var path in Directory.GetFiles(addinPath, "*.dll", SearchOption.TopDirectoryOnly))
-                    GetPlugIns(path, (plugin) => assemblies.Add(plugin));
+                    GetPlugIns(path, (plugin) =>
+                    {
+                        // Log it
+                        if (log)
+                            Logger.LogDebugSource($"Found plugin {plugin.AddInTitle} in {path}");
+
+                        assemblies.Add(plugin);
+                    });
             }
             // Or load explicit ones
             else
             {
+                // Log it
+                if (log)
+                    Logger.LogDebugSource($"Explicitly loading {PlugInDetails?.Count} PlugIns...");
+
                 // For each assembly
                 foreach (var p in PlugInDetails)
                 {
@@ -301,6 +341,10 @@ namespace AngelSix.SolidDna
                             // If we are called in the main domain, cross-load
                             if (UseDetachedAppDomain)
                             {
+                                // Log it
+                                if (log)
+                                    Logger.LogDebugSource($"Cross-domain loading PlugIn {path.AssemblyFullName}...");
+
                                 // Create instance of the plug-in via cross-domain and cast back
                                 var plugin = (dynamic)PlugInAppDomain.CreateInstanceAndUnwrap(
                                                         path.AssemblyFullName,
@@ -309,19 +353,34 @@ namespace AngelSix.SolidDna
                                 // If we got it, add it to the list
                                 if (plugin != null)
                                     assemblies.Add(plugin);
+                                else if (log)
+                                    // Log error
+                                   Logger.LogErrorSource($"Failed to create instance of PlugIn {path.AssemblyFullName}");
                             }
                             else
                             {
-                                GetPlugIns(path.FullPath, (plugin) => assemblies.Add(plugin));
+                                GetPlugIns(path.FullPath, (plugin) =>
+                                {
+                                    // Log it
+                                    if (log)
+                                        Logger.LogDebugSource($"Found plugin {plugin.AddInTitle} in {path}");
+
+                                    assemblies.Add(plugin);
+                                });
                             }
                         }
-                        catch
+                        catch (Exception ex)
                         {
-                            // TOOD: Report error
+                            // Log error
+                         //   Logger?.LogCriticalSource($"Unexpected error: {ex}");
                         }
                     }
                 }
             }
+
+            // Log it
+            if (log)
+                Logger.LogDebugSource($"Loaded {assemblies?.Count} plug-ins from {addinPath}");
 
             return assemblies;
         }
@@ -386,10 +445,16 @@ namespace AngelSix.SolidDna
         /// Runs any initialization code required on plug-ins
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
-        public static void ConfigurePlugIns(string addinPath)
+        /// <param name="log">True to log the output of the loading. Use false when registering for COM</param>
+        public static void ConfigurePlugIns(string addinPath, bool log = true)
         {
             if (UseDetachedAppDomain)
+            {
+                // Log it
+                Logger.LogDebugSource($"Cross-domain ConfigurePlugIns...");
+
                 CrossDomain.ConfigurePlugIns(addinPath);
+            }
             else
             {
                 // This is usually run for the ComRegister function
@@ -419,19 +484,29 @@ namespace AngelSix.SolidDna
                 //          
                 //
                 // *********************************************************************************
-                
+
+                // Log it
+               // Logger.LogDebugSource($"ConfigurePlugIns...");
+
                 // Try and find the title from the first plug-in found
-                var plugins = SolidDnaPlugIns(addinPath, loadAll: true);
+                var plugins = SolidDnaPlugIns(addinPath, log: log, loadAll: true);
                 var firstPlugInWithTitle = plugins.FirstOrDefault(f => !string.IsNullOrEmpty(f.AddInTitle));
 
                 if (firstPlugInWithTitle != null)
                 {
+                    // Log it
+                    //Logger.LogDebugSource($"Setting AddIn Title to {firstPlugInWithTitle.AddInTitle}");
+                   // Logger.LogDebugSource($"Setting AddIn Description to {firstPlugInWithTitle.AddInDescription}");
+
                     AddInIntegration.SolidWorksAddInTitle = firstPlugInWithTitle.AddInTitle;
                     AddInIntegration.SolidWorksAddInDescription = firstPlugInWithTitle.AddInDescription;
                 }
 
+                // Log it
+                //Logger.LogDebugSource($"Loading PlugIns...");
+
                 // Load all plug-in's at this stage for faster lookup
-                PlugIns = SolidDnaPlugIns(addinPath);
+                PlugIns = SolidDnaPlugIns(addinPath, log);
             }
         }
 

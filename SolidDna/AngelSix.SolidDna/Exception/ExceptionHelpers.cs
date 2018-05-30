@@ -1,7 +1,7 @@
 ﻿using Dna;
 using System;
 using System.Diagnostics;
-using static Dna.Framework;
+using static Dna.FrameworkDI;
 
 namespace AngelSix.SolidDna
 {

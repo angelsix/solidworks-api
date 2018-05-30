@@ -4,6 +4,8 @@ using SolidWorks.Interop.swpublished;
 using System;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.DependencyInjection;
+using static Dna.FrameworkDI;
+using System.IO;
 
 namespace AngelSix.SolidDna
 {
@@ -94,6 +96,9 @@ namespace AngelSix.SolidDna
         /// <param name="arg"></param>
         public void Callback(string arg)
         {
+            // Log it
+            Logger.LogDebugSource($"SolidWorks Callback fired {arg}");
+
             PlugInIntegration.OnCallback(arg);
         }
         
@@ -105,63 +110,120 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public bool ConnectToSW(object ThisSW, int Cookie)
         {
-            // Get the path to this actual add-in dll
-            var myPath = this.AssemblyPath();
+            try
+            {
+                // Get the path to this actual add-in dll
+                var assemblyFilePath = this.AssemblyFilePath();
+                var assemblyPath = this.AssemblyPath();
 
-            PreConnectToSolidWorks();
-
-            //
-            //   NOTE: Do not need to create it here, as we now create it inside PlugInIntegration.Setup in it's own AppDomain
-            //         If we change back to loading directly (not in an app domain) then uncomment this 
-            //
-            // Store a reference to the current SolidWorks instance
-            // Initialize SolidWorks (SolidDNA class)
-            //SolidWorks = new SolidWorksApplication((SldWorks)ThisSW, Cookie);
-
-            // Setup callback info
-            var ok = ((SldWorks)ThisSW).SetAddinCallbackInfo2(0, this, Cookie);
-
-            // Setup plug-in application domain
-            PlugInIntegration.Setup(GetType().Assembly.Location, ((SldWorks)ThisSW).RevisionNumber(), Cookie,
                 // Setup IoC
-                (construction) =>
-                {
+                IoC.Setup(assemblyFilePath, construction =>
+                    {
                     //  Add SolidDna-specific services
                     // --------------------------------
 
+                    // Add default debug/console logger
+                    construction.AddDefaultLogger();
+
                     // Add localization manager
                     construction.Services.AddSingleton<ILocalizationManager>(new LocalizationManager
-                      {
-                          StringResourceDefinition = new ResourceDefinition
-                          {
-                              Type = ResourceDefinitionType.EmbeddedResource,
-                              Location = "AngelSix.SolidDna.Localization.Strings.Strings-{0}.xml",
-                              UseDefaultCultureIfNotFound = true,
-                          }
-                      });
+                        {
+                            StringResourceDefinition = new ResourceDefinition
+                            {
+                                Type = ResourceDefinitionType.EmbeddedResource,
+                                Location = "AngelSix.SolidDna.Localization.Strings.Strings-{0}.xml",
+                                UseDefaultCultureIfNotFound = true,
+                            }
+                        });
 
                     //  Configure any services this class wants to add
                     // ------------------------------------------------
                     ConfigureServices(construction);
-                });
+                    });
 
-            // Any pre-load steps
-            PreLoadPlugIns();
+                // Log it (critical, so regardless of log level it will write out)
+                Logger.LogCriticalSource($"DI Setup complete for {AddInIntegration.SolidWorksAddInTitle}");
 
-            // Perform any plug-in configuration
-            PlugInIntegration.ConfigurePlugIns(myPath);
+                // Log it
+                Logger.LogDebugSource($"{SolidWorksAddInTitle} Connected to SolidWorks...");
 
-            // Call the application startup function for an entry point to the application
-            ApplicationStartup();
+                // Log it
+                Logger.LogDebugSource($"Assembly Path {assemblyFilePath}");
 
-            // Inform listeners
-            ConnectedToSolidWorks();
+                // Log it
+                Logger.LogDebugSource($"Firing PreConnectToSolidWorks...");
 
-            // And plug-in domain listeners
-            PlugInIntegration.ConnectedToSolidWorks();
+                // Fire event
+                PreConnectToSolidWorks();
 
-            // Return ok
-            return true;
+                //
+                //   NOTE: Do not need to create it here, as we now create it inside PlugInIntegration.Setup in it's own AppDomain
+                //         If we change back to loading directly (not in an app domain) then uncomment this 
+                //
+                // Store a reference to the current SolidWorks instance
+                // Initialize SolidWorks (SolidDNA class)
+                //SolidWorks = new SolidWorksApplication((SldWorks)ThisSW, Cookie);
+
+                // Log it
+                Logger.LogDebugSource($"Setting AddinCallbackInfo...");
+
+                // Setup callback info
+                var ok = ((SldWorks)ThisSW).SetAddinCallbackInfo2(0, this, Cookie);
+
+                // Log it
+                Logger.LogDebugSource($"PlugInIntegration Setup...");
+
+                // Setup plug-in application domain
+                PlugInIntegration.Setup(assemblyPath, ((SldWorks)ThisSW).RevisionNumber(), Cookie);
+
+                // Log it
+                Logger.LogDebugSource($"Firing PreLoadPlugIns...");
+
+                // Any pre-load steps
+                PreLoadPlugIns();
+
+                // Log it
+                Logger.LogDebugSource($"Configuring PlugIns...");
+
+                // Perform any plug-in configuration
+                PlugInIntegration.ConfigurePlugIns(assemblyPath);
+
+                // Log it
+                Logger.LogDebugSource($"Firing ApplicationStartup...");
+
+                // Call the application startup function for an entry point to the application
+                ApplicationStartup();
+
+                // Log it
+                Logger.LogDebugSource($"Firing ConnectedToSolidWorks...");
+
+                // Inform listeners
+                ConnectedToSolidWorks();
+
+                // Log it
+                Logger.LogDebugSource($"PlugInIntegration ConnectedToSolidWorks...");
+
+                // And plug-in domain listeners
+                PlugInIntegration.ConnectedToSolidWorks();
+
+                // Return ok
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Try to log it to logger if it made it
+                try
+                {
+                    Logger.LogCriticalSource($"Unexpected error: {ex}");
+                }
+                catch
+                {
+                    // Fallback just write a static log directly
+                    File.AppendAllText(Path.ChangeExtension(this.AssemblyFilePath(), "fatal.log.txt"), $"\r\nUnexpected error: {ex}");
+                }
+
+                return false;
+            }
         }
 
         /// <summary>
@@ -170,11 +232,20 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public bool DisconnectFromSW()
         {
+            // Log it
+            Logger.LogDebugSource($"{SolidWorksAddInTitle} Disconnected from SolidWorks...");
+
+            // Log it
+            Logger.LogDebugSource($"Firing DisconnectedFromSolidWorks...");
+
             // Inform listeners
             DisconnectedFromSolidWorks();
 
             // And plug-in domain listeners
             PlugInIntegration.DisconnectedFromSolidWorks();
+
+            // Log it
+            Logger.LogDebugSource($"Tearing down...");
 
             // Clean up plug-in app domain
             PlugInIntegration.Teardown();
@@ -196,6 +267,9 @@ namespace AngelSix.SolidDna
         /// </summary>
         public static void OnConnectedToSolidWorks()
         {
+            // Log it
+            Logger.LogDebugSource($"Firing ConnectedToSolidWorks event...");
+
             ConnectedToSolidWorks();
         }
 
@@ -204,6 +278,9 @@ namespace AngelSix.SolidDna
         /// </summary>
         public static void OnDisconnectedFromSolidWorks()
         {
+            // Log it
+            Logger.LogDebugSource($"Firing DisconnectedFromSolidWorks event...");
+
             DisconnectedFromSolidWorks();
         }
 
@@ -238,7 +315,7 @@ namespace AngelSix.SolidDna
                 var pluginPath = typeof(PlugInIntegration).CodeBaseNormalized();
 
                 // Let plug-ins configure title and descriptions
-                PlugInIntegration.ConfigurePlugIns(pluginPath);
+                PlugInIntegration.ConfigurePlugIns(pluginPath, log: false);
 
                 // Set SolidWorks add-in title and description
                 rk.SetValue("Title", SolidWorksAddInTitle);

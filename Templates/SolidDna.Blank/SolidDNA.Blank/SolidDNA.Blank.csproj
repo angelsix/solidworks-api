@@ -85,7 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AngelSix.SolidDna">
-      <Version>1.0.0.5</Version>
+      <Version>1.0.0.9</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -99,6 +99,11 @@
     <Content Include="References\SolidWorks.Interop.swpublished.dll" />
     <Content Include="References\SolidWorks.Interop.SWRoutingLib.dll" />
     <Content Include="Resources\SolidWorksAddinInstaller.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

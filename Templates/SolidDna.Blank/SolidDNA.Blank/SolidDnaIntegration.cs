@@ -1,5 +1,6 @@
 ﻿using AngelSix.SolidDna;
 using Dna;
+using System.IO;
 using static AngelSix.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDNA.Blank
@@ -48,8 +49,8 @@ namespace SolidDNA.Blank
     //
     //        This method will fire the following methods in this order:
     // 
-    //         - PreConnectToSolidWorks
     //         - ConfigureServices
+    //         - PreConnectToSolidWorks
     //         - PreLoadPlugIns
     //         - ApplicationStartup
     //         - ConnectedToSolidWorks
@@ -93,6 +94,9 @@ namespace SolidDNA.Blank
             //
             //      Dna.Framework.Service<SomeClass>();
             //
+
+            // Add file logger (will be in /bin/Debug/SolidDNA.Blank.log.txt)
+            construction.AddFileLogger(Path.ChangeExtension(this.AssemblyFilePath(), "log.txt"));
         }
 
         /// <summary>
