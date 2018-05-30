@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Permissions;
-using static Dna.Framework;
+using static Dna.FrameworkDI;
 
 namespace AngelSix.SolidDna
 {
@@ -23,10 +23,9 @@ namespace AngelSix.SolidDna
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
         /// <param name="cookie">The cookie Id of the SolidWorks instance</param>
         /// <param name="version">The version of the currently connected SolidWorks instance</param>
-        /// <param name="configureServices">Provides a callback to inject any services into the Dna.Framework DI system</param>
-        public void SetupAppDomain(string addinPath, string version, int cookie, Action<FrameworkConstruction> configureServices = null)
+        public void SetupAppDomain(string addinPath, string version, int cookie)
         {
-            PlugInIntegration.Setup(addinPath, version, cookie, configureServices);
+            PlugInIntegration.Setup(addinPath, version, cookie);
 
             // Make sure we resolve assemblies in this domain, as it seems to use this domain to resolve
             // assemblies not the appDomain when crossing boundaries

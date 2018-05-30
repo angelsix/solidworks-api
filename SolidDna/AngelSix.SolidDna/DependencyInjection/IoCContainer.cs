@@ -1,7 +1,8 @@
 ﻿using Dna;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using System;
-using static Dna.Framework;
+using System.IO;
+using static Dna.FrameworkDI;
 
 namespace AngelSix.SolidDna
 {
@@ -48,17 +49,24 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Sets up the IoC and injects all required elements
         /// </summary>
+        /// <param name="addinPath">The full path to the add-in dll file</param>
         /// <param name="configureServices">Provides a callback to inject any services into the Dna.Framework DI system</param>
-        public static void Setup(Action<FrameworkConstruction> configureServices = null)
+        public static void Setup(string addinPath, Action<FrameworkConstruction> configureServices = null)
         {
             // Create default construction
-            var construction = new DefaultFrameworkConstruction();
+            Framework.Construct(new DefaultFrameworkConstruction(configure =>
+            {
+                // Add configuration file for the name of this file
+                // For example if it is MyAddin.dll then the configuration file
+                // will be in the same folder called MyAddin.appsettings.json"
+                configure.AddJsonFile(Path.ChangeExtension(addinPath, "appsettings.json"), optional: true);
+            }));
 
             // Invoke the callback for adding custom services
-            configureServices?.Invoke(construction);
+            configureServices?.Invoke(Framework.Construction);
 
             // Build DI
-            construction.Build();
+            Framework.Construction.Build();
         }
 
         #endregion
