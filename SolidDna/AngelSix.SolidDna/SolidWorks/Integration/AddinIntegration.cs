@@ -119,14 +119,11 @@ namespace AngelSix.SolidDna
                 // Setup IoC
                 IoC.Setup(assemblyFilePath, construction =>
                     {
-                    //  Add SolidDna-specific services
-                    // --------------------------------
+                        //  Add SolidDna-specific services
+                        // --------------------------------
 
-                    // Add default debug/console logger
-                    construction.AddDefaultLogger();
-
-                    // Add localization manager
-                    construction.Services.AddSingleton<ILocalizationManager>(new LocalizationManager
+                        // Add localization manager
+                        construction.Services.AddSingleton<ILocalizationManager>(new LocalizationManager
                         {
                             StringResourceDefinition = new ResourceDefinition
                             {
@@ -136,9 +133,9 @@ namespace AngelSix.SolidDna
                             }
                         });
 
-                    //  Configure any services this class wants to add
-                    // ------------------------------------------------
-                    ConfigureServices(construction);
+                        //  Configure any services this class wants to add
+                        // ------------------------------------------------
+                        ConfigureServices(construction);
                     });
 
                 // Log it (critical, so regardless of log level it will write out)
