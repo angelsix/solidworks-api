@@ -365,6 +365,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         private void ActiveModel_Saved()
         {
+            // If the current model was not saved before this event
+            if (!mActiveModel?.HasBeenSaved == false)
+                // Update model information
+                ReloadActiveModelInformation();
+
             // Inform listeners
             ActiveFileSaved(mActiveModel?.FilePath, mActiveModel);
         }
