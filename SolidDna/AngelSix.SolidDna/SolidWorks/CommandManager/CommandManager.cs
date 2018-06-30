@@ -106,7 +106,7 @@ namespace AngelSix.SolidDna
             var id = mCommandGroups.Count == 0 ? 1 : mCommandGroups.Max(f => f.UserId) + 1;
 
             // Store error code
-            int errors = -1;
+            var errors = -1;
 
             // Attempt to create the command group
             var unsafeCommandGroup = mBaseObject.CreateCommandGroup2(id, title, tooltip, hint, position, ignorePreviousVersion, ref errors);
@@ -201,7 +201,7 @@ namespace AngelSix.SolidDna
         public override void Dispose()
         {
             // Remove all command groups
-            for (int i = mCommandGroups.Count - 1; i >= 0; i--)
+            for (var i = mCommandGroups.Count - 1; i >= 0; i--)
                 RemoveCommandGroup(mCommandGroups[i]);
 
             base.Dispose();

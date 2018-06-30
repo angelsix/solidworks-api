@@ -110,6 +110,11 @@ namespace AngelSix.SolidDna
         public event Action ModelInformationChanged = () => { };
 
         /// <summary>
+        /// Called when the active configuration has changed
+        /// </summary>
+        public event Action ActiveConfigurationChanged = () => { };
+
+        /// <summary>
         /// Called when the selected objects in the model has changed
         /// </summary>
         public event Action SelectionChanged = () => { };
@@ -123,7 +128,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         public Model(ModelDoc2 model) : base(model)
         {
+            // Update information about this model
             ReloadModelData();
+
+            // Attach event handlers
+            SetupModelEventHandlers();
         }
 
         #endregion
@@ -136,7 +145,7 @@ namespace AngelSix.SolidDna
         protected void ReloadModelData()
         {
             // Clean up any previous data
-            DisposeChildren();
+            DisposeAllReferences();
 
             // Can't do much if there is no document
             if (mBaseObject == null)
@@ -156,9 +165,6 @@ namespace AngelSix.SolidDna
 
             // Get the selection manager
             SelectionManager = new ModelSelectionManager(mBaseObject.ISelectionManager);
-
-            // Re-attach event handlers
-            SetupModelEventHandlers();
 
             // Inform listeners
             ModelInformationChanged();
@@ -212,6 +218,9 @@ namespace AngelSix.SolidDna
         {
             // Refresh data
             ReloadModelData();
+
+            // Inform listeners
+            ActiveConfigurationChanged();
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -290,11 +299,12 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         protected int FileDestroyedNotify()
         {
-            // This is a pre-notify so just clear our data don't reload state
-            DisposeChildren();
-
             // Inform listeners
             ModelClosing();
+
+            // This is a pre-notify but we are going to be dead
+            // so dispose ourselves (our underlying COM objects)
+            Dispose();
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -592,9 +602,9 @@ namespace AngelSix.SolidDna
         #region Dispose
 
         /// <summary>
-        /// Clean up any embedded models
+        /// Clean up all COM references for this model, it's children and anything that was used by this model
         /// </summary>
-        protected void DisposeChildren()
+        protected void DisposeAllReferences()
         {
             // Tidy up embedded SolidDNA objects
             Extension?.Dispose();
@@ -612,7 +622,7 @@ namespace AngelSix.SolidDna
         public override void Dispose()
         {
             // Clean up embedded objects
-            DisposeChildren();
+            DisposeAllReferences();
 
             // Dispose self
             base.Dispose();
