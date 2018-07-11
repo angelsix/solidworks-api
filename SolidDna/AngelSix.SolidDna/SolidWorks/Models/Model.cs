@@ -558,7 +558,7 @@ namespace AngelSix.SolidDna
         /// Recurses the model for all of it's features and sub-features
         /// </summary>
         /// <param name="featureAction">The callback action that is called for each feature in the model</param>
-        public void Features(Action<Feature, int> featureAction)
+        public void Features(Action<ModelFeature, int> featureAction)
         {
             RecurseFeatures(featureAction, UnsafeObject.FirstFeature() as Feature);
         }
@@ -571,7 +571,7 @@ namespace AngelSix.SolidDna
         /// <param name="featureAction">The callback action that is called for each feature in the model</param>
         /// <param name="startFeature">The feature to start at</param>
         /// <param name="featureDepth">The current depth of the sub-features based on the original calling feature</param>
-        private void RecurseFeatures(Action<Feature, int> featureAction, Feature startFeature = null, int featureDepth = 0)
+        private void RecurseFeatures(Action<ModelFeature, int> featureAction, Feature startFeature = null, int featureDepth = 0)
         {
             // Get the current feature
             var currentFeature = startFeature;
@@ -580,7 +580,10 @@ namespace AngelSix.SolidDna
             while (currentFeature != null)
             {
                 // Inform callback of the feature
-                featureAction(currentFeature, featureDepth);
+                using (var modelFeature = new ModelFeature((Feature)currentFeature))
+                {
+                    featureAction(modelFeature, featureDepth);
+                }
 
                 // Now get the first sub-feature
                 var subFeature = currentFeature.GetFirstSubFeature() as Feature;
