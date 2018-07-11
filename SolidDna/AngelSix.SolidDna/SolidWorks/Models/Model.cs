@@ -4,6 +4,9 @@ using SolidWorks.Interop.swconst;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Runtime.InteropServices;
+using static Dna.FrameworkDI;
+using Dna;
 
 namespace AngelSix.SolidDna
 {
@@ -546,6 +549,85 @@ namespace AngelSix.SolidDna
         {
              SelectionManager?.SelectedObjects(action);
         }
+
+        #endregion
+
+        #region Features
+
+        /// <summary>
+        /// Recurses the model for all of it's features and sub-features
+        /// </summary>
+        /// <param name="featureAction">The callback action that is called for each feature in the model</param>
+        public void Features(Action<Feature, int> featureAction)
+        {
+            RecurseFeatures(featureAction, UnsafeObject.FirstFeature() as Feature);
+        }
+
+        #region Private Feature Helpers
+
+        /// <summary>
+        /// Recurses features and sub-features and provides a callback action to process and work with each feature
+        /// </summary>
+        /// <param name="featureAction">The callback action that is called for each feature in the model</param>
+        /// <param name="startFeature">The feature to start at</param>
+        /// <param name="featureDepth">The current depth of the sub-features based on the original calling feature</param>
+        private void RecurseFeatures(Action<Feature, int> featureAction, Feature startFeature = null, int featureDepth = 0)
+        {
+            // Get the current feature
+            var currentFeature = startFeature;
+
+            // While that feature is not null...
+            while (currentFeature != null)
+            {
+                // Inform callback of the feature
+                featureAction(currentFeature, featureDepth);
+
+                // Now get the first sub-feature
+                var subFeature = currentFeature.GetFirstSubFeature() as Feature;
+
+                // While we have a sub-feature...
+                while (subFeature != null)
+                {
+                    // Get it's next sub-feature
+                    var nextSubFeature = subFeature.GetNextSubFeature() as Feature;
+
+                    // Recurse all of the sub-features
+                    RecurseFeatures(featureAction, subFeature, featureDepth + 1);
+
+                    // And once back up out of the recursive dive
+                    // Move to the next sub-feature and process that
+                    subFeature = nextSubFeature;
+                }
+
+                // If we are at the top-level...
+                if (featureDepth == 0)
+                {
+                    // Get the next feature
+                    Logger.LogCriticalSource($"Current feature {currentFeature.Name} getting next feature...");
+                    var nextFeature = currentFeature.GetNextFeature() as Feature;
+                    Logger.LogCriticalSource($"Next feature {nextFeature?.Name}");
+
+                    // Now release the current feature
+                    Marshal.FinalReleaseComObject(currentFeature);
+
+                    // And update the current feature reference to the next feature
+                    // to carry on the loop
+                    currentFeature = nextFeature;
+                }
+                // Otherwise...
+                else
+                {
+                    // Release the current feature as it is a sub-feature
+                    // and is processed in the `while (subFeature != null)` loop
+                    Marshal.FinalReleaseComObject(currentFeature);
+
+                    // Now remove reference to current feature to end recursion
+                    currentFeature = null;
+                }
+            }
+        }
+
+        #endregion
 
         #endregion
 
