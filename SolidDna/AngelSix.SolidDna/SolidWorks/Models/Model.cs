@@ -579,14 +579,20 @@ namespace AngelSix.SolidDna
             // While that feature is not null...
             while (currentFeature != null)
             {
-                // Inform callback of the feature
-                using (var modelFeature = new ModelFeature((Feature)currentFeature))
-                {
-                    featureAction(modelFeature, featureDepth);
-                }
-
                 // Now get the first sub-feature
                 var subFeature = currentFeature.GetFirstSubFeature() as Feature;
+
+                // Get the next feature if we should
+                var nextFeature = default(Feature);
+                if (featureDepth == 0)
+                    nextFeature = currentFeature.GetNextFeature() as Feature;
+
+                // Create model feature
+                using (var modelFeature = new ModelFeature((Feature)currentFeature))
+                {
+                    // Inform callback of the feature
+                    featureAction(modelFeature, featureDepth);
+                }
 
                 // While we have a sub-feature...
                 while (subFeature != null)
@@ -605,14 +611,6 @@ namespace AngelSix.SolidDna
                 // If we are at the top-level...
                 if (featureDepth == 0)
                 {
-                    // Get the next feature
-                    Logger.LogCriticalSource($"Current feature {currentFeature.Name} getting next feature...");
-                    var nextFeature = currentFeature.GetNextFeature() as Feature;
-                    Logger.LogCriticalSource($"Next feature {nextFeature?.Name}");
-
-                    // Now release the current feature
-                    Marshal.FinalReleaseComObject(currentFeature);
-
                     // And update the current feature reference to the next feature
                     // to carry on the loop
                     currentFeature = nextFeature;
@@ -620,11 +618,8 @@ namespace AngelSix.SolidDna
                 // Otherwise...
                 else
                 {
-                    // Release the current feature as it is a sub-feature
+                    // Remove the current feature as it is a sub-feature
                     // and is processed in the `while (subFeature != null)` loop
-                    Marshal.FinalReleaseComObject(currentFeature);
-
-                    // Now remove reference to current feature to end recursion
                     currentFeature = null;
                 }
             }

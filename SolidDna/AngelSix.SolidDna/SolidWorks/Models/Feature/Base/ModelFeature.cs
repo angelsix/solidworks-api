@@ -71,6 +71,12 @@ namespace AngelSix.SolidDna
         public string FeatureTypeName => GetFeatureTypeName();
 
         /// <summary>
+        /// Gets the SolidWorks feature name, such as Sketch1
+        /// </summary>
+        /// <returns></returns>
+        public string FeatureName => mBaseObject.Name;
+
+        /// <summary>
         /// The specific feature for this feature, if any
         /// NOTE: This is a COM object. Set all instance variables of this to null once done if you set any
         /// </summary>
