@@ -261,8 +261,8 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
             var result = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
 
-            // If the last bit of text is "Types registered successfully, show success
-            if (result.Replace("\r", "").Replace("\n", "").EndsWith("Types registered successfully"))
+            // If it exit successfully
+            if (process.ExitCode == 0)
                 MessageBox.Show("Add-in was successfully registered", "Success");
             // Otherwise just show the results
             else
@@ -303,9 +303,9 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
             var result = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
 
-            // If the last bit of text is "Types registered successfully, show success
-            if (result.Replace("\r", "").Replace("\n", "").EndsWith("Types un-registered successfully"))
-                MessageBox.Show("Add-in was successfully un-registered", "Success");
+            // If it exit successfully
+            if (process.ExitCode == 0)
+                MessageBox.Show("Add-in was successfully unregistered", "Success");
             // Otherwise just show the results
             else
                 MessageBox.Show(result, "Unexpected Response", MessageBoxButton.OK, MessageBoxImage.Warning);
