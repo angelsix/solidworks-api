@@ -130,6 +130,18 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region Public Callback Events
+
+        /// <summary>
+        /// Informs this class that the active model may have changed and it should be reloaded
+        /// </summary>
+        public void RequestActiveModelChanged()
+        {
+            ReloadActiveModelInformation();
+        }
+
+        #endregion
+
         #region Version
 
         /// <summary>
@@ -365,11 +377,6 @@ namespace AngelSix.SolidDna
         /// </summary>
         private void ActiveModel_Saved()
         {
-            // If the current model was not saved before this event
-            if (!mActiveModel?.HasBeenSaved == false)
-                // Update model information
-                ReloadActiveModelInformation();
-
             // Inform listeners
             ActiveFileSaved(mActiveModel?.FilePath, mActiveModel);
         }

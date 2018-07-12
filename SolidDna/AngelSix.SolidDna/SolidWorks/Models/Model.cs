@@ -26,7 +26,7 @@ namespace AngelSix.SolidDna
         /// Indicates if this file has been saved (so exists on disk)
         /// If not, it's a new model currently only in-memory and will not have a file path
         /// </summary>
-        public bool HasBeenSaved => !string.IsNullOrEmpty(UnsafeObject?.GetPathName());
+        public bool HasBeenSaved => !string.IsNullOrEmpty(FilePath);
 
         /// <summary>
         /// The type of document such as a part, assembly or drawing
@@ -170,7 +170,7 @@ namespace AngelSix.SolidDna
             SelectionManager = new ModelSelectionManager(mBaseObject.ISelectionManager);
 
             // Inform listeners
-            ModelInformationChanged();
+            ModelInformationChanged();            
         }
 
         /// <summary>
@@ -185,14 +185,14 @@ namespace AngelSix.SolidDna
                 case ModelType.Assembly:
                     AsAssembly().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
                     AsAssembly().DestroyNotify += FileDestroyedNotify;
-                    AsAssembly().FileSavePostNotify += FileSaveNotify;
+                    AsAssembly().FileSavePostNotify += FileSavePostNotify;
                     AsAssembly().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsAssembly().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
                 case ModelType.Part:
                     AsPart().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
                     AsPart().DestroyNotify += FileDestroyedNotify;
-                    AsPart().FileSavePostNotify += FileSaveNotify;
+                    AsPart().FileSavePostNotify += FileSavePostNotify;
                     AsPart().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsPart().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
@@ -202,7 +202,7 @@ namespace AngelSix.SolidDna
                     AsDrawing().AddItemNotify += DrawingItemAddNotify;
                     AsDrawing().DeleteItemNotify += DrawingDeleteItemNotify;
                     AsDrawing().DestroyNotify += FileDestroyedNotify;
-                    AsDrawing().FileSavePostNotify += FileSaveNotify;
+                    AsDrawing().FileSavePostNotify += FileSavePostNotify;
                     AsDrawing().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsDrawing().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
@@ -286,7 +286,7 @@ namespace AngelSix.SolidDna
         /// <param name="filename">The name of the file that has been saved</param>
         /// <param param name="saveType">The type of file that has been saved</param>
         /// <returns></returns>
-        protected int FileSaveNotify(int saveType, string filename)
+        protected int FileSavePostNotify(int saveType, string filename)
         {
             // Inform listeners
             ModelSaved();
@@ -664,10 +664,18 @@ namespace AngelSix.SolidDna
                 // Add any errors
                 results.Errors = (SaveAsErrors)errors;
 
-                // If successful...
-                if (results.Successful)
+                // If successful, and this is not a new file 
+                // (otherwise the RCW changes and SolidWorksApplication has to reload ActiveModel)...
+                if (results.Successful && HasBeenSaved)
                     // Reload model data
                     ReloadModelData();
+
+                // If we have not been saved, SolidWorks never fires any FileSave events at all
+                // so request a refresh of the ActiveModel. That is the best we can do
+                // as this RCW is now invalid. If this model is not active when saved then 
+                // it will simply reload the active models information
+                if (!HasBeenSaved)
+                    SolidWorksEnvironment.Application.RequestActiveModelChanged();
 
                 // Return result
                 return results;
