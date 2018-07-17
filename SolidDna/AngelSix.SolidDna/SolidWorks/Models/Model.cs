@@ -635,9 +635,9 @@ namespace AngelSix.SolidDna
         /// Recurses the model for all of it's components and sub-components
         /// </summary>
         /// <param name="componentAction">The callback action that is called for each component in the model</param>
-        public void Components(Action<Component2, int> componentAction)
+        public void Components(Action<Component, int> componentAction)
         {
-            RecurseComponents(componentAction, ActiveConfiguration.UnsafeObject.GetRootComponent3(true) as Component2);
+            RecurseComponents(componentAction, new Component(ActiveConfiguration.UnsafeObject?.GetRootComponent3(true)));
         }
 
         #region Private Component Helpers
@@ -648,7 +648,7 @@ namespace AngelSix.SolidDna
         /// <param name="componentAction">The callback action that is called for each components in the component</param>
         /// <param name="startComponent">The components to start at</param>
         /// <param name="componentDepth">The current depth of the sub-components based on the original calling components</param>
-        private void RecurseComponents(Action<Component2, int> componentAction, Component2 startComponent = null, int componentDepth = 0)
+        private void RecurseComponents(Action<Component, int> componentAction, Component startComponent = null, int componentDepth = 0)
         {
             // While that component is not null...
             // Inform callback of the feature
@@ -656,10 +656,16 @@ namespace AngelSix.SolidDna
                 componentAction(startComponent, componentDepth);
 
             //run agains for every child
-            var ChildrenComp = startComponent.GetChildren() as object[];
+            var ChildrenComp = startComponent.Children;
             foreach (Component2 ChildComp in ChildrenComp)
             {
-                RecurseComponents(componentAction, ChildComp, componentDepth + 1);
+                //get the current component
+                using (var currentComponent = new Component(ChildComp))
+                {
+                    //if not null continue recursively...
+                    if (currentComponent != null)
+                        RecurseComponents(componentAction, currentComponent, componentDepth + 1);
+                }
             }
         }
 
