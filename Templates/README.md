@@ -17,4 +17,10 @@ Open up `SolidDNA.Templates.sln`
 
 If you added new zips that didn't already exist in the project template folder, open up `source.extension.vsixmanifest` then go to `Assets` and click `New`. Select the type `ProjectTemplate` and the source as `File` and select the zip file from the drop-down.
 
+In the `source.extension.vsixmanifest` update the Version number. 
 
+Once done just select `Release` as your configuration and build the project. The project `.vsix` installer is then in the `bin\Release` folder ready to distribute.
+
+Install locally by double-clicking and checking it works correctly first.
+
+To upload it to the Visual Studio Marketplace, go to https://marketplace.visualstudio.com/ and create an account/login, then click `Publish Extensions` 
