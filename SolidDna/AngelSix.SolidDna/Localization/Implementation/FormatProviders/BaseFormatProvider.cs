@@ -21,12 +21,12 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// A list of all cached resources
         /// </summary>
-        protected Dictionary<string, object> Cache;
+        protected Dictionary<string, object> mCache;
 
         /// <summary>
         /// If true, resource files are cached in memory
         /// </summary>
-        protected bool CacheResourceFiles;
+        protected bool mCacheResourceFiles;
 
         #endregion
 
@@ -54,12 +54,12 @@ namespace AngelSix.SolidDna
                 var resourcePath = ResourceFormatProviderHelpers.GetCulturePath(pathFormat.Location, culture);
 
                 // Make sure list has been initialized
-                if (Cache == null)
-                    Cache = new Dictionary<string, object>();
+                if (mCache == null)
+                    mCache = new Dictionary<string, object>();
 
                 // If we have a document already, return that
-                if (Cache.ContainsKey(resourcePath))
-                    return (T)Cache[resourcePath];
+                if (mCache.ContainsKey(resourcePath))
+                    return (T)mCache[resourcePath];
 
                 // Otherwise try and get it
                 var resourceDocument = default(T);
@@ -76,9 +76,9 @@ namespace AngelSix.SolidDna
                 }
                 finally
                 {
-                    // Add resource document if found or not (except for Urls, never add failed Urls in case of bad internet connection
-                    if (CacheResourceFiles && pathFormat.Type != ResourceDefinitionType.Url)
-                        Cache.Add(resourcePath, resourceDocument);
+                    // Add resource document if found or not (except for Urls, never add failed Urls in case of bad Internet connection
+                    if (mCacheResourceFiles && pathFormat.Type != ResourceDefinitionType.Url)
+                        mCache.Add(resourcePath, resourceDocument);
                 }
 
                 // Return what we found, if anything

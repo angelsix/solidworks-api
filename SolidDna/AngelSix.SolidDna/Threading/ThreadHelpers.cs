@@ -60,7 +60,7 @@ namespace AngelSix.SolidDna
         /// TODO: Find a better way to access an invoker/dispatcher without needing a Taskpane
         /// </summary>
         /// <param name="action">The action to run</param>
-        public static async Task RunOnUIThreadAwait(Action action)
+        public static async Task RunOnUIThreadAsync(Action action)
         {
             // If we are on the UI thread already, just run the action
             if (mInvoker == null)

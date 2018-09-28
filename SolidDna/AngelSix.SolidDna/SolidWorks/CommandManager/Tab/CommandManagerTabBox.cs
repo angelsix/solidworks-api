@@ -18,6 +18,5 @@ namespace AngelSix.SolidDna
         }
 
         #endregion
-
     }
 }

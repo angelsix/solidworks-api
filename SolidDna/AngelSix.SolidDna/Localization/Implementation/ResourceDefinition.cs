@@ -42,7 +42,7 @@
         public string Location { get; set; }
 
         /// <summary>
-        /// If true and no resource file is found for the speficied culture
+        /// If true and no resource file is found for the specified culture
         /// then the default culture file is used instead
         /// </summary>
         public bool UseDefaultCultureIfNotFound { get; set; }

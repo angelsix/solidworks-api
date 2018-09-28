@@ -22,11 +22,6 @@ namespace AngelSix.SolidDna
         /// </summary>
         private static AppDomain PlugInAppDomain;
 
-        /// <summary>
-        /// The cross-domain marshal to use for the plug-in Application domain calls
-        /// </summary>
-        private static PlugInIntegrationMarshal CrossDomain;
-
         #endregion
 
         #region Public Properties
@@ -64,7 +59,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// The cross-domain marshal to use for the plug-in Application domain calls
         /// </summary>
-        public static PlugInIntegrationMarshal PluginCrossDomain => CrossDomain;
+        public static PlugInIntegrationMarshal PluginCrossDomain { get; private set; }
 
         #endregion
 
@@ -106,10 +101,10 @@ namespace AngelSix.SolidDna
                 AssembliesToResolve.Add(typeof(PlugInIntegrationMarshal).Assembly.FullName);
 
                 // Run code on new app-domain to configure
-                CrossDomain = (PlugInIntegrationMarshal)PlugInAppDomain.CreateInstanceAndUnwrap(typeof(PlugInIntegrationMarshal).Assembly.FullName, typeof(PlugInIntegrationMarshal).FullName);
+                PluginCrossDomain = (PlugInIntegrationMarshal)PlugInAppDomain.CreateInstanceAndUnwrap(typeof(PlugInIntegrationMarshal).Assembly.FullName, typeof(PlugInIntegrationMarshal).FullName);
 
                 // Setup
-                CrossDomain.SetupAppDomain(addinPath, version, cookie);
+                PluginCrossDomain.SetupAppDomain(addinPath, version, cookie);
             }
             else
             {
@@ -139,7 +134,7 @@ namespace AngelSix.SolidDna
             if (UseDetachedAppDomain)
             {
                 // Tear down
-                CrossDomain.Teardown();
+                PluginCrossDomain.Teardown();
 
                 // Log it
                 Logger.LogDebugSource($"Unloading cross-domain...");
@@ -168,7 +163,7 @@ namespace AngelSix.SolidDna
         public static void ConnectedToSolidWorks()
         {
             if (UseDetachedAppDomain)
-                CrossDomain.ConnectedToSolidWorks();
+                PluginCrossDomain.ConnectedToSolidWorks();
             else
             {
                 AddInIntegration.OnConnectedToSolidWorks();
@@ -190,7 +185,7 @@ namespace AngelSix.SolidDna
         public static void DisconnectedFromSolidWorks()
         {
             if (UseDetachedAppDomain)
-                CrossDomain.DisconnectedFromSolidWorks();
+                PluginCrossDomain.DisconnectedFromSolidWorks();
             else
             {
                 AddInIntegration.OnDisconnectedFromSolidWorks();
@@ -218,7 +213,7 @@ namespace AngelSix.SolidDna
         public static void AddPlugIn<T>()
         {
             if (UseDetachedAppDomain)
-                CrossDomain.AddPlugIn<T>();
+                PluginCrossDomain.AddPlugIn<T>();
             else
             {
                 // Get the full path to the assembly
@@ -246,7 +241,7 @@ namespace AngelSix.SolidDna
         {
             if (UseDetachedAppDomain)
                 // Add it to the plug-in integration domain also
-                CrossDomain.AddPlugIn(fullPath);
+                PluginCrossDomain.AddPlugIn(fullPath);
             else
             {
                 // Create list if one doesn't exist
@@ -271,7 +266,7 @@ namespace AngelSix.SolidDna
         {
             // Inform plug-in domain of event
             if (UseDetachedAppDomain)
-                CrossDomain.OnCallback(name);
+                PluginCrossDomain.OnCallback(name);
             else
             {
                 // Inform listeners
@@ -453,7 +448,7 @@ namespace AngelSix.SolidDna
                 // Log it
                 Logger.LogDebugSource($"Cross-domain ConfigurePlugIns...");
 
-                CrossDomain.ConfigurePlugIns(addinPath);
+                PluginCrossDomain.ConfigurePlugIns(addinPath);
             }
             else
             {

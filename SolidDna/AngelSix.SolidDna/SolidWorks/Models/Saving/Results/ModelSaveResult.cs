@@ -15,6 +15,9 @@
         /// </summary>
         public SaveAsWarnings Warnings { get; set; }
 
+        /// <summary>
+        /// Any errors for the file save operation
+        /// </summary>
         public SaveAsErrors Errors { get; set; }
     }
 }

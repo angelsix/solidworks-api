@@ -11,7 +11,7 @@ namespace AngelSix.SolidDna
     {
         #region Private Members
 
-        private static readonly TaskFactory mTaskFactory = new TaskFactory(CancellationToken.None, TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
+        private static readonly TaskFactory TaskFactory = new TaskFactory(CancellationToken.None, TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
 
         #endregion
 
@@ -23,7 +23,7 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public static TResult RunSync<TResult>(Func<Task<TResult>> func)
         {
-            return mTaskFactory
+            return TaskFactory
               .StartNew(func)
               .Unwrap()
               .GetAwaiter()
@@ -37,7 +37,7 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public static void RunSync(Func<Task> func)
         {
-            mTaskFactory
+            TaskFactory
               .StartNew(func)
               .Unwrap()
               .GetAwaiter()

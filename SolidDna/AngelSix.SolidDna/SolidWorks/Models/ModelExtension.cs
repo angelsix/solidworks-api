@@ -9,7 +9,7 @@ namespace AngelSix.SolidDna
     /// </summary>
     public class ModelExtension : SolidDnaObject<ModelDocExtension>
     {
-        #region Protected Members
+        #region Public Properties
 
         /// <summary>
         /// The parent Model for this extension
@@ -71,7 +71,7 @@ namespace AngelSix.SolidDna
                 }
 
                 double[] massProps = null;
-                int status = -1;
+                var status = -1;
 
                 //
                 // SolidWorks 2016 is the start of support for MassProperties2

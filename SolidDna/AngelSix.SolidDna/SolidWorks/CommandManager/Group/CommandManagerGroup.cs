@@ -1,6 +1,4 @@
 ﻿using SolidWorks.Interop.sldworks;
-using SolidWorks.Interop.swconst;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -50,42 +48,42 @@ namespace AngelSix.SolidDna
 
         /// <summary>
         /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group
-        /// This list should be 20px heigh, and each icon is 20x20, joined horizontally. 
+        /// This list should be 20px height, and each icon is 20x20, joined horizontally. 
         /// So a list of 4 icons would be 80px wide by 20px height
         /// </summary>
         public string IconList20Path { get; set; }
 
         /// <summary>
         /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group
-        /// This list should be 32px heigh, and each icon is 32x32, joined horizontally. 
+        /// This list should be 32px height, and each icon is 32x32, joined horizontally. 
         /// So a list of 4 icons would be 128px wide by 32px height
         /// </summary>
         public string IconList32Path { get; set; }
 
         /// <summary>
         /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group
-        /// This list should be 40px heigh, and each icon is 40x40, joined horizontally. 
+        /// This list should be 40px height, and each icon is 40x40, joined horizontally. 
         /// So a list of 4 icons would be 160px wide by 40px height
         /// </summary>
         public string IconList40Path { get; set; }
 
         /// <summary>
         /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group
-        /// This list should be 64px heigh, and each icon is 64x64, joined horizontally. 
+        /// This list should be 64px height, and each icon is 64x64, joined horizontally. 
         /// So a list of 4 icons would be 256px wide by 64px height
         /// </summary>
         public string IconList64Path { get; set; }
 
         /// <summary>
         /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group
-        /// This list should be 96px heigh, and each icon is 96x96, joined horizontally. 
+        /// This list should be 96px height, and each icon is 96x96, joined horizontally. 
         /// So a list of 4 icons would be 384px wide by 96px height
         /// </summary>
         public string IconList96Path { get; set; }
 
         /// <summary>
         /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group
-        /// This list should be 20px heigh, and each icon is 128x128, joined horizontally. 
+        /// This list should be 20px height, and each icon is 128x128, joined horizontally. 
         /// So a list of 4 icons would be 512px wide by 128px height
         /// </summary>
         public string IconList128Path { get; set; }
@@ -407,7 +405,7 @@ namespace AngelSix.SolidDna
 
             CommandManagerTab tab = null;
 
-            // Get the tab it it already exists
+            // Get the tab if it already exists
             if (mTabs.Any(f => string.Equals(f.Key.Title, title) && f.Key.ModelType == type))
                 tab = mTabs.First(f => string.Equals(f.Key.Title, title) && f.Key.ModelType == type).Value;
             // Otherwise create it

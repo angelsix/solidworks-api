@@ -13,7 +13,6 @@ namespace AngelSix.SolidDna
     /// </summary>
     public class SelectedObject : SolidDnaObject<object>
     {
-        
         #region Public Properties
 
         /// <summary>
@@ -28,8 +27,7 @@ namespace AngelSix.SolidDna
         /// From the feature you can check the specific feature type and
         /// get the specific feature from that
         /// </summary>
-        public bool IsFeature { get { return
-                    ObjectType == swSelectType_e.swSelDATUMPLANES ||
+        public bool IsFeature => ObjectType == swSelectType_e.swSelDATUMPLANES ||
                     ObjectType == swSelectType_e.swSelDATUMAXES ||
                     ObjectType == swSelectType_e.swSelDATUMPOINTS ||
                     ObjectType == swSelectType_e.swSelATTRIBUTES ||
@@ -46,12 +44,11 @@ namespace AngelSix.SolidDna
                     ObjectType == swSelectType_e.swSelCAMERAS ||
                     ObjectType == swSelectType_e.swSelSWIFTANNOTATIONS ||
                     ObjectType == swSelectType_e.swSelSWIFTFEATURES;
-                } }
 
         /// <summary>
         /// True if this object is a dimension
         /// </summary>
-        public bool IsDimension {  get { return ObjectType == swSelectType_e.swSelDIMENSIONS; } }
+        public bool IsDimension => ObjectType == swSelectType_e.swSelDIMENSIONS;
 
         #endregion
 
