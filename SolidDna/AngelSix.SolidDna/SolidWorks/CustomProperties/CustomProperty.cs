@@ -27,26 +27,14 @@ namespace AngelSix.SolidDna
         /// </summary>
         public string Value
         {
-            get
-            {
-                return mEditor.GetCustomProperty(Name);
-            }
-            set
-            {
-                mEditor.SetCustomProperty(Name, value);
-            }
+            get => mEditor.GetCustomProperty(Name);
+            set => mEditor.SetCustomProperty(Name, value);
         }
 
         /// <summary>
         /// The resolved value of the custom property
         /// </summary>
-        public string ResolvedValue
-        {
-            get
-            {
-                return mEditor.GetCustomProperty(Name, resolve: true);
-            }
-        }
+        public string ResolvedValue => mEditor.GetCustomProperty(Name, resolve: true);
 
         #endregion
 

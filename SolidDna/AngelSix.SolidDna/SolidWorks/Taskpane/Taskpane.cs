@@ -1,5 +1,4 @@
-﻿using System;
-using SolidWorks.Interop.sldworks;
+﻿using SolidWorks.Interop.sldworks;
 using System.Threading.Tasks;
 
 namespace AngelSix.SolidDna
@@ -31,7 +30,7 @@ namespace AngelSix.SolidDna
         /// <param name="progId">The [ProgId()] attribute value adorned on the UserControl class</param>
         /// <param name="licenseKey">The license key (for specific SolidWorks add-in types)</param>
         /// <returns></returns>
-        public async Task<T> AddControl<T>(string progId, string licenseKey)
+        public async Task<T> AddControlAsync<T>(string progId, string licenseKey)
         {
             // Wrap any error creating the taskpane in a SolidDna exception
             return SolidDnaErrors.Wrap<T>(() =>

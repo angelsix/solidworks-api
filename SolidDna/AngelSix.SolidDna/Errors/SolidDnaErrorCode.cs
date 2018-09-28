@@ -1,5 +1,4 @@
-﻿
-namespace AngelSix.SolidDna
+﻿namespace AngelSix.SolidDna
 {
     /// <summary>
     /// A list of all known types of error codes in SolidDNA

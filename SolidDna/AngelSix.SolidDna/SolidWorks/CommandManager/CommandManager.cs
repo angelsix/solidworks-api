@@ -1,9 +1,8 @@
 ﻿using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Linq;
-using System;
+using System.Runtime.InteropServices;
 
 namespace AngelSix.SolidDna
 {
@@ -66,7 +65,7 @@ namespace AngelSix.SolidDna
                     // Create the group
                     group.Create(this);
 
-                    // Addd this group to the list
+                    // Add this group to the list
                     mCommandGroups.Add(group);
 
                     // Return the group

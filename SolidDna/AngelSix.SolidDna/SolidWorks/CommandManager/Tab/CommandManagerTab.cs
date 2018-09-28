@@ -35,7 +35,7 @@ namespace AngelSix.SolidDna
 
         #endregion
 
-        #region Dipose
+        #region Dispose
 
         /// <summary>
         /// Disposing

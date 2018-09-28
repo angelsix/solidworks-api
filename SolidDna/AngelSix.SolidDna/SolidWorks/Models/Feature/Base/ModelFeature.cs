@@ -552,7 +552,7 @@ namespace AngelSix.SolidDna
         public bool IsRibData => FeatureType == ModelFeatureType.RibData;
 
         /// <summary>
-        /// Checks if this features specify type is Rip data data
+        /// Checks if this features specify type is Rip data
         /// </summary>
         public bool IsRipData => FeatureType == ModelFeatureType.RipData;
 
@@ -779,6 +779,34 @@ namespace AngelSix.SolidDna
 
             // Get the definition
             mFeatureData = new SolidDnaObject<object>(model?.GetDefinition());
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Sets the suppression state of this feature
+        /// </summary>
+        /// <remarks>SolidWorks does not allow suppressing features while a PropertyManager page is open.</remarks>
+        /// <param name="state">Suppression state as defined in <see cref="ModelFeatureSuppressionState"/></param>
+        /// <param name="configurationOption">Configuration option as defined in <see cref="ModelConfigurationOptions"/></param>
+        /// <param name="configurationNames">Array of configuration names; valid only if configurationOption set to <see cref="ModelConfigurationOptions.SpecificConfiguration"/></param>
+        /// <returns>True if operation was successful</returns>
+        public bool SetSuppressionState(ModelFeatureSuppressionState state, ModelConfigurationOptions configurationOption, string[] configurationNames = null)
+        {
+            return mBaseObject.SetSuppression2((int)state, (int)configurationOption, configurationNames);
+        }
+
+        /// <summary>
+        /// Gets whether the feature in the specified configurations is suppressed
+        /// </summary>
+        /// <param name="configurationOption">Configuration option as defined in <see cref="ModelConfigurationOptions"/></param>
+        /// <param name="configurationNames">Array of configuration names</param>
+        /// <returns>Array of Booleans indicating the suppression states for the feature in the specified configurations</returns>
+        public bool[] IsSuppressed(ModelConfigurationOptions configurationOption, string[] configurationNames = null)
+        {
+            return (bool[])mBaseObject.IsSuppressed2((int)configurationOption, configurationNames);
         }
 
         #endregion

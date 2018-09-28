@@ -34,7 +34,7 @@ namespace AngelSix.SolidDna
 
         #endregion
 
-        #region Private members
+        #region Private Members
 
         /// <summary>
         /// Locking object for synchronizing the disposing of SolidWorks and reloading active model info.
@@ -224,7 +224,7 @@ namespace AngelSix.SolidDna
             // - wait until the file is open instead
 
             // NOTE: We need to check if the variable already has a value because in the case of a drawing
-            // we get multiple pre events - one for the drawing, and one for each model in it,
+            // we get multiple pre-events - one for the drawing, and one for each model in it,
             // we're only interested in the first
 
             // Wrap any error
@@ -422,7 +422,7 @@ namespace AngelSix.SolidDna
                 else
                 {
                     // Otherwise, get all known ones
-                    // Get the list of material databases (full paths to sldmat files)
+                    // Get the list of material databases (full paths to SLDMAT files)
                     var databases = (string[])mBaseObject.GetMaterialDatabases();
 
                     // Get materials from each
@@ -441,7 +441,7 @@ namespace AngelSix.SolidDna
 
 
         /// <summary>
-        /// Attempts to find the material from a SolidWorks material database file (sldmat)
+        /// Attempts to find the material from a SolidWorks material database file (SLDMAT)
         /// If found, returns the full information about the material
         /// </summary>
         /// <param name="database">The full path to the database</param>

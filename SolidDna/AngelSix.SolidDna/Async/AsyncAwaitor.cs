@@ -20,12 +20,12 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// A semaphore to lock the semaphore list
         /// </summary>
-        private static SemaphoreSlim mSelfLock = new SemaphoreSlim(1, 1);
+        private static SemaphoreSlim SelfLock = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// A list of all semaphore locks (one per key)
         /// </summary>
-        private static Dictionary<string, SemaphoreDetails> mSemaphores = new Dictionary<string, SemaphoreDetails>();
+        private static Dictionary<string, SemaphoreDetails> Semaphores = new Dictionary<string, SemaphoreDetails>();
 
         #endregion
 
@@ -36,7 +36,7 @@ namespace AngelSix.SolidDna
         /// <param name="task">The task to perform inside of the semaphore lock</param>
         /// <param name="maxAccessCount">If this is the first call, sets the maximum number of tasks that can access this task before it waiting</param>
         /// <returns></returns>
-        public static async Task Await(string key, Func<Task> task, int maxAccessCount = 1)
+        public static async Task AwaitAsync(string key, Func<Task> task, int maxAccessCount = 1)
         {
             #region Create Semaphore
 
@@ -47,13 +47,13 @@ namespace AngelSix.SolidDna
             //      code execution will proceed
             //      Otherwise this thread waits here until the semaphore is released 
             //
-            await mSelfLock.WaitAsync();
+            await SelfLock.WaitAsync();
 
             try
             {
                 // Create semaphore if it doesn't already exist
-                if (!mSemaphores.ContainsKey(key))
-                    mSemaphores.Add(key, new SemaphoreDetails(key, maxAccessCount));
+                if (!Semaphores.ContainsKey(key))
+                    Semaphores.Add(key, new SemaphoreDetails(key, maxAccessCount));
             }
             finally
             {
@@ -65,14 +65,14 @@ namespace AngelSix.SolidDna
                 //      This is why it is important to do the Release within a try...finally clause
                 //      Program execution may crash or take a different path, this way you are guaranteed execution
                 //
-                mSelfLock.Release();
+                SelfLock.Release();
             }
 
             #endregion
 
             // Now use this semaphore and perform the desired task inside its lock
             // NOTE: We never remove semaphores after creating them, so this will never be null
-            var semaphore = mSemaphores[key];
+            var semaphore = Semaphores[key];
 
             // Await this semaphore
             await semaphore.Semaphore.WaitAsync();
@@ -96,7 +96,7 @@ namespace AngelSix.SolidDna
         /// <param name="task">The task to perform inside of the semaphore lock</param>
         /// <param name="maxAccessCount">If this is the first call, sets the maximum number of tasks that can access this task before it waiting</param>
         /// <returns></returns>
-        public static async Task<T> Await<T>(string key, Func<Task<T>> task, int maxAccessCount = 1)
+        public static async Task<T> AwaitAsync<T>(string key, Func<Task<T>> task, int maxAccessCount = 1)
         {
             #region Create Semaphore
 
@@ -107,13 +107,13 @@ namespace AngelSix.SolidDna
             //      code execution will proceed
             //      Otherwise this thread waits here until the semaphore is released 
             //
-            await mSelfLock.WaitAsync();
+            await SelfLock.WaitAsync();
 
             try
             {
                 // Create semaphore if it doesn't already exist
-                if (!mSemaphores.ContainsKey(key))
-                    mSemaphores.Add(key, new SemaphoreDetails(key, maxAccessCount));
+                if (!Semaphores.ContainsKey(key))
+                    Semaphores.Add(key, new SemaphoreDetails(key, maxAccessCount));
             }
             finally
             {
@@ -125,14 +125,14 @@ namespace AngelSix.SolidDna
                 //      This is why it is important to do the Release within a try...finally clause
                 //      Program execution may crash or take a different path, this way you are guaranteed execution
                 //
-                mSelfLock.Release();
+                SelfLock.Release();
             }
 
             #endregion
 
             // Now use this semaphore and perform the desired task inside its lock
             // NOTE: We never remove semaphores after creating them, so this will never be null
-            var semaphore = mSemaphores[key];
+            var semaphore = Semaphores[key];
 
             // Await this semaphore
             await semaphore.Semaphore.WaitAsync();

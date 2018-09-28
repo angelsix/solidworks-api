@@ -46,14 +46,15 @@ namespace AngelSix.SolidDna
                     return;
                 }
 
-                // Othewise, get all selected objects
+                // Otherwise, get all selected objects
                 for (var i = 0; i < count; i++)
                 {
                     // Get the object itself
-                    var selected = new SelectedObject(mBaseObject.GetSelectedObject6(i + 1, -1));
-
-                    // Get the type
-                    selected.ObjectType = (swSelectType_e)mBaseObject.GetSelectedObjectType3(i + 1, -1);
+                    var selected = new SelectedObject(mBaseObject.GetSelectedObject6(i + 1, -1))
+                    {
+                        // Get the type
+                        ObjectType = (swSelectType_e)mBaseObject.GetSelectedObjectType3(i + 1, -1)
+                    };
 
                     // Add to the list
                     list.Add(selected);

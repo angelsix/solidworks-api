@@ -40,7 +40,7 @@ namespace AngelSix.SolidDna
 
         /// <summary>
         /// Called once SolidWorks has loaded our add-in and is ready
-        /// Now is a good time to create taskpanes, meun bars or anything else
+        /// Now is a good time to create taskpanes, menu bars or anything else
         ///  
         /// NOTE: This call will be made twice, one in the default domain and one in the AppDomain as the SolidDna plug-ins
         /// </summary>
@@ -48,7 +48,7 @@ namespace AngelSix.SolidDna
 
         /// <summary>
         /// Called once SolidWorks has unloaded our add-in
-        /// Now is a good time to clean up taskpanes, meun bars or anything else
+        /// Now is a good time to clean up taskpanes, menu bars or anything else
         /// 
         /// NOTE: This call will be made twice, one in the default domain and one in the AppDomain as the SolidDna plug-ins
         /// </summary>
@@ -215,7 +215,7 @@ namespace AngelSix.SolidDna
                 }
                 catch
                 {
-                    // Fallback just write a static log directly
+                    // Fall-back just write a static log directly
                     File.AppendAllText(Path.ChangeExtension(this.AssemblyFilePath(), "fatal.log.txt"), $"\r\nUnexpected error: {ex}");
                 }
 

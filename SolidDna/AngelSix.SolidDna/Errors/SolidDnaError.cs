@@ -22,7 +22,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// The error type code for this error
         /// </summary>
-        public int ErrorTypeCode { get { return (int)ErrorTypeCodeValue; } }
+        public int ErrorTypeCode => (int)ErrorTypeCodeValue;
 
         /// <summary>
         /// The enum value that this error type code refers to. See <see cref="SolidDnaErrorTypeCode"/>
@@ -32,7 +32,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// The unique error code for this exact error
         /// </summary>
-        public int ErrorCode { get { return (int)ErrorCodeValue; } }
+        public int ErrorCode => (int)ErrorCodeValue;
 
         /// <summary>
         /// The enum value that this error code refers to. See <see cref="SolidDnaErrorCode"/>
@@ -55,7 +55,7 @@ namespace AngelSix.SolidDna
         public int CallerLineNumber { get; set; }
 
         /// <summary>
-        /// Any relevant data to the error message in human redable form;
+        /// Any relevant data to the error message in human readable form;
         /// such as a file path or URI
         /// </summary>
         public string PertinentData { get; set; }

@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 
 namespace AngelSix.SolidDna
@@ -59,7 +57,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         public TaskpaneIntegration()
         {
-            // Fimd out the ProgId of the desired control type
+            // Find out the ProgId of the desired control type
             mHostProgId = new THost().ProgId;
         }
 
@@ -78,7 +76,7 @@ namespace AngelSix.SolidDna
             mTaskpaneView = await AddInIntegration.SolidWorks.CreateTaskpaneAsync(Icon, AddInIntegration.SolidWorksAddInTitle);
 
             // Load our UI into the taskpane
-            mHostControl = await mTaskpaneView.AddControl<ITaskpaneControl>(mHostProgId, string.Empty);
+            mHostControl = await mTaskpaneView.AddControlAsync<ITaskpaneControl>(mHostProgId, string.Empty);
 
             // Set UI thread
             ThreadHelpers.Enable((Control)mHostControl);
@@ -90,7 +88,7 @@ namespace AngelSix.SolidDna
             if (WpfControl != null)
             {
                 // NOTE: ElementHost must be created on UI thread
-                // Create a new ElementHost to host the Wpf control
+                // Create a new ElementHost to host the WPF control
                 var elementHost = new ElementHost
                 {
                     // Add given WPF control

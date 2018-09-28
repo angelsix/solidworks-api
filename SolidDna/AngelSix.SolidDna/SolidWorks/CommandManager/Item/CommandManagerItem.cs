@@ -61,17 +61,17 @@ namespace AngelSix.SolidDna
         public CommandManagerItemTabView TabView { get; set; } = CommandManagerItemTabView.IconWithTextBelow;
 
         /// <summary>
-        /// True to show this item in tha command tab when a part is open
+        /// True to show this item in the command tab when a part is open
         /// </summary>
         public bool VisibleForParts { get; set; } = true;
 
         /// <summary>
-        /// True to show this item in tha command tab when an assembly is open
+        /// True to show this item in the command tab when an assembly is open
         /// </summary>
         public bool VisibleForAssemblies { get; set; } = true;
 
         /// <summary>
-        /// True to show this item in tha command tab when a drawing is open
+        /// True to show this item in the command tab when a drawing is open
         /// </summary>
         public bool VisibleForDrawings { get; set; } = true;
 

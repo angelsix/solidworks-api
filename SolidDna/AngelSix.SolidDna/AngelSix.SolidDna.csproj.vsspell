@@ -1,18 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- Visual Studio Spell Checker configuration file - [https://github.com/EWSoftware/VSSpellChecker]
      Do not edit the XML.  Use the configuration file editor in Visual Studio to modify the settings. -->
-<SpellCheckerConfiguration Format="2016.3.10.0">
+<SpellCheckerConfiguration Format="2018.8.16.0">
   <InheritAdditionalDictionaryFolders>True</InheritAdditionalDictionaryFolders>
   <SelectedLanguages />
   <InheritIgnoredWords>True</InheritIgnoredWords>
   <IgnoredWords>
     <Ignore>app</Ignore>
+    <Ignore>async</Ignore>
+    <Ignore>awaiter</Ignore>
+    <Ignore>behaviour</Ignore>
+    <Ignore>bmp</Ignore>
+    <Ignore>codebase</Ignore>
     <Ignore>dll</Ignore>
-    <Ignore>plugin</Ignore>
-    <Ignore>Taskpane</Ignore>
-    <Ignore>untrim</Ignore>
-    <Ignore>Weldment</Ignore>
+    <Ignore>dropdown</Ignore>
+    <Ignore>enum</Ignore>
+    <Ignore>enums</Ignore>
+    <Ignore>myiconlist</Ignore>
     <Ignore>Ok</Ignore>
+    <Ignore>plugin</Ignore>
+    <Ignore>png</Ignore>
+    <Ignore>pre</Ignore>
+    <Ignore>rethrowing</Ignore>
+    <Ignore>Taskpane</Ignore>
+    <Ignore>taskpanes</Ignore>
+    <Ignore>toolbar</Ignore>
+    <Ignore>tooltip</Ignore>
+    <Ignore>untrim</Ignore>
+    <Ignore>urls</Ignore>
+    <Ignore>Weldment</Ignore>
+    <Ignore>xml</Ignore>
+    <Ignore>unsuppress</Ignore>
+    <Ignore>speedpak</Ignore>
   </IgnoredWords>
   <InheritExclusionExpressions>True</InheritExclusionExpressions>
   <InheritIgnoredFilePatterns>True</InheritIgnoredFilePatterns>
@@ -20,4 +39,6 @@
   <IgnoredFilePatterns>
     <FilePattern>pdf</FilePattern>
   </IgnoredFilePatterns>
+  <InheritIgnoredClassifications>True</InheritIgnoredClassifications>
+  <IgnoredClassifications />
 </SpellCheckerConfiguration>

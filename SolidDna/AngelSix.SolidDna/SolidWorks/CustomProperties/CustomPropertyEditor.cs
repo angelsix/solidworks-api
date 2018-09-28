@@ -44,12 +44,8 @@ namespace AngelSix.SolidDna
         {
             // TODO: Add error checking and exception catching
 
-            string val;
-            string resolvedVal;
-            bool wasResolved;
-
             // Get custom property
-            mBaseObject.Get5(name, false, out val, out resolvedVal, out wasResolved);
+            mBaseObject.Get5(name, false, out var val, out var resolvedVal, out var wasResolved);
 
             // Return desired result
             return resolve ? resolvedVal : val;

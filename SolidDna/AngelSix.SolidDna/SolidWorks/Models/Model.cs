@@ -1,12 +1,9 @@
-﻿using System;
-using SolidWorks.Interop.sldworks;
+﻿using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
-using System.Runtime.InteropServices;
-using static Dna.FrameworkDI;
-using Dna;
+using System.Linq;
 
 namespace AngelSix.SolidDna
 {
@@ -67,6 +64,11 @@ namespace AngelSix.SolidDna
         /// Get the number of configurations
         /// </summary>
         public int ConfigurationCount => mBaseObject.GetConfigurationCount();
+
+        /// <summary>
+        /// Gets the configuration names
+        /// </summary>
+        public List<string> ConfigurationNames => new List<string>((string[])mBaseObject.GetConfigurationNames());
 
         /// <summary>
         /// The mass properties of the part
@@ -274,7 +276,7 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         protected int UserSelectionPostNotify()
         {
-            // Inform Listenes
+            // Inform Listeners
             SelectionChanged();
 
             return 0;

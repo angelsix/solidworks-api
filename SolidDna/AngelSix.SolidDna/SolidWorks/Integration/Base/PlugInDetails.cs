@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AngelSix.SolidDna
+﻿namespace AngelSix.SolidDna
 {
     /// <summary>
     /// Contains details about a SolidDna plug-in to be loaded
