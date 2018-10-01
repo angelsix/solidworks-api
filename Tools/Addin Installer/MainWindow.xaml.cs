@@ -19,11 +19,6 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         #region Private Members
 
         /// <summary>
-        /// The name of the SolidWorks exe
-        /// </summary>
-        private string mSolidWorksFilename = "SLDWORKS.exe";
-
-        /// <summary>
         /// The name of the RegAsm tool
         /// </summary>
         private string mRegAsmFilename = "RegAsm.exe";
@@ -44,9 +39,6 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         {
             InitializeComponent();
 
-            // Try and locate SolidWorks
-            LocateSolidWorks();
-
             // Try and local RegAsm
             LocateRegAsm();
         }
@@ -61,13 +53,6 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         /// <returns></returns>
         private bool SanityCheck()
         {
-            // Check SolidWorks
-            if (string.IsNullOrEmpty(SolidWorksPath.Text) || !File.Exists(SolidWorksPath.Text))
-            {
-                MessageBox.Show("Please specify a path to a valid SolidWorks application", "No SolidWorks found");
-                return false;
-            }
-
             // Check RegAsm
             if (string.IsNullOrEmpty(RegAsmPath.Text) || !File.Exists(RegAsmPath.Text))
             {
@@ -83,20 +68,6 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Attempts to local the SolidWorks exe and set it to the path
-        /// </summary>
-        private void LocateSolidWorks()
-        {
-            // Locate SolidWorks exe in Program Files
-            var results = new List<string>();
-            FindByFilename(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "SolidWorks", mSolidWorksFilename, results);
-
-            // If we have at least one SolidWorks, use that
-            if (results?.Count > 0)
-                SolidWorksPath.Text = results.First();
         }
 
         /// <summary>
@@ -156,30 +127,6 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         #region UI Events
 
         /// <summary>
-        /// Browse for a SolidWorks exe manually
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BrowseSolidWorksButton_Click(object sender, RoutedEventArgs e)
-        {
-            var ofd = new OpenFileDialog
-            {
-                Filter = $"SolidWorks | {mSolidWorksFilename}",
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)
-            };
-
-            // Open dialog
-            var result = ofd.ShowDialog();
-
-            // If they cancelled, return
-            if (!result.HasValue || !result.Value)
-                return;
-
-            // If they selected a file, use that
-            SolidWorksPath.Text = ofd.FileName;
-        }
-
-        /// <summary>
         /// Browse for RegAsm manually
         /// </summary>
         /// <param name="sender"></param>
@@ -195,7 +142,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
             // Open dialog
             var result = ofd.ShowDialog();
 
-            // If they cancelled, return
+            // If they canceled, return
             if (!result.HasValue || !result.Value)
                 return;
 
@@ -219,7 +166,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
             // Open dialog
             var result = ofd.ShowDialog();
 
-            // If they cancelled, return
+            // If they canceled, return
             if (!result.HasValue || !result.Value)
                 return;
 
