@@ -377,6 +377,9 @@ namespace AngelSix.SolidDna
         /// </summary>
         private void ActiveModel_Saved()
         {
+            // Reload active model info (filepath may have changed)
+            ReloadActiveModelInformation();
+        
             // Inform listeners
             ActiveFileSaved(mActiveModel?.FilePath, mActiveModel);
         }
