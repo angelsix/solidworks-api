@@ -290,6 +290,9 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         protected int FileSavePostNotify(int saveType, string filename)
         {
+            // Update filepath
+            FilePath = mBaseObject.GetPathName();
+        
             // Inform listeners
             ModelSaved();
 
