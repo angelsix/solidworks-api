@@ -25,18 +25,6 @@
                 <Label Content="SolidWorks Add-in Installer" FontWeight="Bold" FontSize="20" />
                 <TextBlock Margin="0 10" TextWrapping="WrapWithOverflow" Text="This tool will register and install a SolidWorks Add-in dll file into the SolidWorks registry so the add-in will show up in SolidWorks" />
 
-                <Label Content="SolidWorks Application" FontWeight="Bold" />
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBox Padding="5" Name="SolidWorksPath" />
-                    <Button Name="BrowseSolidWorksButton" Click="BrowseSolidWorksButton_Click" Grid.Column="1" Content="Browse" Padding="5" />
-
-                </Grid>
-
                 <Label Content="RegAsm Application" FontWeight="Bold" />
                 <Grid>
                     <Grid.ColumnDefinitions>
