@@ -6,6 +6,9 @@ using System.Runtime.InteropServices;
 using Microsoft.Extensions.DependencyInjection;
 using static Dna.FrameworkDI;
 using System.IO;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Linq;
 
 namespace AngelSix.SolidDna
 {
@@ -17,6 +20,15 @@ namespace AngelSix.SolidDna
     /// </summary>
     public abstract class AddInIntegration : ISwAddin
     {
+        #region Protected Members
+
+        /// <summary>
+        /// A list of assemblies to use when resolving any missing references
+        /// </summary>
+        protected List<AssemblyName> mReferencedAssemblies = new List<AssemblyName>();
+
+        #endregion
+
         #region Public Properties
 
         /// <summary>
@@ -33,6 +45,11 @@ namespace AngelSix.SolidDna
         /// Represents the current SolidWorks application
         /// </summary>
         public static SolidWorksApplication SolidWorks { get; set; }
+
+        /// <summary>
+        /// Gets the list of all known reference assemblies in this solution
+        /// </summary>
+        public AssemblyName[] ReferencedAssemblies => mReferencedAssemblies.ToArray();
 
         #endregion
 
@@ -53,6 +70,55 @@ namespace AngelSix.SolidDna
         /// NOTE: This call will be made twice, one in the default domain and one in the AppDomain as the SolidDna plug-ins
         /// </summary>
         public static event Action DisconnectedFromSolidWorks = () => { };
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public AddInIntegration()
+        {
+            try
+            {
+                // Help resolve any assembly references
+                AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+
+                // Get the path to this actual add-in dll
+                var assemblyFilePath = this.AssemblyFilePath();
+                var assemblyPath = this.AssemblyPath();
+
+                // Setup IoC
+                IoC.Setup(assemblyFilePath, construction =>
+                {
+                    //  Add SolidDna-specific services
+                    // --------------------------------
+
+                    // Add reference to the add-in integration
+                    // Which can then be fetched anywhere with
+                    // IoC.AddIn
+                    construction.Services.AddSingleton(this);
+
+                    // Add localization manager
+                    construction.AddLocalizationManager();
+
+                    //  Configure any services this class wants to add
+                    // ------------------------------------------------
+                    ConfigureServices(construction);
+                });
+
+                // Log details
+                Logger.LogDebugSource($"DI Setup complete");
+                Logger.LogDebugSource($"Assembly File Path {assemblyFilePath}");
+                Logger.LogDebugSource($"Assembly Path {assemblyPath}");
+            }
+            catch (Exception ex)
+            {
+                // Fall-back just write a static log directly
+                File.AppendAllText(Path.ChangeExtension(this.AssemblyFilePath(), "fatal.log.txt"), $"\r\nUnexpected error: {ex}");
+            }
+        }
 
         #endregion
 
@@ -116,36 +182,8 @@ namespace AngelSix.SolidDna
                 var assemblyFilePath = this.AssemblyFilePath();
                 var assemblyPath = this.AssemblyPath();
 
-                // Setup IoC
-                IoC.Setup(assemblyFilePath, construction =>
-                    {
-                        //  Add SolidDna-specific services
-                        // --------------------------------
-
-                        // Add localization manager
-                        construction.Services.AddSingleton<ILocalizationManager>(new LocalizationManager
-                        {
-                            StringResourceDefinition = new ResourceDefinition
-                            {
-                                Type = ResourceDefinitionType.EmbeddedResource,
-                                Location = "AngelSix.SolidDna.Localization.Strings.Strings-{0}.xml",
-                                UseDefaultCultureIfNotFound = true,
-                            }
-                        });
-
-                        //  Configure any services this class wants to add
-                        // ------------------------------------------------
-                        ConfigureServices(construction);
-                    });
-
-                // Log it (critical, so regardless of log level it will write out)
-                Logger.LogCriticalSource($"DI Setup complete for {AddInIntegration.SolidWorksAddInTitle}");
-
                 // Log it
                 Logger.LogDebugSource($"{SolidWorksAddInTitle} Connected to SolidWorks...");
-
-                // Log it
-                Logger.LogDebugSource($"Assembly Path {assemblyFilePath}");
 
                 // Log it
                 Logger.LogDebugSource($"Firing PreConnectToSolidWorks...");
@@ -208,16 +246,8 @@ namespace AngelSix.SolidDna
             }
             catch (Exception ex)
             {
-                // Try to log it to logger if it made it
-                try
-                {
-                    Logger.LogCriticalSource($"Unexpected error: {ex}");
-                }
-                catch
-                {
-                    // Fall-back just write a static log directly
-                    File.AppendAllText(Path.ChangeExtension(this.AssemblyFilePath(), "fatal.log.txt"), $"\r\nUnexpected error: {ex}");
-                }
+                // Log it
+                Logger.LogCriticalSource($"Unexpected error: {ex}");
 
                 return false;
             }
@@ -292,31 +322,56 @@ namespace AngelSix.SolidDna
         [ComRegisterFunction()]
         protected static void ComRegister(Type t)
         {
-            var keyPath = string.Format(@"SOFTWARE\SolidWorks\AddIns\{0:b}", t.GUID);
+            // Create new instance of ComRegister add-in to setup DI
+            new ComRegisterAddInIntegration();
 
-            // Create our registry folder for the add-in
-            using (var rk = Microsoft.Win32.Registry.LocalMachine.CreateSubKey(keyPath))
+            try
             {
-                // Load add-in when SolidWorks opens
-                rk.SetValue(null, 1);
+                // Get assembly name
+                var assemblyName = t.Assembly.Location;
 
-                //
-                // IMPORTANT: 
-                //
-                //   In this special case, COM register won't load the wrong AngelSix.SolidDna.dll file 
-                //   as it isn't loading multiple instances and keeping them in memory
-                //            
-                //   So loading the path of the AngelSix.SolidDna.dll file that should be in the same
-                //   folder as the add-in dll right now will work fine to get the add-in path
-                //
-                var pluginPath = typeof(PlugInIntegration).CodeBaseNormalized();
+                // Log it
+                Logger.LogInformationSource($"Registering {assemblyName}");
 
-                // Let plug-ins configure title and descriptions
-                PlugInIntegration.ConfigurePlugIns(pluginPath, log: false);
+                // Get registry key path
+                var keyPath = string.Format(@"SOFTWARE\SolidWorks\AddIns\{0:b}", t.GUID);
 
-                // Set SolidWorks add-in title and description
-                rk.SetValue("Title", SolidWorksAddInTitle);
-                rk.SetValue("Description", SolidWorksAddInDescription);
+                // Create our registry folder for the add-in
+                using (var rk = Microsoft.Win32.Registry.LocalMachine.CreateSubKey(keyPath))
+                {
+                    // Load add-in when SolidWorks opens
+                    rk.SetValue(null, 1);
+
+                    //
+                    // IMPORTANT: 
+                    //
+                    //   In this special case, COM register won't load the wrong AngelSix.SolidDna.dll file 
+                    //   as it isn't loading multiple instances and keeping them in memory
+                    //            
+                    //   So loading the path of the AngelSix.SolidDna.dll file that should be in the same
+                    //   folder as the add-in dll right now will work fine to get the add-in path
+                    //
+                    var pluginPath = typeof(PlugInIntegration).CodeBaseNormalized();
+
+                    // Force auto-discovering plug-in during COM registration
+                    PlugInIntegration.AutoDiscoverPlugins = true;
+
+                    Logger.LogInformationSource("Configuring plugins...");
+
+                    // Let plug-ins configure title and descriptions
+                    PlugInIntegration.ConfigurePlugIns(pluginPath);
+
+                    // Set SolidWorks add-in title and description
+                    rk.SetValue("Title", SolidWorksAddInTitle);
+                    rk.SetValue("Description", SolidWorksAddInDescription);
+
+                    Logger.LogInformationSource($"COM Registration successful. '{SolidWorksAddInTitle}' : '{SolidWorksAddInDescription}'");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogCriticalSource($"COM Registration error. {ex}");
+                throw;
             }
         }
 
@@ -327,11 +382,82 @@ namespace AngelSix.SolidDna
         [ComUnregisterFunction()]
         protected static void ComUnregister(Type t)
         {
+            // Get registry key path
             var keyPath = string.Format(@"SOFTWARE\SolidWorks\AddIns\{0:b}", t.GUID);
 
             // Remove our registry entry
             Microsoft.Win32.Registry.LocalMachine.DeleteSubKeyTree(keyPath);
 
+        }
+
+        #endregion
+
+        #region Assembly Resolve Methods
+
+        /// <summary>
+        /// Adds any reference assemblies to the assemblies that get resolved when loading assemblies
+        /// based on the reference type. To add all references from a project, pass in any type that is
+        /// contained in the project as the reference type
+        /// </summary>
+        /// <typeparam name="ReferenceType">The type contained in the assembly where the references are</typeparam>
+        public void AddReferenceAssemblies<ReferenceType>()
+        {
+            // Find all reference assemblies from the type
+            var referencedAssemblies = typeof(ReferenceType).Assembly.GetReferencedAssemblies();
+
+            // If there are any references
+            if (referencedAssemblies?.Length > 0)
+                // Add them
+                mReferencedAssemblies.AddRange(referencedAssemblies);
+        }
+
+        /// <summary>
+        /// Attempts to resolve missing assemblies based on a list of known references
+        /// primarily from SolidDna and the Add-in project itself
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            // Try and find a reference assembly that matches...
+            var resolvedAssembly = mReferencedAssemblies.FirstOrDefault(f => string.Equals(f.FullName, args.Name, StringComparison.InvariantCultureIgnoreCase));
+
+            // If we didn't find any assembly
+            if (resolvedAssembly == null)
+                // Return null
+                return null;
+
+            // If we found a match...
+            try
+            {
+                // Try and load the assembly
+                var assembly = Assembly.Load(resolvedAssembly.Name);
+
+                // If it loaded...
+                if (assembly != null)
+                    // Return it
+                    return assembly;
+
+                // Otherwise, throw file not found
+                throw new FileNotFoundException();
+            }
+            catch
+            {
+                //
+                // Try to load by filename - split out the filename of the full assembly name
+                // and append the base path of the original assembly (i.e. look in the same directory)
+                //
+                // NOTE: this doesn't account for special search paths but then that never
+                //       worked before either
+                //
+                var parts = resolvedAssembly.Name.Split(',');
+                var filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + parts[0].Trim() + ".dll";
+
+                // Try and load assembly at let it throw FileNotFound if not there 
+                // as it's an expected failure if not found
+                return Assembly.LoadFrom(filePath);
+            }
         }
 
         #endregion

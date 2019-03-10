@@ -46,11 +46,6 @@ namespace AngelSix.SolidDna
         public static List<string> AssembliesToResolve { get; set; } = new List<string>();
 
         /// <summary>
-        /// If true, attempts to resolve all assemblies
-        /// </summary>
-        public static bool ResolveAllAssemblies { get; set; }
-
-        /// <summary>
         /// A list of all plug-ins that have been added to be loaded
         /// The key is the absolute file path, and the Type is the <see cref="SolidPlugIn"/> implementation type
         /// </summary>
@@ -60,6 +55,15 @@ namespace AngelSix.SolidDna
         /// The cross-domain marshal to use for the plug-in Application domain calls
         /// </summary>
         public static PlugInIntegrationMarshal PluginCrossDomain { get; private set; }
+
+        /// <summary>
+        /// If true, searches in the directory of the application (where AngelSix.SolidDna.dll is) for any dll that
+        /// contains any <see cref="SolidPlugIn"/> implementations and adds them to the <see cref="PlugInDetails"/>
+        /// during the <see cref="ConfigurePlugIns(string, bool)"/> stage.
+        /// If false, the user should during the <see cref="AddInIntegration.PreLoadPlugIns"/> method, add
+        /// any specific implementations of the <see cref="SolidPlugIn"/> to <see cref="PlugInIntegration.PlugInDetails"/> list
+        /// </summary>
+        public static bool AutoDiscoverPlugins { get; set; } = true;
 
         #endregion
 
@@ -86,10 +90,6 @@ namespace AngelSix.SolidDna
             {
                 // Log it
                 Logger.LogDebugSource($"Detached AppDomain PlugIn Setup...");
-
-                // Make sure we resolve assemblies in this domain, as it seems to use this domain to resolve
-                // assemblies not the appDomain when crossing boundaries
-                AppDomain.CurrentDomain.AssemblyResolve += PlugInIntegrationMarshal.AppDomain_AssemblyResolve;
 
                 PlugInAppDomain = AppDomain.CreateDomain("SolidDnaPlugInDomain", null, new AppDomainSetup
                 {
@@ -285,17 +285,16 @@ namespace AngelSix.SolidDna
         /// <param name="loadAll">True to find all plug-ins in the same folder as the SolidDna dll</param>
         /// <param name="log">True to log the output of the loading. Use false when registering for COM</param>
         /// <returns></returns>
-        public static List<SolidPlugIn> SolidDnaPlugIns(string addinPath, bool log, bool loadAll = true)
+        public static List<SolidPlugIn> SolidDnaPlugIns(string addinPath)
         {
             // Create new empty list
             var assemblies = new List<SolidPlugIn>();
 
             // Find all dll's in the same directory
-            if (loadAll)
+            if (AutoDiscoverPlugins)
             {
                 // Log it
-                if (log)
-                    Logger.LogDebugSource($"Loading all PlugIns...");
+                Logger.LogDebugSource($"Loading all PlugIns...");
 
                 if (UseDetachedAppDomain)
                 {
@@ -312,8 +311,7 @@ namespace AngelSix.SolidDna
                     GetPlugIns(path, (plugin) =>
                     {
                         // Log it
-                        if (log)
-                            Logger.LogDebugSource($"Found plugin {plugin.AddInTitle} in {path}");
+                        Logger.LogDebugSource($"Found plugin {plugin.AddInTitle} in {path}");
 
                         assemblies.Add(plugin);
                     });
@@ -322,8 +320,7 @@ namespace AngelSix.SolidDna
             else
             {
                 // Log it
-                if (log)
-                    Logger.LogDebugSource($"Explicitly loading {PlugInDetails?.Count} PlugIns...");
+                Logger.LogDebugSource($"Explicitly loading {PlugInDetails?.Count} PlugIns...");
 
                 // For each assembly
                 foreach (var p in PlugInDetails)
@@ -337,29 +334,31 @@ namespace AngelSix.SolidDna
                             if (UseDetachedAppDomain)
                             {
                                 // Log it
-                                if (log)
-                                    Logger.LogDebugSource($"Cross-domain loading PlugIn {path.AssemblyFullName}...");
+                                Logger.LogDebugSource($"Cross-domain loading PlugIn {path.AssemblyFullName}...");
 
                                 // Create instance of the plug-in via cross-domain and cast back
                                 var plugin = (dynamic)PlugInAppDomain.CreateInstanceAndUnwrap(
                                                         path.AssemblyFullName,
                                                         path.TypeFullName);
 
-                                // If we got it, add it to the list
+                                // If we got it...
                                 if (plugin != null)
+                                    // Add it to the list
                                     assemblies.Add(plugin);
-                                else if (log)
+                                // Otherwise...
+                                else
                                     // Log error
                                    Logger.LogErrorSource($"Failed to create instance of PlugIn {path.AssemblyFullName}");
                             }
                             else
                             {
+                                // Try and find the SolidPlugIn implementation...
                                 GetPlugIns(path.FullPath, (plugin) =>
                                 {
                                     // Log it
-                                    if (log)
-                                        Logger.LogDebugSource($"Found plugin {plugin.AddInTitle} in {path}");
+                                    Logger.LogDebugSource($"Found plugin {plugin.AddInTitle} in {path}");
 
+                                    // Add it to the list
                                     assemblies.Add(plugin);
                                 });
                             }
@@ -367,15 +366,14 @@ namespace AngelSix.SolidDna
                         catch (Exception ex)
                         {
                             // Log error
-                         //   Logger?.LogCriticalSource($"Unexpected error: {ex}");
+                            Logger.LogCriticalSource($"Unexpected error: {ex}");
                         }
                     }
                 }
             }
 
             // Log it
-            if (log)
-                Logger.LogDebugSource($"Loaded {assemblies?.Count} plug-ins from {addinPath}");
+            Logger.LogDebugSource($"Loaded {assemblies?.Count} plug-ins from {addinPath}");
 
             return assemblies;
         }
@@ -388,7 +386,11 @@ namespace AngelSix.SolidDna
         public static void GetPlugIns(string pluginFullPath, Action<SolidPlugIn> onFound)
         {
             // Load the assembly
-            var assembly = Assembly.LoadFile(pluginFullPath);
+            // NOTE: Calling LoadFrom instead of LoadFile will auto-resolve references in that folder
+            //       otherwise they won't resolve.
+            //       For this reason its important that plug-ins are in the same folder as the 
+            //       AngelSix.SolidDna.dll and all other used references
+            var assembly = Assembly.LoadFrom(pluginFullPath);
 
             // If we didn't succeed, ignore
             if (assembly == null)
@@ -441,7 +443,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
         /// <param name="log">True to log the output of the loading. Use false when registering for COM</param>
-        public static void ConfigurePlugIns(string addinPath, bool log = true)
+        public static void ConfigurePlugIns(string addinPath)
         {
             if (UseDetachedAppDomain)
             {
@@ -480,28 +482,31 @@ namespace AngelSix.SolidDna
                 //
                 // *********************************************************************************
 
+                // Load all plug-in's at this stage for faster lookup
+                PlugIns = SolidDnaPlugIns(addinPath);
+
                 // Log it
-               // Logger.LogDebugSource($"ConfigurePlugIns...");
+                Logger.LogDebugSource($"{PlugIns.Count} plug-ins found");
 
-                // Try and find the title from the first plug-in found
-                var plugins = SolidDnaPlugIns(addinPath, log: log, loadAll: true);
-                var firstPlugInWithTitle = plugins.FirstOrDefault(f => !string.IsNullOrEmpty(f.AddInTitle));
+                // Find first plug-in in the list and use that as the title and description (for COM register)
+                var firstPlugInWithTitle = PlugIns.FirstOrDefault(f => !string.IsNullOrEmpty(f.AddInTitle));
 
+                // If we have a title...
                 if (firstPlugInWithTitle != null)
                 {
                     // Log it
-                    //Logger.LogDebugSource($"Setting AddIn Title to {firstPlugInWithTitle.AddInTitle}");
-                   // Logger.LogDebugSource($"Setting AddIn Description to {firstPlugInWithTitle.AddInDescription}");
+                    Logger.LogDebugSource($"Setting Add-In Title:       {firstPlugInWithTitle.AddInTitle}");
+                    Logger.LogDebugSource($"Setting Add-In Description: {firstPlugInWithTitle.AddInDescription}");
 
+                    // Set title and description details
                     AddInIntegration.SolidWorksAddInTitle = firstPlugInWithTitle.AddInTitle;
                     AddInIntegration.SolidWorksAddInDescription = firstPlugInWithTitle.AddInDescription;
                 }
+                // Otherwise
+                else
+                    // Log it
+                    Logger.LogDebugSource($"No PlugIn's found with a title.");
 
-                // Log it
-                //Logger.LogDebugSource($"Loading PlugIns...");
-
-                // Load all plug-in's at this stage for faster lookup
-                PlugIns = SolidDnaPlugIns(addinPath, log);
             }
         }
 
