@@ -123,7 +123,7 @@ namespace SolidDNA.WPF.Blank
     /// 
     /// NOTE: We can have multiple plug-ins in a single add-in
     /// </summary>
-    public class MySolidDnaPlugIn : SolidPlugIn
+    public class MySolidDnaPlugIn : SolidPlugIn<MySolidDnaPlugIn>
     {
         #region Private Members
 
