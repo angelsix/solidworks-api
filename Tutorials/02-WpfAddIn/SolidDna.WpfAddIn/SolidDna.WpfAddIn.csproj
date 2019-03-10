@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SolidDna.WpfAddIn</RootNamespace>
     <AssemblyName>SolidDna.WpfAddIn</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
@@ -34,50 +34,41 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="SolidWorks.Interop.sldworks, Version=25.1.0.49, Culture=neutral, PublicKeyToken=7c4797c3e4eeac03, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="SolidWorks.Interop.sldworks">
+      <HintPath>..\..\..\References\2019\SolidWorks.Interop.sldworks.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\..\..\References\2018\SolidWorks.Interop.sldworks.dll</HintPath>
     </Reference>
-    <Reference Include="SolidWorks.Interop.sw3dprinter, Version=25.1.0.49, Culture=neutral, PublicKeyToken=752e44715eff0bce, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="SolidWorks.Interop.sw3dprinter">
+      <HintPath>..\..\..\References\2019\SolidWorks.Interop.sw3dprinter.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\..\..\References\2018\SolidWorks.Interop.sw3dprinter.dll</HintPath>
     </Reference>
-    <Reference Include="SolidWorks.Interop.swcommands, Version=25.1.0.49, Culture=neutral, PublicKeyToken=0fda92720ba7919f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="SolidWorks.Interop.swcommands">
+      <HintPath>..\..\..\References\2019\SolidWorks.Interop.swcommands.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\..\..\References\2018\SolidWorks.Interop.swcommands.dll</HintPath>
     </Reference>
-    <Reference Include="SolidWorks.Interop.swconst, Version=25.1.0.49, Culture=neutral, PublicKeyToken=19f43e188e4269d8, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="SolidWorks.Interop.swconst">
+      <HintPath>..\..\..\References\2019\SolidWorks.Interop.swconst.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\..\..\References\2018\SolidWorks.Interop.swconst.dll</HintPath>
     </Reference>
-    <Reference Include="SolidWorks.Interop.swdimxpert, Version=25.1.0.49, Culture=neutral, PublicKeyToken=5e9cf5ab4ebec26a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="SolidWorks.Interop.swdimxpert">
+      <HintPath>..\..\..\References\2019\SolidWorks.Interop.swdimxpert.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\..\..\References\2018\SolidWorks.Interop.swdimxpert.dll</HintPath>
     </Reference>
-    <Reference Include="SolidWorks.Interop.swdocumentmgr, Version=25.1.0.49, Culture=neutral, PublicKeyToken=e52dfa2d3a1e978a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="SolidWorks.Interop.swdocumentmgr">
+      <HintPath>..\..\..\References\2019\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\..\..\References\2018\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
     </Reference>
-    <Reference Include="SolidWorks.Interop.swmotionstudy, Version=25.1.0.49, Culture=neutral, PublicKeyToken=034d56e16c5ef330, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="SolidWorks.Interop.swmotionstudy">
+      <HintPath>..\..\..\References\2019\SolidWorks.Interop.swmotionstudy.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\..\..\References\2018\SolidWorks.Interop.swmotionstudy.dll</HintPath>
     </Reference>
-    <Reference Include="SolidWorks.Interop.swpublished, Version=25.1.0.49, Culture=neutral, PublicKeyToken=89a97bdc5284e6d8, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="SolidWorks.Interop.swpublished">
+      <HintPath>..\..\..\References\2019\SolidWorks.Interop.swpublished.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\..\..\References\2018\SolidWorks.Interop.swpublished.dll</HintPath>
     </Reference>
-    <Reference Include="SolidWorks.Interop.SWRoutingLib, Version=25.1.0.49, Culture=neutral, PublicKeyToken=1439c4c051169f7b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="SolidWorks.Interop.SWRoutingLib">
+      <HintPath>..\..\..\References\2019\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\..\..\References\2018\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
