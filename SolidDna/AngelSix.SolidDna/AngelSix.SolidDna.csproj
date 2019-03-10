@@ -7,7 +7,7 @@
     <Authors>Luke Malpass</Authors>
     <Company>AngelSix Ltd</Company>
     <Description>The new SolidDNA SDK, making the SolidWorks API easier, well behaved and modern</Description>
-    <Copyright>Copyright © 2016-2018</Copyright>
+    <Copyright>Copyright © 2016-2019</Copyright>
     <PackageLicenseUrl>https://github.com/angelsix/solidworks-api/blob/develop/license</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/angelsix/solidworks-api</PackageProjectUrl>
     <RepositoryUrl>https://github.com/angelsix/solidworks-api</RepositoryUrl>
@@ -40,31 +40,31 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="SolidWorks.Interop.sldworks">
-      <HintPath>..\..\References\2018\SolidWorks.Interop.sldworks.dll</HintPath>
+      <HintPath>..\..\References\2019\SolidWorks.Interop.sldworks.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.sw3dprinter">
-      <HintPath>..\..\References\2018\SolidWorks.Interop.sw3dprinter.dll</HintPath>
+      <HintPath>..\..\References\2019\SolidWorks.Interop.sw3dprinter.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.swcommands">
-      <HintPath>..\..\References\2018\SolidWorks.Interop.swcommands.dll</HintPath>
+      <HintPath>..\..\References\2019\SolidWorks.Interop.swcommands.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.swconst">
-      <HintPath>..\..\References\2018\SolidWorks.Interop.swconst.dll</HintPath>
+      <HintPath>..\..\References\2019\SolidWorks.Interop.swconst.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.swdimxpert">
-      <HintPath>..\..\References\2018\SolidWorks.Interop.swdimxpert.dll</HintPath>
+      <HintPath>..\..\References\2019\SolidWorks.Interop.swdimxpert.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.swdocumentmgr">
-      <HintPath>..\..\References\2018\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
+      <HintPath>..\..\References\2019\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.swmotionstudy">
-      <HintPath>..\..\References\2018\SolidWorks.Interop.swmotionstudy.dll</HintPath>
+      <HintPath>..\..\References\2019\SolidWorks.Interop.swmotionstudy.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.swpublished">
-      <HintPath>..\..\References\2018\SolidWorks.Interop.swpublished.dll</HintPath>
+      <HintPath>..\..\References\2019\SolidWorks.Interop.swpublished.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.SWRoutingLib">
-      <HintPath>..\..\References\2018\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
+      <HintPath>..\..\References\2019\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
