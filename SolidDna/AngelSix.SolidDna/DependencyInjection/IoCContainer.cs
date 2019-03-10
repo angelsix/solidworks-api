@@ -18,6 +18,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         public static ILocalizationManager Localization => Get<ILocalizationManager>();
 
+        /// <summary>
+        /// The instance of the <see cref="AddInIntegration"/> class that is for this add-in
+        /// </summary>
+        public static AddInIntegration AddIn => Get<AddInIntegration>();
+
         #endregion
 
         #region Method shortcuts
@@ -56,10 +61,12 @@ namespace AngelSix.SolidDna
             // Create default construction
             Framework.Construct(new DefaultFrameworkConstruction(configure =>
             {
-                // Add configuration file for the name of this file
-                // For example if it is MyAddin.dll then the configuration file
-                // will be in the same folder called MyAddin.appsettings.json"
-                configure.AddJsonFile(Path.ChangeExtension(addinPath, "appsettings.json"), optional: true);
+                // If the add-in path is not null
+                if (!string.IsNullOrEmpty(addinPath))
+                    // Add configuration file for the name of this file
+                    // For example if it is MyAddin.dll then the configuration file
+                    // will be in the same folder called MyAddin.appsettings.json"
+                    configure.AddJsonFile(Path.ChangeExtension(addinPath, "appsettings.json"), optional: true);
             }));
 
             // Invoke the callback for adding custom services

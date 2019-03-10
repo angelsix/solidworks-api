@@ -26,10 +26,6 @@ namespace AngelSix.SolidDna
         public void SetupAppDomain(string addinPath, string version, int cookie)
         {
             PlugInIntegration.Setup(addinPath, version, cookie);
-
-            // Make sure we resolve assemblies in this domain, as it seems to use this domain to resolve
-            // assemblies not the appDomain when crossing boundaries
-            AppDomain.CurrentDomain.AssemblyResolve += AppDomain_AssemblyResolve;
         }
 
         /// <summary>
@@ -38,67 +34,6 @@ namespace AngelSix.SolidDna
         public void Teardown()
         {
             PlugInIntegration.Teardown();
-        }
-
-        /// <summary>
-        /// Helper to resolve assemblies over AppDomain boundaries
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public static Assembly AppDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            try
-            {
-                // Only try and process SolidDna plug-ins
-                var found = PlugInIntegration.ResolveAllAssemblies;
-
-                if (!found)
-                {
-                    foreach (var val in PlugInIntegration.PlugInDetails.Keys)
-                        if (val == args.Name)
-                        {
-                            found = true;
-                            break;
-                        }
-                }
-
-                // If we have it in assemblies to resolve, thats ok too
-                if (!found)
-                    found = PlugInIntegration.AssembliesToResolve.Any(f => f == args.Name);
-
-                // If not found...
-                if (!found)
-                    // Return null
-                    return null;
-
-                // Try and load the assembly
-                var assembly = Assembly.Load(args.Name);
-
-                // If it loaded...
-                if (assembly != null)
-                    // Return it
-                    return assembly;
-
-                // Otherwise, throw file not found
-                throw new FileNotFoundException();
-            }
-            catch
-            {
-                //
-                // Try to load by filename - split out the filename of the full assembly name
-                // and append the base path of the original assembly (i.e. look in the same directory)
-                //
-                // NOTE: this doesn't account for special search paths but then that never
-                //       worked before either
-                //
-                var parts = args.Name.Split(',');
-                var filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + parts[0].Trim() + ".dll";
-
-                // Try and load assembly at let it throw FileNotFound if not there 
-                // as it's an expected failure if not found
-                return Assembly.LoadFrom(filePath);
-            }
         }
 
         #endregion
