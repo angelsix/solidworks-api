@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -23,23 +24,39 @@ namespace SolidDNA.ScriptRunner
         public MyAddinControl()
         {
             InitializeComponent();
+
+            // Set example script direct code
+            DirectEntry.Text = File.ReadAllText(Path.Combine(Path.GetDirectoryName(typeof(MyAddinControl).Assembly.Location), "ScriptDirectExample.cs"));
         }
 
         #endregion
 
+        #region UI Events
+
         /// <summary>
-        /// When the button is clicked
+        /// When the Run button is clicked on the Direct tab
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void Button_ClickAsync(object sender, System.Windows.RoutedEventArgs e)
+        private void DirectEntry_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            // Run the code
+            RunScript(DirectEntry.Text);
+        }
+
+        /// <summary>
+        /// When the Run button is clicked on the File tab
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void RunFile_ClickAsync(object sender, System.Windows.RoutedEventArgs e)
         {
             try
             {
                 var scriptText = string.Empty;
 
                 // For now just read file direct from users desktop called script
-                var scriptLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "script.cs");
+                var scriptLocation = FileLocation.Text;
 
                 // If script file not found
                 if (!File.Exists(scriptLocation))
@@ -54,16 +71,48 @@ namespace SolidDNA.ScriptRunner
                     // Store results
                     scriptText = await fileReader.ReadToEndAsync();
 
-                // Get references to all known references of this project
-                var references = IoC.AddIn.ReferencedAssemblies.Select(reference =>
-                {
-                    // Load the reference
-                    var loadedAssembly = Assembly.Load(reference);
+                // Run the script
+                RunScript(scriptText);
+            }
+            catch (Exception ex)
+            {
+                // Show error to user
+                Application.ShowMessageBox($"Unexpected error running SolidDna script. {ex.ToString()}");
+            }
+        }
 
-                    // And add a reference to this assembly into the dynamic code assembly
-                    return (MetadataReference)MetadataReference.CreateFromFile(loadedAssembly.Location);
+        private void BrowseFile_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            using (var openFileDialog = new System.Windows.Forms.OpenFileDialog
+            {
+                Filter = "C# Script (*.cs)|*.cs",
+                Title = "Select C# script",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+            })
+            {
+                // If they didn't select a file
+                if (openFileDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                    // Return
+                    return;
 
-                }).ToList();
+                // Set filename
+                FileLocation.Text = openFileDialog.FileName;
+            }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Runs the given script
+        /// </summary>
+        /// <param name="scriptText">The script to run</param>
+        private void RunScript(string scriptText)
+        {
+            try
+            {
+                // Prepend basic wrapper if this is not a full C# class file
+                scriptText = PrependScriptWrapper(scriptText);
+                var references = GetAssemblyReferences();
 
                 // Create a compilation task ready to compile the code
                 var compilation = CSharpCompilation.Create(
@@ -116,5 +165,48 @@ namespace SolidDNA.ScriptRunner
                 Application.ShowMessageBox($"Unexpected error running SolidDna script. {ex.ToString()}");
             }
         }
+
+        #region Private Helpers
+
+        /// <summary>
+        /// Gets all referenced assemblies for this add-in
+        /// </summary>
+        /// <returns></returns>
+        private List<MetadataReference> GetAssemblyReferences()
+        {
+            // Get references to all known references of this project
+            var references = IoC.AddIn.ReferencedAssemblies.Select(reference =>
+            {
+                // Load the reference
+                var loadedAssembly = Assembly.Load(reference);
+
+                // And add a reference to this assembly into the dynamic code assembly
+                return (MetadataReference)MetadataReference.CreateFromFile(loadedAssembly.Location);
+
+            }).ToList();
+
+            // Return references
+            return references;
+        }
+
+        /// <summary>
+        /// Wraps basic script text in a basic class for all standard/default using statements so you can run really basic
+        /// scripts without having to define a class and a Run method or any using statements
+        /// </summary>
+        /// <param name="scriptText">The script text to wrap</param>
+        /// <remarks>If the text already contains a SolidDnaScript class nothing will get wrapped</remarks>
+        /// <returns></returns>
+        private string PrependScriptWrapper(string scriptText)
+        {
+            // If it already has a SolidDnaScript class...
+            if (scriptText.Contains("class SolidDnaScript"))
+                // Do nothing
+                return scriptText;
+
+            // Wrap the text in the standard script file
+            return File.ReadAllText(Path.Combine(Path.GetDirectoryName(typeof(MyAddinControl).Assembly.Location), "ScriptWrapperFormat.cs")).Replace("//CODE", scriptText);
+        }
+
+        #endregion
     }
 }

@@ -90,6 +90,12 @@
     <Compile Include="MyTaskpaneUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Content Include="ScriptWrapperFormat.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ScriptDirectExample.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Compile Include="SolidDnaIntegration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
