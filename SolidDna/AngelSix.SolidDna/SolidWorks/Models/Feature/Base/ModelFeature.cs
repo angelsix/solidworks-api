@@ -165,7 +165,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Checks if this feature's specific type is a Reference Curve
         /// </summary>
-        public bool IsReferenceCruve => FeatureType == ModelFeatureType.ReferenceCurve;
+        public bool IsReferenceCurve => FeatureType == ModelFeatureType.ReferenceCurve;
 
         /// <summary>
         /// Checks if this feature's specific type is a Reference Plane
