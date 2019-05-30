@@ -1,5 +1,4 @@
-﻿
-namespace AngelSix.SolidDna
+﻿namespace AngelSix.SolidDna
 {
     /// <summary>
     /// A custom property of a model that can be edit directly

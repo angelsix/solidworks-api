@@ -32,7 +32,7 @@ namespace AngelSix.SolidDna
         public static List<SolidPlugIn> PlugIns = new List<SolidPlugIn>();
 
         /// <summary>
-        /// If true, will load your Add-in dll in it's own application domain so you can 
+        /// If true, will load your Add-in dll in its own application domain so you can 
         /// unload and rebuild your add-in without having to close SolidWorks
         /// NOTE: This does seem to expose some bugs and issues in SolidWorks API
         ///       in terms of resolving references to specific dll's, so if you experience
@@ -46,7 +46,7 @@ namespace AngelSix.SolidDna
         public static List<string> AssembliesToResolve { get; set; } = new List<string>();
 
         /// <summary>
-        /// A list of all plug-ins that have been added to be loaded
+        /// A list of all plug-ins that have been added to be loaded. 
         /// The key is the absolute file path, and the Type is the <see cref="SolidPlugIn"/> implementation type
         /// </summary>
         public static Dictionary<string, List<PlugInDetails>> PlugInDetails { get; private set; } = new Dictionary<string, List<PlugInDetails>>();
@@ -59,7 +59,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// If true, searches in the directory of the application (where AngelSix.SolidDna.dll is) for any dll that
         /// contains any <see cref="SolidPlugIn"/> implementations and adds them to the <see cref="PlugInDetails"/>
-        /// during the <see cref="ConfigurePlugIns(string, bool)"/> stage.
+        /// during the <see cref="ConfigurePlugIns(string)"/> stage.
         /// If false, the user should during the <see cref="AddInIntegration.PreLoadPlugIns"/> method, add
         /// any specific implementations of the <see cref="SolidPlugIn"/> to <see cref="PlugInIntegration.PlugInDetails"/> list
         /// </summary>
@@ -206,10 +206,9 @@ namespace AngelSix.SolidDna
         #region Add Plug-in
 
         /// <summary>
-        /// Adds a plug-in based on it's <see cref="SolidPlugIn"/> implementation
+        /// Adds a plug-in based on its <see cref="SolidPlugIn"/> implementation
         /// </summary>
         /// <typeparam name="T">The class that implements the <see cref="SolidPlugIn"/></typeparam>
-        /// </param>
         public static void AddPlugIn<T>()
         {
             if (UseDetachedAppDomain)
@@ -234,9 +233,9 @@ namespace AngelSix.SolidDna
         }
 
         /// <summary>
-        /// Adds a plug-in based on it's <see cref="SolidPlugIn"/> implementation
+        /// Adds a plug-in based on its <see cref="SolidPlugIn"/> implementation
         /// </summary>
-        /// <typeparam name="fullPath">The absolute path to the plug-in dll</typeparam>
+        /// <param name="fullPath">The absolute path to the plug-in dll</param>
         public static void AddPlugIn(string fullPath)
         {
             if (UseDetachedAppDomain)
@@ -282,8 +281,6 @@ namespace AngelSix.SolidDna
         /// Discovers all SolidDna plug-ins
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
-        /// <param name="loadAll">True to find all plug-ins in the same folder as the SolidDna dll</param>
-        /// <param name="log">True to log the output of the loading. Use false when registering for COM</param>
         /// <returns></returns>
         public static List<SolidPlugIn> SolidDnaPlugIns(string addinPath)
         {
@@ -442,7 +439,6 @@ namespace AngelSix.SolidDna
         /// Runs any initialization code required on plug-ins
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
-        /// <param name="log">True to log the output of the loading. Use false when registering for COM</param>
         public static void ConfigurePlugIns(string addinPath)
         {
             if (UseDetachedAppDomain)
@@ -506,7 +502,6 @@ namespace AngelSix.SolidDna
                 else
                     // Log it
                     Logger.LogDebugSource($"No PlugIn's found with a title.");
-
             }
         }
 

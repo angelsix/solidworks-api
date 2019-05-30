@@ -25,9 +25,10 @@ namespace AngelSix.SolidDna
         #region Selected Entities
 
         /// <summary>
-        /// Get's all of the selected objects in the model
+        /// Gets all of the selected objects in the model
         /// </summary>
-        /// <param name="action">The selected objects list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>
+        /// <param name="action">The selected objects list to be worked on inside the action.
+        ///     NOTE: Do not store references to them outside of this action</param>
         /// <returns></returns>
         public void SelectedObjects(Action<List<SelectedObject>> action)
         {

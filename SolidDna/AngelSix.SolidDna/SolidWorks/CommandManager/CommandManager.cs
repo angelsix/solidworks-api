@@ -32,14 +32,14 @@ namespace AngelSix.SolidDna
         #region Command Group
 
         /// <summary>
-        /// 
+        /// Create a command group from a list of <see cref="CommandManagerItem"/> items
         /// </summary>
         /// <param name="title">Name of the CommandGroup to create (see Remarks)</param>
         /// <param name="items">The command items to add</param>
+        /// <param name="iconListsPath">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
+        ///     For example C:\Folder\myiconlist{0}.png</param>
         /// <param name="tooltip">Tool tip for the CommandGroup</param>
         /// <param name="hint">Text displayed in SOLIDWORKS status bar when a user's mouse pointer is over the CommandGroup</param>
-        /// <param name="iconListsPath">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
-        /// For example C:\Folder\myiconlist{0}.png</param>
         /// <param name="position">Position of the CommandGroup in the CommandManager for all document templates.
         /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandMananger, or specify -1 to add it to the end of the CommandManager.
         /// NOTE: You can also use ICommandGroup::MenuPosition to control the position of the CommandGroup in specific document templates.</param>
@@ -88,7 +88,8 @@ namespace AngelSix.SolidDna
         /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandMananger, or specify -1 to add it to the end of the CommandManager.
         /// NOTE: You can also use ICommandGroup::MenuPosition to control the position of the CommandGroup in specific document templates.</param>
         /// <param name="ignorePreviousVersion">True to remove all previously saved customization and toolbar information before creating a new CommandGroup, false to not.
-        /// Call CommandManager.GetGroupDataFromRegistry before calling this method to determine how to set IgnorePreviousVersion. Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
+        ///     Call CommandManager.GetGroupDataFromRegistry before calling this method to determine how to set IgnorePreviousVersion.
+        ///     Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
         /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
         /// <returns></returns>
@@ -134,7 +135,7 @@ namespace AngelSix.SolidDna
         /// Removes the specific command group
         /// </summary>
         /// <param name="group">The command group to remove</param>
-        /// <param name="runtimeOnly">True to remove the CommandGroup , saving its toolbar information in the registry; false to remove both the CommandGroup and its toolbar information in the registry</param>
+        /// <param name="runtimeOnly">True to remove the CommandGroup, saving its toolbar information in the registry. False to remove both the CommandGroup and its toolbar information in the registry</param>
         public void RemoveCommandGroup(CommandManagerGroup group, bool runtimeOnly = false)
         {
             lock (mCommandGroups)

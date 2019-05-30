@@ -19,7 +19,7 @@ namespace AngelSix.SolidDna
         public static ILocalizationManager Localization => Get<ILocalizationManager>();
 
         /// <summary>
-        /// The instance of the <see cref="AddInIntegration"/> class that is for this add-in
+        /// The instance of the <see cref="AddInIntegration"/> class that is used for this add-in
         /// </summary>
         public static AddInIntegration AddIn => Get<AddInIntegration>();
 
@@ -40,7 +40,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Attempts to get the injected service of the specified type
         /// </summary>
-        /// <typeparam name="type">The type of service to fetch</typeparam>
+        /// <param name="type">The type of service to fetch</param>
         /// <returns></returns>
         public static object Get(Type type)
         {
@@ -107,7 +107,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Attempts to get the injected service of the specified type
         /// </summary>
-        /// <typeparam name="type">The type of service to fetch</typeparam>
+        /// <param name="type">The type of service to fetch</param>
         /// <returns></returns>
         public static object Get(Type type)
         {

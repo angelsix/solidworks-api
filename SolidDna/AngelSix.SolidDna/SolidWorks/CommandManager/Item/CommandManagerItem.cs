@@ -31,7 +31,7 @@ namespace AngelSix.SolidDna
 
         /// <summary>
         /// The position of the item in the list.
-        /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandMananger, or specify -1 to add it to the end of the CommandManager.
+        /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandManager, or specify -1 to add it to the end of the CommandManager.
         /// </summary>
         public int Position { get; set; } = -1;
 

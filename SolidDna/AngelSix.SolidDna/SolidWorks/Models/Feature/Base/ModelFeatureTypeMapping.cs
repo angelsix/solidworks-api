@@ -3,7 +3,7 @@
 namespace AngelSix.SolidDna
 {
     /// <summary>
-    /// Maps SolidWorks model Feature's to their specific types
+    /// Maps SolidWorks model Features to their specific types
     /// </summary>
     public static class ModelFeatureTypeMapping
     {

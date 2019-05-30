@@ -5,13 +5,11 @@ using System.Threading.Tasks;
 
 namespace AngelSix.SolidDna
 {
-
     /// <summary>
-    /// Adds the ability to safely await on tasks to be complete that need limited access
+    /// Adds the ability to safely await on tasks to be complete that need limited access. 
     /// For example, only allowing one task to access some data at a time, like the old 
-    /// async locks
-    /// 
-    /// This awaiter uses the safer semaphore to prevent any chance of a deadlock
+    /// async locks.
+    /// This awaiter uses the safer semaphore to prevent any chance of a deadlock.
     /// </summary>
     public static class AsyncAwaitor
     {

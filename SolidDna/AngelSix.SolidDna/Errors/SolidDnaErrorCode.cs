@@ -153,7 +153,6 @@
         /// </summary>
         SolidWorksCommandGroupCreateTabError = 12006,
 
-
         #endregion
 
         #region Export Data (13,000)
@@ -174,6 +173,5 @@
         SolidWorksExportDataPdfSetSheetsError = 13001,
 
         #endregion
-
     }
 }

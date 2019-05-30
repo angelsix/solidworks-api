@@ -18,7 +18,7 @@ namespace AngelSix.SolidDna
         /// <param name="errorDetails">Specific details about this exact error</param>
         /// <param name="errorTypeCode">The error type code of this error</param>
         /// <param name="errorCode">The specific error code of this error</param>
-        /// <param name="innerException">If an inner exception is supplied, it's message is appended to the errorDetails</param>
+        /// <param name="innerException">If an inner exception is supplied, its message is appended to the errorDetails</param>
         /// <returns></returns>
         public static SolidDnaError CreateError(SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDetails, Exception innerException = null)
         {
@@ -74,7 +74,7 @@ namespace AngelSix.SolidDna
         }
 
         /// <summary>
-        /// Runs an function and catches any exceptions thrown
+        /// Runs a function and catches any exceptions thrown, 
         /// wrapping and rethrowing them as a <see cref="SolidDnaException"/>
         /// </summary>
         /// <param name="func">The function to run</param>
@@ -112,7 +112,7 @@ namespace AngelSix.SolidDna
         }
 
         /// <summary>
-        /// Runs a task and catches any exceptions thrown
+        /// Runs a task and catches any exceptions thrown, 
         /// wrapping and rethrowing them as a <see cref="SolidDnaException"/>
         /// </summary>
         /// <param name="task">The task to run</param>

@@ -3,7 +3,7 @@
 namespace AngelSix.SolidDna
 {
     /// <summary>
-    /// An base class to implement to become a SolidDna plug-in
+    /// An base class to implement to become a SolidDna plug-in. 
     /// The compiled dll of SolidDna must be in the same location as 
     /// the plug-in dll to be discovered
     /// </summary>
@@ -12,13 +12,13 @@ namespace AngelSix.SolidDna
         #region Public Properties
 
         /// <summary>
-        /// Get's the desired title to show in the SolidWorks add-in
+        /// Gets the desired title to show in the SolidWorks add-in
         /// </summary>
         /// <returns></returns>
         public abstract string AddInTitle { get; }
 
         /// <summary>
-        /// Get's the desired description to show in the SolidWorks add-in
+        /// Gets the desired description to show in the SolidWorks add-in
         /// </summary>
         /// <returns></returns>
         public abstract string AddInDescription { get; }
@@ -56,7 +56,7 @@ namespace AngelSix.SolidDna
     }
 
     /// <summary>
-    /// An base class to implement to become a SolidDna plug-in
+    /// An base class to implement to become a SolidDna plug-in. 
     /// The compiled dll of SolidDna must be in the same location as 
     /// the plug-in dll to be discovered
     /// </summary>

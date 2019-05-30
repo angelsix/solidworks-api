@@ -35,7 +35,7 @@ namespace AngelSix.SolidDna
         #endregion
 
         /// <summary>
-        /// Combines the SolidDnaError and InnerExeption, adding the InnerException message to the SolidDnaError.ErrorDescription
+        /// Combines the SolidDnaError and InnerException, adding the InnerException message to the SolidDnaError.ErrorDescription
         /// </summary>
         /// <returns></returns>
         public SolidDnaError ToCompositeSolidDnaError()
