@@ -146,7 +146,7 @@
         /// <summary>
         /// There was an error while trying to set a Command Group Icon list with an invalid path
         /// </summary>
-        SolidWorksCommandGroupIvalidPathFormatError = 12005,
+        SolidWorksCommandGroupInvalidPathFormatError = 12005,
 
         /// <summary>
         /// There was an error while running a SolidWorks API call to create a Command Group Tab
