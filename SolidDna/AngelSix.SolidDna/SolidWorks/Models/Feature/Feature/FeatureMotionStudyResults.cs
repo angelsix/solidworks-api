@@ -1,5 +1,4 @@
-﻿using SolidWorks.Interop.sldworks;
-using SolidWorks.Interop.swmotionstudy;
+﻿using SolidWorks.Interop.swmotionstudy;
 
 namespace AngelSix.SolidDna
 {

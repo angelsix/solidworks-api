@@ -41,9 +41,9 @@ namespace AngelSix.SolidDna
         Copy = 2,
 
         /// <summary>
-        /// Supports parts, assemblies, and drawings; this setting indicates to 
+        /// Supports parts, assemblies and drawings; this setting indicates to 
         /// save all components (sub-assemblies and parts) in both assemblies 
-        /// and drawings; if a part has an external reference, then this setting
+        /// and drawings. If a part has an external reference, then this setting
         /// indicates to save the external reference
         /// </summary>
         SaveReferenced = 4,

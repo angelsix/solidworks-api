@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Security.Permissions;
 using static Dna.FrameworkDI;
 
@@ -108,19 +105,18 @@ namespace AngelSix.SolidDna
         }
 
         /// <summary>
-        /// Adds a plug-in based on it's <see cref="SolidPlugIn"/> implementation
+        /// Adds a plug-in based on its <see cref="SolidPlugIn"/> implementation
         /// </summary>
-        /// <typeparam name="fullPath">The absolute path to the plug-in dll</typeparam>
+        /// <param name="fullPath">The absolute path to the plug-in dll</param>
         public void AddPlugIn(string fullPath)
         {
             PlugInIntegration.AddPlugIn(fullPath);
         }
 
         /// <summary>
-        /// Adds a plug-in based on it's <see cref="SolidPlugIn"/> implementation
+        /// Adds a plug-in based on its <see cref="SolidPlugIn"/> implementation
         /// </summary>
         /// <typeparam name="T">The class that implements the <see cref="SolidPlugIn"/></typeparam>
-        /// </param>
         public void AddPlugIn<T>()
         {
             PlugInIntegration.AddPlugIn<T>();

@@ -38,7 +38,7 @@ namespace AngelSix.SolidDna
         /// NOTE: Make sure any and all await calls inside this function and its children
         ///       use ConfigureAwait(false). This is because the parent has to support 
         ///       a synchronous version of this call, so the method cannot sync back with
-        ///       it's calling context without risk of deadlock
+        ///       its calling context without risk of deadlock.
         /// </summary>
         /// <param name="pathFormat">The path to the desired resource, containing {0} in place of the culture</param>
         /// <param name="constructData">The function that takes the file data and converts it into the format required by the provider</param>
@@ -69,7 +69,7 @@ namespace AngelSix.SolidDna
                     // Try to get the stream for this resource
                     using (var stream = await ResourceFormatProviderHelpers.GetStreamAsync(pathFormat.Type, resourcePath).ConfigureAwait(false))
                     {
-                        // If successfully try and convert that data into a usable resource object
+                        // If successful, try and convert that data into a usable resource object
                         if (stream != null)
                             resourceDocument = constructData(stream);
                     }

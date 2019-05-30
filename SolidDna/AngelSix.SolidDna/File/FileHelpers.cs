@@ -10,8 +10,8 @@ namespace AngelSix.SolidDna
     {
         /// <summary>
         /// Gets a file or folder name from a given path.
-        /// If the path does not contain any folders the passed in path is returned
-        /// otherwise the file/folder name is returned
+        /// If the path does not contain any folders, the passed in path is returned. 
+        /// Otherwise the file/folder name is returned
         /// </summary>
         /// <param name="path">The path to get the file/folder name from</param>
         /// <returns></returns>
@@ -22,10 +22,10 @@ namespace AngelSix.SolidDna
                 return string.Empty;
 
             // Normalize slashes
-            var normalizedpath = path.Replace('/', '\\');
+            var normalizedPath = path.Replace('/', '\\');
 
             // Get the last slash
-            var lastSlash = normalizedpath.LastIndexOf('\\');
+            var lastSlash = normalizedPath.LastIndexOf('\\');
 
             // If we don't have any folders, return the passed in path
             if (lastSlash <= 0)

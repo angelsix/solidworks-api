@@ -53,7 +53,7 @@ namespace AngelSix.SolidDna
         }
 
         /// <summary>
-        /// Gets the culture from the specified culture, or resorts to the default culture if  not specified 
+        /// Gets the culture from the specified culture, or resorts to the default culture if not specified 
         /// </summary>
         /// <param name="culture">The international standard for the desired culture, such as en-GB, en-US, fr-FR etc...</param>
         /// <returns></returns>
@@ -66,7 +66,7 @@ namespace AngelSix.SolidDna
         /// Takes a formatted path and a culture name and returns the path
         /// </summary>
         /// <param name="locationFormat">The path format to the resource</param>
-        /// <param name="culture">The culture to use. If not specified the default culture will be used</param>
+        /// <param name="culture">The culture to use. If not specified, the default culture will be used</param>
         /// <returns></returns>
         public static string GetCulturePath(string locationFormat, string culture = null)
         {

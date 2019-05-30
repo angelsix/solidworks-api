@@ -30,7 +30,7 @@ namespace AngelSix.SolidDna
     */
 
     /// <summary>
-    /// Represents a SolidWorks feature of any type
+    /// Represents a SolidWorks feature of any type.
     /// NOTE: This is a SharedSolidDnaObject so the passed 
     /// in COM object should be final disposed by the <see cref="SelectedObject"/> parent
     /// 
@@ -77,13 +77,13 @@ namespace AngelSix.SolidDna
         public string FeatureName => mBaseObject.Name;
 
         /// <summary>
-        /// The specific feature for this feature, if any
+        /// The specific feature for this feature, if any.
         /// NOTE: This is a COM object. Set all instance variables of this to null once done if you set any
         /// </summary>
         public object SpecificFeature => mSpecificFeature?.UnsafeObject;
 
         /// <summary>
-        /// The feature data for this feature, if any
+        /// The feature data for this feature, if any.
         /// NOTE: This is a COM object. Set all instance variables of this to null once done if you set any
         /// </summary>
         public object FeatureData => mFeatureData?.UnsafeObject;
@@ -93,122 +93,122 @@ namespace AngelSix.SolidDna
         #region Features
 
         /// <summary>
-        /// Checks if this features specify type is an Attribute
+        /// Checks if this feature's specific type is an Attribute
         /// </summary>
         public bool IsAttribute => FeatureType == ModelFeatureType.Attribute;
 
         /// <summary>
-        /// Checks if this features specify type is a Body Folder
+        /// Checks if this feature's specific type is a Body Folder
         /// </summary>
         public bool IsBodyFolder => FeatureType == ModelFeatureType.BodyFolder;
 
         /// <summary>
-        /// Checks if this features specify type is a BOM
+        /// Checks if this feature's specific type is a BOM
         /// </summary>
         public bool IsBom => FeatureType == ModelFeatureType.Bom;
 
         /// <summary>
-        /// Checks if this features specify type is a Camera
+        /// Checks if this feature's specific type is a Camera
         /// </summary>
         public bool IsCamera => FeatureType == ModelFeatureType.Camera;
 
         /// <summary>
-        /// Checks if this features specify type is a Comment Folder
+        /// Checks if this feature's specific type is a Comment Folder
         /// </summary>
         public bool IsCommentFolder => FeatureType == ModelFeatureType.CommentFolder;
 
         /// <summary>
-        /// Checks if this features specify type is a Cosmetic Weld Bead Folder 
+        /// Checks if this feature's specific type is a Cosmetic Weld Bead Folder 
         /// </summary>
         public bool IsCosmeticWeldBeadFolder => FeatureType == ModelFeatureType.CosmeticWeldBeadFolder;
 
         /// <summary>
-        /// Checks if this features specify type is a Detail Circle
+        /// Checks if this feature's specific type is a Detail Circle
         /// </summary>
         public bool IsDetailCircle => FeatureType == ModelFeatureType.DetailCircle;
 
         /// <summary>
-        /// Checks if this features specify type is an 
+        /// Checks if this feature's specific type is a Section view
         /// </summary>
         public bool IsDrSection => FeatureType == ModelFeatureType.DrSection;
 
         /// <summary>
-        /// Checks if this features specify type is a Feature Folder
+        /// Checks if this feature's specific type is a Feature Folder
         /// </summary>
         public bool IsFeatureFolder => FeatureType == ModelFeatureType.FeatureFolder;
 
         /// <summary>
-        /// Checks if this features specify type is a Light
+        /// Checks if this feature's specific type is a Light
         /// </summary>
         public bool IsLight => FeatureType == ModelFeatureType.Light;
 
         /// <summary>
-        /// Checks if this features specify type is a Mate 
+        /// Checks if this feature's specific type is a Mate 
         /// </summary>
         public bool IsMate => FeatureType == ModelFeatureType.Mate;
 
         /// <summary>
-        /// Checks if this features specify type is a Mate Reference 
+        /// Checks if this feature's specific type is a Mate Reference 
         /// </summary>
         public bool IsMateReference => FeatureType == ModelFeatureType.MateReference;
 
         /// <summary>
-        /// Checks if this features specify type is a Motion Study Results
+        /// Checks if this feature's specific type is a Motion Study Results
         /// </summary>
         public bool IsMotionStudyResults => FeatureType == ModelFeatureType.MotionStudyResults;
 
         /// <summary>
-        /// Checks if this features specify type is a Ref Axis
+        /// Checks if this feature's specific type is a Ref Axis
         /// </summary>
         public bool IsReferenceAxis => FeatureType == ModelFeatureType.ReferenceAxis;
 
         /// <summary>
-        /// Checks if this features specify type is a Reference Curve
+        /// Checks if this feature's specific type is a Reference Curve
         /// </summary>
         public bool IsReferenceCruve => FeatureType == ModelFeatureType.ReferenceCurve;
 
         /// <summary>
-        /// Checks if this features specify type is a Reference Plane
+        /// Checks if this feature's specific type is a Reference Plane
         /// </summary>
         public bool IsReferencePlane => FeatureType == ModelFeatureType.ReferencePlane;
 
         /// <summary>
-        /// Checks if this features specify type is a Reference Point
+        /// Checks if this feature's specific type is a Reference Point
         /// </summary>
         public bool IsReferencePoint => FeatureType == ModelFeatureType.ReferencePoint;
 
         /// <summary>
-        /// Checks if this features specify type is a Sensor 
+        /// Checks if this feature's specific type is a Sensor 
         /// </summary>
         public bool IsSensor => FeatureType == ModelFeatureType.Sensor;
 
         /// <summary>
-        /// Checks if this features specify type is a Sketch
+        /// Checks if this feature's specific type is a Sketch
         /// </summary>
         public bool IsSketch => FeatureType == ModelFeatureType.Sketch;
 
         /// <summary>
-        /// Checks if this features specify type is a Sketch Block Definition
+        /// Checks if this feature's specific type is a Sketch Block Definition
         /// </summary>
         public bool IsSketchBlockDefinition => FeatureType == ModelFeatureType.SketchBlockDefinition;
 
         /// <summary>
-        /// Checks if this features specify type is a Sketch Block Instance 
+        /// Checks if this feature's specific type is a Sketch Block Instance 
         /// </summary>
         public bool IsSketchBlockInstance => FeatureType == ModelFeatureType.SketchBlockInstance;
 
         /// <summary>
-        /// Checks if this features specify type is a Sketch Picture
+        /// Checks if this feature's specific type is a Sketch Picture
         /// </summary>
         public bool IsSketchPicture => FeatureType == ModelFeatureType.SketchPicture;
 
         /// <summary>
-        /// Checks if this features specify type is a Surface Mid
+        /// Checks if this feature's specific type is a Surface Mid
         /// </summary>
         public bool IsSurfaceMid => FeatureType == ModelFeatureType.SurfaceMid;
 
         /// <summary>
-        /// Checks if this features specify type is a Table Anchor
+        /// Checks if this feature's specific type is a Table Anchor
         /// </summary>
         public bool IsTableAnchor => FeatureType == ModelFeatureType.TableAnchor;
 
@@ -217,547 +217,547 @@ namespace AngelSix.SolidDna
         #region Feature Data
 
         /// <summary>
-        /// Checks if this features specify type is Base Flange data
+        /// Checks if this feature's specific type is Base Flange data
         /// </summary>
         public bool IsBaseFlangeData => FeatureType == ModelFeatureType.BaseFlangeData;
 
         /// <summary>
-        /// Checks if this features specify type is Bends data
+        /// Checks if this feature's specific type is Bends data
         /// </summary>
         public bool IsBendsData => FeatureType == ModelFeatureType.BendsData;
 
         /// <summary>
-        /// Checks if this features specify type is Boundary Boss data
+        /// Checks if this feature's specific type is Boundary Boss data
         /// </summary>
         public bool IsBoundaryBossData => FeatureType == ModelFeatureType.BoundaryBossData;
 
         /// <summary>
-        /// Checks if this features specify type is Break Corner data
+        /// Checks if this feature's specific type is Break Corner data
         /// </summary>
         public bool IsBreakCornerData => FeatureType == ModelFeatureType.BreakCornerData;
 
         /// <summary>
-        /// Checks if this features specify type is Broken Out Section data
+        /// Checks if this feature's specific type is Broken Out Section data
         /// </summary>
         public bool IsBrokenOutSectionData => FeatureType == ModelFeatureType.BrokenOutSectionData;
 
         /// <summary>
-        /// Checks if this features specify type is Cavity data
+        /// Checks if this feature's specific type is Cavity data
         /// </summary>
         public bool IsCavityData => FeatureType == ModelFeatureType.CavityData;
 
         /// <summary>
-        /// Checks if this features specify type is Chain Pattern data
+        /// Checks if this feature's specific type is Chain Pattern data
         /// </summary>
         public bool IsChainPatternData => FeatureType == ModelFeatureType.ChainPatternData;
 
         /// <summary>
-        /// Checks if this features specify type is Chamfer data
+        /// Checks if this feature's specific type is Chamfer data
         /// </summary>
         public bool IsChamferData => FeatureType == ModelFeatureType.ChamferData;
 
         /// <summary>
-        /// Checks if this features specify type is Circular Pattern data
+        /// Checks if this feature's specific type is Circular Pattern data
         /// </summary>
         public bool IsCircularPatternData => FeatureType == ModelFeatureType.CircularPatternData;
 
         /// <summary>
-        /// Checks if this features specify type is Combine Bodies data
+        /// Checks if this feature's specific type is Combine Bodies data
         /// </summary>
         public bool IsCombineBodiesData => FeatureType == ModelFeatureType.CombineBodiesData;
 
         /// <summary>
-        /// Checks if this features specify type is Composite Curve data
+        /// Checks if this feature's specific type is Composite Curve data
         /// </summary>
         public bool IsCompositeCurveData => FeatureType == ModelFeatureType.CompositeCurveData;
 
         /// <summary>
-        /// Checks if this features specify type is Coordinate System data
+        /// Checks if this feature's specific type is Coordinate System data
         /// </summary>
         public bool IsCoordinateSystemData => FeatureType == ModelFeatureType.CoordinateSystemData;
 
         /// <summary>
-        /// Checks if this features specify type is Core data
+        /// Checks if this feature's specific type is Core data
         /// </summary>
         public bool IsCoreData => FeatureType == ModelFeatureType.CoreData;
 
         /// <summary>
-        /// Checks if this features specify type is Cosmetic Thread data
+        /// Checks if this feature's specific type is Cosmetic Thread data
         /// </summary>
         public bool IsCosmeticThreadData => FeatureType == ModelFeatureType.CosmeticThreadData;
 
         /// <summary>
-        /// Checks if this features specify type is Cosmetic Weld Bead data
+        /// Checks if this feature's specific type is Cosmetic Weld Bead data
         /// </summary>
         public bool IsCosmeticWeldBeadData => FeatureType == ModelFeatureType.CosmeticWeldBeadData;
 
         /// <summary>
-        /// Checks if this features specify type is Cross Break data
+        /// Checks if this feature's specific type is Cross Break data
         /// </summary>
         public bool IsCrossBreakData => FeatureType == ModelFeatureType.CrossBreakData;
 
         /// <summary>
-        /// Checks if this features specify type is Curve Driven Pattern data
+        /// Checks if this feature's specific type is Curve Driven Pattern data
         /// </summary>
         public bool IsCurveDrivenPatternData => FeatureType == ModelFeatureType.CurveDrivenPatternData;
 
         /// <summary>
-        /// Checks if this features specify type is Delete Body data
+        /// Checks if this feature's specific type is Delete Body data
         /// </summary>
         public bool IsDeleteBodyData => FeatureType == ModelFeatureType.DeleteBodyData;
 
         /// <summary>
-        /// Checks if this features specify type is Delete Face data
+        /// Checks if this feature's specific type is Delete Face data
         /// </summary>
         public bool IsDeleteFaceData => FeatureType == ModelFeatureType.DeleteFaceData;
 
         /// <summary>
-        /// Checks if this features specify type is Derived Part data
+        /// Checks if this feature's specific type is Derived Part data
         /// </summary>
         public bool IsDerivedPartData => FeatureType == ModelFeatureType.DerivedPartData;
 
         /// <summary>
-        /// Checks if this features specify type is Derived Pattern data
+        /// Checks if this feature's specific type is Derived Pattern data
         /// </summary>
         public bool IsDerivedPatternData => FeatureType == ModelFeatureType.DerivedPatternData;
 
         /// <summary>
-        /// Checks if this features specify type is Dim Pattern data
+        /// Checks if this feature's specific type is Dim Pattern data
         /// </summary>
         public bool IsDimPatternData => FeatureType == ModelFeatureType.DimPatternData;
 
         /// <summary>
-        /// Checks if this features specify type is Dome data
+        /// Checks if this feature's specific type is Dome data
         /// </summary>
         public bool IsDomeData => FeatureType == ModelFeatureType.DomeData;
 
         /// <summary>
-        /// Checks if this features specify type is Draft data
+        /// Checks if this feature's specific type is Draft data
         /// </summary>
         public bool IsDraftData => FeatureType == ModelFeatureType.DraftData;
 
         /// <summary>
-        /// Checks if this features specify type is Edge Flange data
+        /// Checks if this feature's specific type is Edge Flange data
         /// </summary>
         public bool IsEdgeFlangeData => FeatureType == ModelFeatureType.EdgeFlangeData;
 
         /// <summary>
-        /// Checks if this features specify type is End Cap data
+        /// Checks if this feature's specific type is End Cap data
         /// </summary>
         public bool IsEndCapData => FeatureType == ModelFeatureType.EndCapData;
 
         /// <summary>
-        /// Checks if this features specify type is Extrude data
+        /// Checks if this feature's specific type is Extrude data
         /// </summary>
         public bool IsExtrudeData => FeatureType == ModelFeatureType.ExtrudeData;
 
         /// <summary>
-        /// Checks if this features specify type is Fill Pattern data
+        /// Checks if this feature's specific type is Fill Pattern data
         /// </summary>
         public bool IsFillPatternData => FeatureType == ModelFeatureType.FillPatternData;
 
         /// <summary>
-        /// Checks if this features specify type is Flat Pattern data
+        /// Checks if this feature's specific type is Flat Pattern data
         /// </summary>
         public bool IsFlatPatternData => FeatureType == ModelFeatureType.FlatPatternData;
 
         /// <summary>
-        /// Checks if this features specify type is Folds data
+        /// Checks if this feature's specific type is Folds data
         /// </summary>
         public bool IsFoldsData => FeatureType == ModelFeatureType.FoldsData;
 
         /// <summary>
-        /// Checks if this features specify type is Free Point Curve data
+        /// Checks if this feature's specific type is Free Point Curve data
         /// </summary>
         public bool IsFreePointCurveData => FeatureType == ModelFeatureType.FreePointCurveData;
 
         /// <summary>
-        /// Checks if this features specify type is Gusset data
+        /// Checks if this feature's specific type is Gusset data
         /// </summary>
         public bool IsGussetData => FeatureType == ModelFeatureType.GussetData;
 
         /// <summary>
-        /// Checks if this features specify type is Heal Edges data
+        /// Checks if this feature's specific type is Heal Edges data
         /// </summary>
         public bool IsHealEdgesData => FeatureType == ModelFeatureType.HealEdgesData;
 
         /// <summary>
-        /// Checks if this features specify type is Helix data
+        /// Checks if this feature's specific type is Helix data
         /// </summary>
         public bool IsHelixData => FeatureType == ModelFeatureType.HelixData;
 
         /// <summary>
-        /// Checks if this features specify type is Hem data
+        /// Checks if this feature's specific type is Hem data
         /// </summary>
         public bool IsHemData => FeatureType == ModelFeatureType.HemData;
 
         /// <summary>
-        /// Checks if this features specify type is Hole Series data
+        /// Checks if this feature's specific type is Hole Series data
         /// </summary>
         public bool IsHoleSeriesData => FeatureType == ModelFeatureType.HoleSeriesData;
 
         /// <summary>
-        /// Checks if this features specify type is Hole Wizard data
+        /// Checks if this feature's specific type is Hole Wizard data
         /// </summary>
         public bool IsHoleWizardData => FeatureType == ModelFeatureType.HoleWizardData;
 
         /// <summary>
-        /// Checks if this features specify type is Imported Curve data
+        /// Checks if this feature's specific type is Imported Curve data
         /// </summary>
         public bool IsImportedCurveData => FeatureType == ModelFeatureType.ImportedCurveData;
 
         /// <summary>
-        /// Checks if this features specify type is Indent data
+        /// Checks if this feature's specific type is Indent data
         /// </summary>
         public bool IsIndentData => FeatureType == ModelFeatureType.IndentData;
 
         /// <summary>
-        /// Checks if this features specify type is Intersect data
+        /// Checks if this feature's specific type is Intersect data
         /// </summary>
         public bool IsIntersectData => FeatureType == ModelFeatureType.IntersectData;
 
         /// <summary>
-        /// Checks if this features specify type is Jog data
+        /// Checks if this feature's specific type is Jog data
         /// </summary>
         public bool IsJogData => FeatureType == ModelFeatureType.JogData;
 
         /// <summary>
-        /// Checks if this features specify type is Library Feature data
+        /// Checks if this feature's specific type is Library Feature data
         /// </summary>
         public bool IsLibraryFeatureData => FeatureType == ModelFeatureType.LibraryFeatureData;
 
         /// <summary>
-        /// Checks if this features specify type is Linear Pattern data
+        /// Checks if this feature's specific type is Linear Pattern data
         /// </summary>
         public bool IsLinearPatternData => FeatureType == ModelFeatureType.LinearPatternData;
 
         /// <summary>
-        /// Checks if this features specify type is Local Circular Pattern data
+        /// Checks if this feature's specific type is Local Circular Pattern data
         /// </summary>
         public bool IsLocalCircularPatternData => FeatureType == ModelFeatureType.LocalCircularPatternData;
 
         /// <summary>
-        /// Checks if this features specify type is Local Curve Pattern data
+        /// Checks if this feature's specific type is Local Curve Pattern data
         /// </summary>
         public bool IsLocalCurvePatternData => FeatureType == ModelFeatureType.LocalCurvePatternData;
 
         /// <summary>
-        /// Checks if this features specify type is Local Linear Pattern data
+        /// Checks if this feature's specific type is Local Linear Pattern data
         /// </summary>
         public bool IsLocalLinearPatternData => FeatureType == ModelFeatureType.LocalLinearPatternData;
 
         /// <summary>
-        /// Checks if this features specify type is Loft data
+        /// Checks if this feature's specific type is Loft data
         /// </summary>
         public bool IsLoftData => FeatureType == ModelFeatureType.LoftData;
 
         /// <summary>
-        /// Checks if this features specify type is Lofted Bend data
+        /// Checks if this feature's specific type is Lofted Bend data
         /// </summary>
         public bool IsLoftedBendData => FeatureType == ModelFeatureType.LoftedBendsData;
 
         /// <summary>
-        /// Checks if this features specify type is Macro data
+        /// Checks if this feature's specific type is Macro data
         /// </summary>
         public bool IsMacroData => FeatureType == ModelFeatureType.MacroData;
 
         /// <summary>
-        /// Checks if this features specify type is Mirror Part data
+        /// Checks if this feature's specific type is Mirror Part data
         /// </summary>
         public bool IsMirrorPartData => FeatureType == ModelFeatureType.MirrorPartData;
 
         /// <summary>
-        /// Checks if this features specify type is Mirror Pattern data
+        /// Checks if this feature's specific type is Mirror Pattern data
         /// </summary>
         public bool IsMirrorPatternData => FeatureType == ModelFeatureType.MirrorPatternData;
 
         /// <summary>
-        /// Checks if this features specify type is Mirror Solid data
+        /// Checks if this feature's specific type is Mirror Solid data
         /// </summary>
         public bool IsMirrorSolidData => FeatureType == ModelFeatureType.MirrorSolidData;
 
         /// <summary>
-        /// Checks if this features specify type is Miter Flange data
+        /// Checks if this feature's specific type is Miter Flange data
         /// </summary>
         public bool IsMiterFlangeData => FeatureType == ModelFeatureType.MiterFlangeData;
 
         /// <summary>
-        /// Checks if this features specify type is Motion Plot Axis data
+        /// Checks if this feature's specific type is Motion Plot Axis data
         /// </summary>
         public bool IsMotionPlotAxisData => FeatureType == ModelFeatureType.MotionPlotAxisData;
 
         /// <summary>
-        /// Checks if this features specify type is Motion Plot data
+        /// Checks if this feature's specific type is Motion Plot data
         /// </summary>
         public bool IsMotionPlotData => FeatureType == ModelFeatureType.MotionPlotData;
 
         /// <summary>
-        /// Checks if this features specify type is Move Copy Body data
+        /// Checks if this feature's specific type is Move Copy Body data
         /// </summary>
         public bool IsMoveCopyBodyData => FeatureType == ModelFeatureType.MoveCopyBodyData;
 
         /// <summary>
-        /// Checks if this features specify type is One Bend data
+        /// Checks if this feature's specific type is One Bend data
         /// </summary>
         public bool IsOneBendData => FeatureType == ModelFeatureType.OneBendData;
 
         /// <summary>
-        /// Checks if this features specify type is Parting Line data
+        /// Checks if this feature's specific type is Parting Line data
         /// </summary>
         public bool IsPartingLineData => FeatureType == ModelFeatureType.PartingLineData;
 
         /// <summary>
-        /// Checks if this features specify type is Parting Surface data
+        /// Checks if this feature's specific type is Parting Surface data
         /// </summary>
         public bool IsPartingSurfaceData => FeatureType == ModelFeatureType.PartingSurfaceData;
 
         /// <summary>
-        /// Checks if this features specify type is Projection Curve data
+        /// Checks if this feature's specific type is Projection Curve data
         /// </summary>
         public bool IsProjectionCurveData => FeatureType == ModelFeatureType.ProjectionCurveData;
 
         /// <summary>
-        /// Checks if this features specify type is Reference Axis data
+        /// Checks if this feature's specific type is Reference Axis data
         /// </summary>
         public bool IsReferenceAxisData => FeatureType == ModelFeatureType.ReferenceAxisData;
 
         /// <summary>
-        /// Checks if this features specify type is Reference Plane data
+        /// Checks if this feature's specific type is Reference Plane data
         /// </summary>
         public bool IsReferencePlaneData => FeatureType == ModelFeatureType.ReferencePlaneData;
 
         /// <summary>
-        /// Checks if this features specify type is Reference Point Curve data
+        /// Checks if this feature's specific type is Reference Point Curve data
         /// </summary>
         public bool IsReferencePointCurveData => FeatureType == ModelFeatureType.ReferencePointCurveData;
 
         /// <summary>
-        /// Checks if this features specify type is Reference Point data
+        /// Checks if this feature's specific type is Reference Point data
         /// </summary>
         public bool IsReferencePointData => FeatureType == ModelFeatureType.ReferencePointData;
 
         /// <summary>
-        /// Checks if this features specify type is Replace Face data
+        /// Checks if this feature's specific type is Replace Face data
         /// </summary>
         public bool IsReplaceFaceData => FeatureType == ModelFeatureType.ReplaceFaceData;
 
         /// <summary>
-        /// Checks if this features specify type is Revolve data
+        /// Checks if this feature's specific type is Revolve data
         /// </summary>
         public bool IsRevolveData => FeatureType == ModelFeatureType.RevolveData;
 
         /// <summary>
-        /// Checks if this features specify type is Rib data
+        /// Checks if this feature's specific type is Rib data
         /// </summary>
         public bool IsRibData => FeatureType == ModelFeatureType.RibData;
 
         /// <summary>
-        /// Checks if this features specify type is Rip data
+        /// Checks if this feature's specific type is Rip data
         /// </summary>
         public bool IsRipData => FeatureType == ModelFeatureType.RipData;
 
         /// <summary>
-        /// Checks if this features specify type is Save Body data
+        /// Checks if this feature's specific type is Save Body data
         /// </summary>
         public bool IsSaveBodyData => FeatureType == ModelFeatureType.SaveBodyData;
 
         /// <summary>
-        /// Checks if this features specify type is Scale data
+        /// Checks if this feature's specific type is Scale data
         /// </summary>
         public bool IsScaleData => FeatureType == ModelFeatureType.ScaleData;
 
         /// <summary>
-        /// Checks if this features specify type is Sheet Metal data
+        /// Checks if this feature's specific type is Sheet Metal data
         /// </summary>
         public bool IsSheetMetalData => FeatureType == ModelFeatureType.SheetMetalData;
 
         /// <summary>
-        /// Checks if this features specify type is Sheet Metal Gusset data
+        /// Checks if this feature's specific type is Sheet Metal Gusset data
         /// </summary>
         public bool IsSheetMetalGussetData => FeatureType == ModelFeatureType.SheetMetalGussetData;
 
         /// <summary>
-        /// Checks if this features specify type is Shell data
+        /// Checks if this feature's specific type is Shell data
         /// </summary>
         public bool IsShellData => FeatureType == ModelFeatureType.ShellData;
 
         /// <summary>
-        /// Checks if this features specify type is Shut Off Surface data
+        /// Checks if this feature's specific type is Shut Off Surface data
         /// </summary>
         public bool IsShutOffSurfaceData => FeatureType == ModelFeatureType.ShutOffSurfaceData;
 
         /// <summary>
-        /// Checks if this features specify type is Simple Fillet data
+        /// Checks if this feature's specific type is Simple Fillet data
         /// </summary>
         public bool IsSimpleFilletData => FeatureType == ModelFeatureType.SimpleFilletData;
 
         /// <summary>
-        /// Checks if this features specify type is Simple Hole data
+        /// Checks if this feature's specific type is Simple Hole data
         /// </summary>
         public bool IsSimpleHoleData => FeatureType == ModelFeatureType.SimpleHoleData;
 
         /// <summary>
-        /// Checks if this features specify type is Simulation 3D Contact data
+        /// Checks if this feature's specific type is Simulation 3D Contact data
         /// </summary>
         public bool IsSimulation3DContactData => FeatureType == ModelFeatureType.Simulation3DContactData;
 
         /// <summary>
-        /// Checks if this features specify type is Simulation Damper data
+        /// Checks if this feature's specific type is Simulation Damper data
         /// </summary>
         public bool IsSimulationDamperData => FeatureType == ModelFeatureType.SimulationDamperData;
 
         /// <summary>
-        /// Checks if this features specify type is Simulation Force data
+        /// Checks if this feature's specific type is Simulation Force data
         /// </summary>
         public bool IsSimulationForceData => FeatureType == ModelFeatureType.SimulationForceData;
 
         /// <summary>
-        /// Checks if this features specify type is Simulation Gravity data
+        /// Checks if this feature's specific type is Simulation Gravity data
         /// </summary>
         public bool IsSimulationGravityData => FeatureType == ModelFeatureType.SimulationGravityData;
 
         /// <summary>
-        /// Checks if this features specify type is Simulation Linear Spring data
+        /// Checks if this feature's specific type is Simulation Linear Spring data
         /// </summary>
         public bool IsSimulationLinearSpringData => FeatureType == ModelFeatureType.SimulationLinearSpringData;
 
         /// <summary>
-        /// Checks if this features specify type is Simulation Motor data
+        /// Checks if this feature's specific type is Simulation Motor data
         /// </summary>
         public bool IsSimulationMotorData => FeatureType == ModelFeatureType.SimulationMotorData;
 
         /// <summary>
-        /// Checks if this features specify type is Sketched Bend data
+        /// Checks if this feature's specific type is Sketched Bend data
         /// </summary>
         public bool IsSketchedBendData => FeatureType == ModelFeatureType.SketchedBendData;
 
         /// <summary>
-        /// Checks if this features specify type is Sketch Pattern data
+        /// Checks if this feature's specific type is Sketch Pattern data
         /// </summary>
         public bool IsSketchPatternData => FeatureType == ModelFeatureType.SketchPatternData;
 
         /// <summary>
-        /// Checks if this features specify type is Smart Component data
+        /// Checks if this feature's specific type is Smart Component data
         /// </summary>
         public bool IsSmartComponentData => FeatureType == ModelFeatureType.SmartComponentFeatureData;
 
         /// <summary>
-        /// Checks if this features specify type is Split Body data
+        /// Checks if this feature's specific type is Split Body data
         /// </summary>
         public bool IsSplitBodyData => FeatureType == ModelFeatureType.SplitBodyData;
 
         /// <summary>
-        /// Checks if this features specify type is Split Line data
+        /// Checks if this feature's specific type is Split Line data
         /// </summary>
         public bool IsSplitLineData => FeatureType == ModelFeatureType.SplitLineData;
 
         /// <summary>
-        /// Checks if this features specify type is Surface Cut data
+        /// Checks if this feature's specific type is Surface Cut data
         /// </summary>
         public bool IsSurfaceCutData => FeatureType == ModelFeatureType.SurfaceCutData;
 
         /// <summary>
-        /// Checks if this features specify type is Surface Extend data
+        /// Checks if this feature's specific type is Surface Extend data
         /// </summary>
         public bool IsSurfaceExtendData => FeatureType == ModelFeatureType.SurfaceExtendData;
 
         /// <summary>
-        /// Checks if this features specify type is Surface Extrude data
+        /// Checks if this feature's specific type is Surface Extrude data
         /// </summary>
         public bool IsSurfaceExtrudeData => FeatureType == ModelFeatureType.SurfaceExtrudeData;
 
         /// <summary>
-        /// Checks if this features specify type is Surface Fill data
+        /// Checks if this feature's specific type is Surface Fill data
         /// </summary>
         public bool IsSurfaceFillData => FeatureType == ModelFeatureType.SurfaceFillData;
 
         /// <summary>
-        /// Checks if this features specify type is Surface Flatten data
+        /// Checks if this feature's specific type is Surface Flatten data
         /// </summary>
         public bool IsSurfaceFlattenData => FeatureType == ModelFeatureType.SurfaceFlattenData;
 
         /// <summary>
-        /// Checks if this features specify type is Surface Knit data
+        /// Checks if this feature's specific type is Surface Knit data
         /// </summary>
         public bool IsSurfaceKnitData => FeatureType == ModelFeatureType.SurfaceKnitData;
 
         /// <summary>
-        /// Checks if this features specify type is Surface Offset data
+        /// Checks if this feature's specific type is Surface Offset data
         /// </summary>
         public bool IsSurfaceOffsetData => FeatureType == ModelFeatureType.SurfaceOffsetData;
 
         /// <summary>
-        /// Checks if this features specify type is Surface Planar data
+        /// Checks if this feature's specific type is Surface Planar data
         /// </summary>
         public bool IsSurfacePlanarData => FeatureType == ModelFeatureType.SurfacePlanarData;
 
         /// <summary>
-        /// Checks if this features specify type is Surface Radiate data
+        /// Checks if this feature's specific type is Surface Radiate data
         /// </summary>
         public bool IsSurfaceRadiateData => FeatureType == ModelFeatureType.SurfaceRadiateData;
 
         /// <summary>
-        /// Checks if this features specify type is Surface Revolve data
+        /// Checks if this feature's specific type is Surface Revolve data
         /// </summary>
         public bool IsSurfaceRevolveData => FeatureType == ModelFeatureType.SurfaceRevolveData;
 
         /// <summary>
-        /// Checks if this features specify type is Surface Ruled data
+        /// Checks if this feature's specific type is Surface Ruled data
         /// </summary>
         public bool IsSurfaceRuledData => FeatureType == ModelFeatureType.SurfaceRuledData;
 
         /// <summary>
-        /// Checks if this features specify type is Surface Trim data
+        /// Checks if this feature's specific type is Surface Trim data
         /// </summary>
         public bool IsSurfaceTrimData => FeatureType == ModelFeatureType.SurfaceTrimData;
 
         /// <summary>
-        /// Checks if this features specify type is Sweep data
+        /// Checks if this feature's specific type is Sweep data
         /// </summary>
         public bool IsSweepData => FeatureType == ModelFeatureType.SweepData;
 
         /// <summary>
-        /// Checks if this features specify type is Table Pattern data
+        /// Checks if this feature's specific type is Table Pattern data
         /// </summary>
         public bool IsTablePatternData => FeatureType == ModelFeatureType.TablePatternData;
 
         /// <summary>
-        /// Checks if this features specify type is Thicken data
+        /// Checks if this feature's specific type is Thicken data
         /// </summary>
         public bool IsThickenData => FeatureType == ModelFeatureType.ThickenData;
 
         /// <summary>
-        /// Checks if this features specify type is Tooling Split data
+        /// Checks if this feature's specific type is Tooling Split data
         /// </summary>
         public bool IsToolingSplitData => FeatureType == ModelFeatureType.ToolingSplitData;
 
         /// <summary>
-        /// Checks if this features specify type is Variable Fillet data
+        /// Checks if this feature's specific type is Variable Fillet data
         /// </summary>
         public bool IsVariableFilletData => FeatureType == ModelFeatureType.VariableFilletData;
 
         /// <summary>
-        /// Checks if this features specify type is Weldment Bead data
+        /// Checks if this feature's specific type is Weldment Bead data
         /// </summary>
         public bool IsWeldmentBeadData => FeatureType == ModelFeatureType.WeldmentBeadData;
 
         /// <summary>
-        /// Checks if this features specify type is Weldment Cut List data
+        /// Checks if this feature's specific type is Weldment Cut List data
         /// </summary>
         public bool IsWeldmentCutListData => FeatureType == ModelFeatureType.WeldmentCutListData;
 
         /// <summary>
-        /// Checks if this features specify type is Weldment Member data
+        /// Checks if this feature's specific type is Weldment Member data
         /// </summary>
         public bool IsWeldmentMemberData => FeatureType == ModelFeatureType.WeldmentMemberData;
 
         /// <summary>
-        /// Checks if this features specify type is Weldment Trim Extend data
+        /// Checks if this feature's specific type is Weldment Trim Extend data
         /// </summary>
         public bool IsWeldmentTrimExtendData => FeatureType == ModelFeatureType.WeldmentTrimExtendData;
 
         /// <summary>
-        /// Checks if this features specify type is Wrap Sketch data
+        /// Checks if this feature's specific type is Wrap Sketch data
         /// </summary>
         public bool IsWrapSketchData => FeatureType == ModelFeatureType.WrapSketchData;
 

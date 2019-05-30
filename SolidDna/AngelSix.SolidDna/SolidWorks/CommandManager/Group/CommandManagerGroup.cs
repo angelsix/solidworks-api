@@ -47,44 +47,44 @@ namespace AngelSix.SolidDna
         public string Tooltip { get; set; }
 
         /// <summary>
-        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group
-        /// This list should be 20px height, and each icon is 20x20, joined horizontally. 
-        /// So a list of 4 icons would be 80px wide by 20px height
+        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group.
+        /// This list should be 20px in height, and each icon is 20x20, joined horizontally. 
+        /// So a list of 4 icons would be 80px in width and 20px in height
         /// </summary>
         public string IconList20Path { get; set; }
 
         /// <summary>
-        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group
-        /// This list should be 32px height, and each icon is 32x32, joined horizontally. 
-        /// So a list of 4 icons would be 128px wide by 32px height
+        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group.
+        /// This list should be 32px in height, and each icon is 32x32, joined horizontally. 
+        /// So a list of 4 icons would be 128px in width and 32px in height
         /// </summary>
         public string IconList32Path { get; set; }
 
         /// <summary>
-        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group
-        /// This list should be 40px height, and each icon is 40x40, joined horizontally. 
-        /// So a list of 4 icons would be 160px wide by 40px height
+        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group.
+        /// This list should be 40px in height, and each icon is 40x40, joined horizontally. 
+        /// So a list of 4 icons would be 160px in width and 40px in height
         /// </summary>
         public string IconList40Path { get; set; }
 
         /// <summary>
-        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group
-        /// This list should be 64px height, and each icon is 64x64, joined horizontally. 
-        /// So a list of 4 icons would be 256px wide by 64px height
+        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group.
+        /// This list should be 64px in height, and each icon is 64x64, joined horizontally. 
+        /// So a list of 4 icons would be 256px in width and 64px in height
         /// </summary>
         public string IconList64Path { get; set; }
 
         /// <summary>
-        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group
-        /// This list should be 96px height, and each icon is 96x96, joined horizontally. 
-        /// So a list of 4 icons would be 384px wide by 96px height
+        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group.
+        /// This list should be 96px in height, and each icon is 96x96, joined horizontally. 
+        /// So a list of 4 icons would be 384px in width and 96px in height
         /// </summary>
         public string IconList96Path { get; set; }
 
         /// <summary>
-        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group
-        /// This list should be 20px height, and each icon is 128x128, joined horizontally. 
-        /// So a list of 4 icons would be 512px wide by 128px height
+        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group.
+        /// This list should be 128px in height, and each icon is 128x128, joined horizontally. 
+        /// So a list of 4 icons would be 512px in width and 128px in height
         /// </summary>
         public string IconList128Path { get; set; }
 
@@ -304,7 +304,7 @@ namespace AngelSix.SolidDna
         }
 
         /// <summary>
-        /// Creates the command group based on it's current children
+        /// Creates the command group based on its current children
         /// NOTE: Once created, parent command manager must remove and re-create the group
         /// This group cannot be re-used after creating, any edits will not take place
         /// </summary>
@@ -325,9 +325,9 @@ namespace AngelSix.SolidDna
             // NOTE: The order in which you specify the icons must be the same for this property and MainIconList.
             //
             //       For example, if you specify an array of paths to 
-            //       20 x 20 pixels, 32 x 32 pixels, and 40 x 40 pixels icons for this property
+            //       20 x 20 pixels, 32 x 32 pixels, and 40 x 40 pixels icons for this property, 
             //       then you must specify an array of paths to 
-            //       20 x 20 pixels, 32 x 32 pixels, and 40 x 40 pixels icons for MainIconList.</remarks>
+            //       20 x 20 pixels, 32 x 32 pixels, and 40 x 40 pixels icons for MainIconList.
             //
 
             // Set all icon lists 
@@ -396,6 +396,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="type">The tab for this type of model</param>
         /// <param name="manager">The command manager</param>
+        /// <param name="items">Items to add</param>
         /// <param name="title">The title of the tab</param>
         public void AddItemsToTab(ModelType type, CommandManager manager, List<CommandManagerItem> items, string title = "")
         {

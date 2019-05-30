@@ -20,7 +20,7 @@ namespace AngelSix.SolidDna
         public string FilePath { get; protected set; }
 
         /// <summary>
-        /// Indicates if this file has been saved (so exists on disk)
+        /// Indicates if this file has been saved (so exists on disk).
         /// If not, it's a new model currently only in-memory and will not have a file path
         /// </summary>
         public bool HasBeenSaved => !string.IsNullOrEmpty(FilePath);
@@ -110,7 +110,7 @@ namespace AngelSix.SolidDna
         public event Action ModelSaved = () => { };
 
         /// <summary>
-        /// Called when any of the model information changes
+        /// Called when any of the model properties changes
         /// </summary>
         public event Action ModelInformationChanged = () => { };
 
@@ -120,7 +120,7 @@ namespace AngelSix.SolidDna
         public event Action ActiveConfigurationChanged = () => { };
 
         /// <summary>
-        /// Called when the selected objects in the model has changed
+        /// Called when the selected objects in the model have changed
         /// </summary>
         public event Action SelectionChanged = () => { };
 
@@ -286,7 +286,7 @@ namespace AngelSix.SolidDna
         /// Called when a model has been saved
         /// </summary>
         /// <param name="filename">The name of the file that has been saved</param>
-        /// <param param name="saveType">The type of file that has been saved</param>
+        /// <param name="saveType">The type of file that has been saved</param>
         /// <returns></returns>
         protected int FileSavePostNotify(int saveType, string filename)
         {
@@ -301,8 +301,8 @@ namespace AngelSix.SolidDna
         }
 
         /// <summary>
-        /// Called when a model is about to be destroyed
-        /// This is a pre-notify so just clean up data don't reload for new data yet
+        /// Called when a model is about to be destroyed.
+        /// This is a pre-notify so just clean up data, don't reload for new data yet
         /// </summary>
         /// <returns></returns>
         protected int FileDestroyedNotify()
@@ -424,7 +424,7 @@ namespace AngelSix.SolidDna
         }
 
         /// <summary>
-        /// Get's all of the custom properties in this model
+        /// Gets all of the custom properties in this model.
         /// Simply set the Value of the custom property to edit it
         /// </summary>
         /// <param name="action">The custom properties list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>
@@ -546,7 +546,7 @@ namespace AngelSix.SolidDna
         #region Selected Entities
 
         /// <summary>
-        /// Get's all of the selected objects in the model
+        /// Gets all of the selected objects in the model
         /// </summary>
         /// <param name="action">The selected objects list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>
         /// <returns></returns>
@@ -602,7 +602,7 @@ namespace AngelSix.SolidDna
                 // While we have a sub-feature...
                 while (subFeature != null)
                 {
-                    // Get it's next sub-feature
+                    // Get its next sub-feature
                     var nextSubFeature = subFeature.GetNextSubFeature() as Feature;
 
                     // Recurse all of the sub-features
@@ -695,7 +695,7 @@ namespace AngelSix.SolidDna
         #region Dispose
 
         /// <summary>
-        /// Clean up all COM references for this model, it's children and anything that was used by this model
+        /// Clean up all COM references for this model, its children and anything that was used by this model
         /// </summary>
         protected void DisposeAllReferences()
         {

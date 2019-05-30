@@ -102,5 +102,4 @@ namespace AngelSix.SolidDna
             return $"{ErrorDetails} ({ErrorMessage}) [T{ErrorTypeCode} E{ErrorCode}]";
         }
     }
-
 }

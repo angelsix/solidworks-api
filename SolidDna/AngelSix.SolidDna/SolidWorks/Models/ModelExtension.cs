@@ -54,9 +54,9 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Gets the mass properties of a part/assembly
         /// </summary>
-        /// <param name="dontThrowOnError">If true, don't throw on errors, just return empty mass</param>
+        /// <param name="doNotThrowOnError">If true, don't throw on errors, just return empty mass</param>
         /// <returns></returns>
-        public MassProperties GetMassProperties(bool dontThrowOnError = true)
+        public MassProperties GetMassProperties(bool doNotThrowOnError = true)
         {
             // Wrap any error
             return SolidDnaErrors.Wrap(() =>
@@ -64,7 +64,7 @@ namespace AngelSix.SolidDna
                 // Make sure we are a part
                 if (!Parent.IsPart && !Parent.IsAssembly)
                 {
-                    if (dontThrowOnError)
+                    if (doNotThrowOnError)
                         return new MassProperties();
                     else
                         throw new InvalidOperationException(Localization.GetString("SolidWorksModelGetMassModelNotPartError"));
@@ -76,7 +76,7 @@ namespace AngelSix.SolidDna
                 //
                 // SolidWorks 2016 is the start of support for MassProperties2
                 //
-                // Tested on 2015 crashes so drop-back to lower version for support
+                // Tested on 2015 and crashes, so drop-back to lower version for support
                 //
                 if (SolidWorksEnvironment.Application.SolidWorksVersion.Version < 2016)
                     // NOTE: 2 is best accuracy
@@ -88,7 +88,7 @@ namespace AngelSix.SolidDna
                 // Make sure it succeeded
                 if (status == (int)swMassPropertiesStatus_e.swMassPropertiesStatus_UnknownError)
                 {
-                    if (dontThrowOnError)
+                    if (doNotThrowOnError)
                         return new MassProperties();
                     else
                         throw new InvalidOperationException(Localization.GetString("SolidWorksModelGetMassModelStatusFailed"));

@@ -10,7 +10,7 @@ namespace AngelSix.SolidDna
         #region Public Properties
 
         /// <summary>
-        /// The selection name for this dimension that can be used to select it
+        /// The selection name for this dimension that can be used to select it.
         /// For example D1@Sketch1
         /// </summary>
         public string SelectionName => mBaseObject.GetNameForSelection();

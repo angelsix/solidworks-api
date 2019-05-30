@@ -5,7 +5,7 @@ using System;
 namespace AngelSix.SolidDna
 {
     /// <summary>
-    /// Represents a selected object of a SolidWorks model
+    /// Represents a selected object of a SolidWorks model.
     /// The type can be one of many different things
     /// 
     /// NOTE: All mappings from selected entities to specific objects are here
@@ -23,7 +23,7 @@ namespace AngelSix.SolidDna
         #region Type Checks
 
         /// <summary>
-        /// True if this object is a feature
+        /// True if this object is a feature.
         /// From the feature you can check the specific feature type and
         /// get the specific feature from that
         /// </summary>
@@ -69,7 +69,7 @@ namespace AngelSix.SolidDna
         #region Type Cast
 
         /// <summary>
-        /// Casts the object to a <see cref="ModelFeature"/>
+        /// Casts the object to a <see cref="ModelFeature"/>.
         /// Check with <see cref="IsFeature"/> first to assure that it is this type
         /// </summary>
         /// <param name="action">The feature is passed into this action to be used within it</param>
@@ -91,7 +91,7 @@ namespace AngelSix.SolidDna
         }
 
         /// <summary>
-        /// Casts the object to a <see cref="ModelDisplayDimension"/>
+        /// Casts the object to a <see cref="ModelDisplayDimension"/>.
         /// Check with <see cref="IsDimension"/> first to assure that it is this type
         /// </summary>
         /// <param name="action">The Dimension is passed into this action to be used within it</param>

@@ -24,14 +24,14 @@ namespace AngelSix.SolidDna
         List<IResourceFormatProvider> Providers { get; set; }
 
         /// <summary>
-        /// Find's a string of the given name, taking into account the culture information.
+        /// Finds a string of the given name, taking into account the culture information.
         /// If no culture is specified, the default culture is used
         /// 
         /// IMPORTANT:
         /// NOTE: Make sure any and all await calls inside this function and its children
         ///       use ConfigureAwait(false). This is because the parent has to support 
         ///       a synchronous version of this call, so the method cannot sync back with
-        ///       it's calling context without risk of deadlock
+        ///       its calling context without risk of deadlock
         /// </summary>
         /// <param name="name">The name of the resource to find</param>
         /// <param name="culture">The culture information to use</param>

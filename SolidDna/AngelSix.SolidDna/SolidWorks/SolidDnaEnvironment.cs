@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Windows.Forms;
-
-namespace AngelSix.SolidDna
+﻿namespace AngelSix.SolidDna
 {
     /// <summary>
     /// Settings and objects related to the current SolidDNA environment
@@ -12,7 +9,7 @@ namespace AngelSix.SolidDna
 
         /// <summary>
         /// If true, any uncaught exceptions that get thrown will get caught,
-        /// logged to the <see cref="ILogFactory"/> then swallowed
+        /// logged to the <see cref="ILogFactory"/> then swallowed.
         /// 
         /// WARNING: If turning this on, be aware you may get null/default values
         /// being returned from function calls if they throw errors
