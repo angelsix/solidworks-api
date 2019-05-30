@@ -56,6 +56,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="name">The name of the custom property</param>
         /// <param name="value">The value of the custom property</param>
+        /// <param name="type">The type of the custom property</param>
         /// <returns></returns>
         public void SetCustomProperty(string name, string value, swCustomInfoType_e type = swCustomInfoType_e.swCustomInfoText)
         {

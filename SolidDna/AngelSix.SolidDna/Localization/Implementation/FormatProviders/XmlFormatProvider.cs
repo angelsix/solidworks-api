@@ -41,7 +41,7 @@ namespace AngelSix.SolidDna
         /// NOTE: Make sure any and all await calls inside this function and its children
         ///       use ConfigureAwait(false). This is because the parent has to support 
         ///       a synchronous version of this call, so the method cannot sync back with
-        ///       it's calling context without risk of deadlock
+        ///       its calling context without risk of deadlock.
         /// </summary>
         public async Task<bool> GetStringAsync(ResourceDefinition resource, string name, string culture, Action<string> onResult)
         {

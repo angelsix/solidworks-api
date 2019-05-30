@@ -9,12 +9,12 @@ namespace AngelSix.SolidDna
     public  enum CommandManagerItemTabView
     {
         /// <summary>
-        /// The item is not show in the tab
+        /// The item is not shown in the tab
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// The item is show with an icon only
+        /// The item is shown with an icon only
         /// </summary>
         IconOnly = 1,
 

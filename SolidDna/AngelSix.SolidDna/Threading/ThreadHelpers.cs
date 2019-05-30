@@ -47,12 +47,12 @@ namespace AngelSix.SolidDna
         }
 
         /// <summary>
-        /// Runs the specified action on the UI thread
+        /// Runs the specified action on the UI thread.
         /// 
         /// IMPORTANT: Make sure the caller (doing the await RunOnUIThreadAwait)
         /// does not await anything inside the action that can be locked by the 
         /// parent scope (the scope of the await itself) otherwise a deadlock
-        /// could occur
+        /// could occur.
         /// 
         /// NOTE: Only possible right now if the application is making use of TaskpaneIntegration as the
         /// UI dispatcher is via the Taskpane control on the UI thread

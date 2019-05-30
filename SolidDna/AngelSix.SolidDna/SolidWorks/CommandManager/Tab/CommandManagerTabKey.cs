@@ -11,7 +11,7 @@
         public string Title { get; set; }
 
         /// <summary>
-        /// The model type this tab is for
+        /// The model type for this tab 
         /// </summary>
         public ModelType ModelType { get; set; }
     }

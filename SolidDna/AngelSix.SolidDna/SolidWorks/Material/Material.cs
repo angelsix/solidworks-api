@@ -6,8 +6,8 @@
     public class Material
     {
         /// <summary>
-        /// The classification this material belongs to (like a group)
-        /// For example, Building Materials, Steel, Wood etc...
+        /// The classification this material belongs to (like a group). 
+        /// For example Building Materials, Steel, Wood etc...
         /// </summary>
         public string Classification { get; set; }
 
@@ -22,7 +22,7 @@
         public string Description { get; set; }
 
         /// <summary>
-        /// The full path of the database this material is from
+        /// The full path of the database that contains this material
         /// </summary>
         public string Database { get; set; }
 

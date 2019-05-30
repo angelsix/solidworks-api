@@ -56,16 +56,16 @@ namespace AngelSix.SolidDna
         #region Public Events
 
         /// <summary>
-        /// Called once SolidWorks has loaded our add-in and is ready
-        /// Now is a good time to create taskpanes, menu bars or anything else
+        /// Called once SolidWorks has loaded our add-in and is ready.
+        /// Now is a good time to create taskpanes, menu bars or anything else.
         ///  
         /// NOTE: This call will be made twice, one in the default domain and one in the AppDomain as the SolidDna plug-ins
         /// </summary>
         public static event Action ConnectedToSolidWorks = () => { };
 
         /// <summary>
-        /// Called once SolidWorks has unloaded our add-in
-        /// Now is a good time to clean up taskpanes, menu bars or anything else
+        /// Called once SolidWorks has unloaded our add-in.
+        /// Now is a good time to clean up taskpanes, menu bars or anything else.
         /// 
         /// NOTE: This call will be made twice, one in the default domain and one in the AppDomain as the SolidDna plug-ins
         /// </summary>
@@ -140,7 +140,7 @@ namespace AngelSix.SolidDna
         public abstract void PreConnectToSolidWorks();
 
         /// <summary>
-        /// Run before loading plug-ins
+        /// Run before loading plug-ins.
         /// This call should be used to add plug-ins to be loaded, via <see cref="PlugInIntegration.AddPlugIn{T}"/>
         /// </summary>
         /// <returns></returns>
@@ -454,7 +454,7 @@ namespace AngelSix.SolidDna
                 var parts = resolvedAssembly.Name.Split(',');
                 var filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + parts[0].Trim() + ".dll";
 
-                // Try and load assembly at let it throw FileNotFound if not there 
+                // Try and load assembly and let it throw FileNotFound if not there 
                 // as it's an expected failure if not found
                 return Assembly.LoadFrom(filePath);
             }

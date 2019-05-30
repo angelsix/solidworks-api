@@ -22,7 +22,7 @@ namespace AngelSix.SolidDna
         protected int mSwCookie;
 
         /// <summary>
-        /// The file path of the current file that is loading
+        /// The file path of the current file that is loading. 
         /// Used to ignore active document changed events during opening of a file
         /// </summary>
         protected string mFileLoading;
@@ -193,8 +193,7 @@ namespace AngelSix.SolidDna
                 // If this is the file we were opening...
                 if (string.Equals(filename, mFileLoading, StringComparison.OrdinalIgnoreCase))
                 {
-                    // File has been loaded
-                    // So clear loading flag
+                    // File has been loaded, so clear loading flag
                     mFileLoading = null;
 
                     // And update all properties and models
@@ -321,7 +320,7 @@ namespace AngelSix.SolidDna
         #region Event Callbacks
 
         /// <summary>
-        /// Called when the active model has informed us it's information has changed
+        /// Called when the active model has informed us its information has changed
         /// </summary>
         private void ActiveModel_InformationChanged()
         {
@@ -405,7 +404,7 @@ namespace AngelSix.SolidDna
         #region Materials
 
         /// <summary>
-        /// Get's a list of all materials in SolidWorks
+        /// Gets a list of all materials in SolidWorks
         /// </summary>
         /// <param name="database">If specified, limits the results to the specified database full path</param>
         public List<Material> GetMaterials(string database = null)
@@ -581,11 +580,13 @@ namespace AngelSix.SolidDna
         #endregion
 
         #region User Interaction
-        
+
         /// <summary>
         /// Pops up a message box to the user with the given message
         /// </summary>
         /// <param name="message">The message to display to the user</param>
+        /// <param name="icon">The severity icon to display</param>
+        /// <param name="buttons">The buttons to display</param>
         public SolidWorksMessageBoxResult ShowMessageBox(string message, SolidWorksMessageBoxIcon icon = SolidWorksMessageBoxIcon.Information, SolidWorksMessageBoxButtons buttons = SolidWorksMessageBoxButtons.Ok)
         {
             // Send message to user

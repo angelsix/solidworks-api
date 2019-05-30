@@ -10,8 +10,7 @@ namespace AngelSix.SolidDna
     /// IMPORTANT: It is required that the class overriding this only uses a parameterless constructor
     /// as it is created via Com so cannot have a parameter-based construction otherwise it won't load
     /// </summary>
-    public class TaskpaneIntegration<THost>
-        where THost : ITaskpaneControl, new()
+    public class TaskpaneIntegration<THost> where THost : ITaskpaneControl, new()
     {
         #region Protected Members
 
