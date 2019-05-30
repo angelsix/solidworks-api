@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Windows.Forms;
-
-namespace AngelSix.SolidDna
+﻿namespace AngelSix.SolidDna
 {
     /// <summary>
     /// Settings and objects related to the current SolidDNA environment
