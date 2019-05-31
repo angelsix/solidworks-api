@@ -463,7 +463,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="database">The database to read</param>
         /// <param name="list">The list to add materials to</param>
-        private void ReadMaterials(string database, ref List<Material> list)
+        private static void ReadMaterials(string database, ref List<Material> list)
         {
             // First make sure the file exists
             if (!File.Exists(database))

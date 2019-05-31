@@ -16,7 +16,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// A lock to limit access to the processes to one at a time
         /// </summary>
-        private SemaphoreSlim mSelfLock = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim mSelfLock = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// A list of all cached resources
