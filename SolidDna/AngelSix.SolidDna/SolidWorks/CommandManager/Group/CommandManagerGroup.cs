@@ -18,9 +18,20 @@ namespace AngelSix.SolidDna
         private bool mCreated;
 
         /// <summary>
+        /// A dictionary with all icon sizes and their paths.
+        /// Entries are only added when path exists.
+        /// </summary>
+        private readonly Dictionary<int, string> mIconListPaths = new Dictionary<int, string>();
+
+        /// <summary>
+        /// List of icon sizes used by SOLIDWORKS. Icons are square, so these values are both width and height.
+        /// </summary>
+        private readonly int[] mIconSizes = {20, 32, 40, 64, 96, 128};
+
+        /// <summary>
         /// A list of all tabs that have been created
         /// </summary>
-        private Dictionary<CommandManagerTabKey, CommandManagerTab> mTabs = new Dictionary<CommandManagerTabKey, CommandManagerTab>();
+        private readonly Dictionary<CommandManagerTabKey, CommandManagerTab> mTabs = new Dictionary<CommandManagerTabKey, CommandManagerTab>();
 
         #endregion
 
@@ -45,48 +56,6 @@ namespace AngelSix.SolidDna
         /// The tooltip of this command group
         /// </summary>
         public string Tooltip { get; set; }
-
-        /// <summary>
-        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group.
-        /// This list should be 20px in height, and each icon is 20x20, joined horizontally. 
-        /// So a list of 4 icons would be 80px in width and 20px in height
-        /// </summary>
-        public string IconList20Path { get; set; }
-
-        /// <summary>
-        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group.
-        /// This list should be 32px in height, and each icon is 32x32, joined horizontally. 
-        /// So a list of 4 icons would be 128px in width and 32px in height
-        /// </summary>
-        public string IconList32Path { get; set; }
-
-        /// <summary>
-        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group.
-        /// This list should be 40px in height, and each icon is 40x40, joined horizontally. 
-        /// So a list of 4 icons would be 160px in width and 40px in height
-        /// </summary>
-        public string IconList40Path { get; set; }
-
-        /// <summary>
-        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group.
-        /// This list should be 64px in height, and each icon is 64x64, joined horizontally. 
-        /// So a list of 4 icons would be 256px in width and 64px in height
-        /// </summary>
-        public string IconList64Path { get; set; }
-
-        /// <summary>
-        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group.
-        /// This list should be 96px in height, and each icon is 96x96, joined horizontally. 
-        /// So a list of 4 icons would be 384px in width and 96px in height
-        /// </summary>
-        public string IconList96Path { get; set; }
-
-        /// <summary>
-        /// The absolute path to the bmp or png that contains an icon list containing all the icons for items in this group.
-        /// This list should be 128px in height, and each icon is 128x128, joined horizontally. 
-        /// So a list of 4 icons would be 512px in width and 128px in height
-        /// </summary>
-        public string IconList128Path { get; set; }
 
         /// <summary>
         /// The type of documents to show this command group in as a menu
@@ -181,43 +150,14 @@ namespace AngelSix.SolidDna
         /// The list of full paths to a bmp or png's that contains the icon list 
         /// from first in the list being the smallest, to last being the largest
         /// NOTE: Supported sizes for each icon in an array is 20x20, 32x32, 40x40, 64x64, 96x96 and 128x128
-        /// Set them via the appropriate properties on this class
         /// </summary>
-        public List<string> GetIconListPaths()
+        public string[] GetIconListPaths()
         {
-            // Create list
-            var list = new List<string>();
-
-            // Add 20x20 icons
-            if (!string.IsNullOrEmpty(IconList20Path))
-                list.Add(IconList20Path);
-
-            // Add 32x32 icons
-            if (!string.IsNullOrEmpty(IconList32Path))
-                list.Add(IconList32Path);
-
-            // Add 40x40 icons
-            if (!string.IsNullOrEmpty(IconList40Path))
-                list.Add(IconList40Path);
-
-            // Add 64x64 icons
-            if (!string.IsNullOrEmpty(IconList64Path))
-                list.Add(IconList64Path);
-
-            // Add 96x96 icons
-            if (!string.IsNullOrEmpty(IconList96Path))
-                list.Add(IconList96Path);
-
-            // Add 128 icons
-            if (!string.IsNullOrEmpty(IconList128Path))
-                list.Add(IconList128Path);
-
-            // Return the list
-            return list;
+            return mIconListPaths.Values.ToArray();
         }
 
         /// <summary>
-        /// Set's all icon lists based on a string format of the absolute path to the icon list images, replacing {0} with the size.
+        /// Sets all icon lists based on a string format of the absolute path to the icon list images, replacing {0} with the size.
         /// For example C:\Folder\myiconlist{0}.png would look for all sizes such as
         /// C:\Folder\myiconlist20.png
         /// C:\Folder\myiconlist32.png
@@ -235,38 +175,19 @@ namespace AngelSix.SolidDna
             if (!pathFormat.Contains("{0}"))
                 throw new SolidDnaException(SolidDnaErrors.CreateError(
                     SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                    SolidDnaErrorCode.SolidWorksCommandGroupIvalidPathFormatError,
+                    SolidDnaErrorCode.SolidWorksCommandGroupInvalidPathFormatError,
                     Localization.GetString("ErrorSolidWorksCommandGroupIconListInvalidPathError")));
 
-            // Find 20 image
-            var result = string.Format(pathFormat, 20);
-            if (File.Exists(result))
-                IconList20Path = result;
 
-            // Find 32 image
-            result = string.Format(pathFormat, 32);
-            if (File.Exists(result))
-                IconList32Path = result;
-
-            // Find 40 image
-            result = string.Format(pathFormat, 40);
-            if (File.Exists(result))
-                IconList40Path = result;
-
-            // Find 64 image
-            result = string.Format(pathFormat, 64);
-            if (File.Exists(result))
-                IconList64Path = result;
-
-            // Find 96 image
-            result = string.Format(pathFormat, 96);
-            if (File.Exists(result))
-                IconList96Path = result;
-
-            // Find 128 image
-            result = string.Format(pathFormat, 128);
-            if (File.Exists(result))
-                IconList128Path = result;
+            // Fill the dictionary with all paths that exist
+            foreach (var iconSize in mIconSizes)
+            {
+                var path = string.Format(pathFormat, iconSize);
+                if (File.Exists(path))
+                {
+                    mIconListPaths.Add(iconSize, path);
+                }
+            }
         }
 
         #endregion
@@ -334,16 +255,16 @@ namespace AngelSix.SolidDna
             var icons = GetIconListPaths();
 
             // 2016+ support
-            mBaseObject.IconList = icons.ToArray();
+            mBaseObject.IconList = icons;
 
             // <2016 support
-            if (icons.Count > 0)
+            if (icons.Length > 0)
             {
                 // Largest icon for this one
                 mBaseObject.LargeIconList = icons.Last();
 
                 // The list of icons
-                mBaseObject.MainIconList = icons.ToArray();
+                mBaseObject.MainIconList = icons;
 
                 // Smallest icon for this one
                 mBaseObject.SmallIconList = icons.First();
@@ -354,7 +275,7 @@ namespace AngelSix.SolidDna
             #region Add Items
 
             // Add items
-            Items?.ForEach(item => AddCommandItem(item));
+            Items?.ForEach(AddCommandItem);
 
             #endregion
 
@@ -367,17 +288,17 @@ namespace AngelSix.SolidDna
             #region Command Tab
 
             // Add to parts tab
-            var list = Items.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForParts).ToList();
+            var list = Items?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForParts).ToList();
             if (list?.Count > 0)
                 AddItemsToTab(ModelType.Part, manager, list);
 
             // Add to assembly tab
-            list = Items.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForAssemblies).ToList();
+            list = Items?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForAssemblies).ToList();
             if (list?.Count > 0)
                 AddItemsToTab(ModelType.Assembly, manager, list);
 
             // Add to drawing tab
-            list = Items.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForDrawings).ToList();
+            list = Items?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForDrawings).ToList();
             if (list?.Count > 0)
                 AddItemsToTab(ModelType.Drawing, manager, list);
 
@@ -404,7 +325,7 @@ namespace AngelSix.SolidDna
             if (string.IsNullOrEmpty(title))
                 title = Title;
 
-            CommandManagerTab tab = null;
+            CommandManagerTab tab;
 
             // Get the tab if it already exists
             if (mTabs.Any(f => string.Equals(f.Key.Title, title) && f.Key.ModelType == type))
