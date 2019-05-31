@@ -634,6 +634,50 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region Components
+
+        /// <summary>
+        /// Recurses the model for all of it's components and sub-components
+        /// </summary>
+        /// <param name="componentAction">The callback action that is called for each component in the model</param>
+        public void Components(Action<Component, int> componentAction)
+        {
+            RecurseComponents(componentAction, new Component(ActiveConfiguration.UnsafeObject?.GetRootComponent3(true)));
+        }
+
+        #region Private Component Helpers
+
+        /// <summary>
+        /// Recurses components and sub-components and provides a callback action to process and work with each components
+        /// </summary>
+        /// <param name="componentAction">The callback action that is called for each components in the component</param>
+        /// <param name="startComponent">The components to start at</param>
+        /// <param name="componentDepth">The current depth of the sub-components based on the original calling components</param>
+        private void RecurseComponents(Action<Component, int> componentAction, Component startComponent = null, int componentDepth = 0)
+        {
+            // While that component is not null...
+            // Inform callback of the feature
+            if (startComponent != null)
+                componentAction(startComponent, componentDepth);
+
+            //run agains for every child
+            var ChildrenComp = startComponent.Children;
+            foreach (Component2 ChildComp in ChildrenComp)
+            {
+                //get the current component
+                using (var currentComponent = new Component(ChildComp))
+                {
+                    //if not null continue recursively...
+                    if (currentComponent != null)
+                        RecurseComponents(componentAction, currentComponent, componentDepth + 1);
+                }
+            }
+        }
+
+        #endregion
+
+        #endregion
+
         #region Saving
 
         /// <summary>
