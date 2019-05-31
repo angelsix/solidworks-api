@@ -33,7 +33,7 @@ namespace AngelSix.SolidDna
         #region Protected Helpers
 
         /// <summary>
-        /// Gets the file data for the specified resource, storing a cached version if specified
+        /// Gets the file data for the specified resource, storing a cached version if specified.
         /// IMPORTANT:
         /// NOTE: Make sure any and all await calls inside this function and its children
         ///       use ConfigureAwait(false). This is because the parent has to support 
