@@ -576,7 +576,7 @@ namespace AngelSix.SolidDna
         /// <param name="featureAction">The callback action that is called for each feature in the model</param>
         /// <param name="startFeature">The feature to start at</param>
         /// <param name="featureDepth">The current depth of the sub-features based on the original calling feature</param>
-        private void RecurseFeatures(Action<ModelFeature, int> featureAction, Feature startFeature = null, int featureDepth = 0)
+        private static void RecurseFeatures(Action<ModelFeature, int> featureAction, Feature startFeature = null, int featureDepth = 0)
         {
             // Get the current feature
             var currentFeature = startFeature;

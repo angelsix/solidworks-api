@@ -171,15 +171,14 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Called when SolidWorks has loaded our add-in and wants us to do our connection logic
         /// </summary>
-        /// <param name="ThisSW">The current SolidWorks instance</param>
-        /// <param name="Cookie">The current SolidWorks cookie Id</param>
+        /// <param name="thisSw">The current SolidWorks instance</param>
+        /// <param name="cookie">The current SolidWorks cookie Id</param>
         /// <returns></returns>
-        public bool ConnectToSW(object ThisSW, int Cookie)
+        public bool ConnectToSW(object thisSw, int cookie)
         {
             try
             {
-                // Get the path to this actual add-in dll
-                var assemblyFilePath = this.AssemblyFilePath();
+                // Get the directory path to this actual add-in dll
                 var assemblyPath = this.AssemblyPath();
 
                 // Log it
@@ -203,13 +202,13 @@ namespace AngelSix.SolidDna
                 Logger.LogDebugSource($"Setting AddinCallbackInfo...");
 
                 // Setup callback info
-                var ok = ((SldWorks)ThisSW).SetAddinCallbackInfo2(0, this, Cookie);
+                var ok = ((SldWorks)thisSw).SetAddinCallbackInfo2(0, this, cookie);
 
                 // Log it
                 Logger.LogDebugSource($"PlugInIntegration Setup...");
 
                 // Setup plug-in application domain
-                PlugInIntegration.Setup(assemblyPath, ((SldWorks)ThisSW).RevisionNumber(), Cookie);
+                PlugInIntegration.Setup(assemblyPath, ((SldWorks)thisSw).RevisionNumber(), cookie);
 
                 // Log it
                 Logger.LogDebugSource($"Firing PreLoadPlugIns...");

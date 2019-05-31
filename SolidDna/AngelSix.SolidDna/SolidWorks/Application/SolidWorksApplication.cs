@@ -68,7 +68,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// The command manager
         /// </summary>
-        public CommandManager CommandManager { get; private set; }
+        public CommandManager CommandManager { get; }
 
         /// <summary>
         /// True if the application is disposing
@@ -161,13 +161,7 @@ namespace AngelSix.SolidDna
                 // Get the hot fix string
                 mBaseObject.GetBuildNumbers2(out var revisionString, out var buildNumber, out var hotfixString);
 
-                return new SolidWorksVersion
-                {
-                    RevisionNumber = revisionNumber,
-                    Revision = revisionString,
-                    BuildNumber = buildNumber,
-                    Hotfix = hotfixString
-                };
+                return new SolidWorksVersion(revisionNumber, revisionString, buildNumber, hotfixString);
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksApplicationVersionError,
@@ -257,7 +251,7 @@ namespace AngelSix.SolidDna
                 if (mFileLoading != null)
                 {
                     // Check the active document
-                    using (var activeDoc = new Model((ModelDoc2)mBaseObject.ActiveDoc))
+                    using (var activeDoc = new Model(mBaseObject.IActiveDoc2))
                     {
                         // If this is the same file that is currently being loaded, ignore this event
                         if (activeDoc != null && string.Equals(mFileLoading, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
@@ -469,7 +463,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="database">The database to read</param>
         /// <param name="list">The list to add materials to</param>
-        private void ReadMaterials(string database, ref List<Material> list)
+        private static void ReadMaterials(string database, ref List<Material> list)
         {
             // First make sure the file exists
             if (!File.Exists(database))

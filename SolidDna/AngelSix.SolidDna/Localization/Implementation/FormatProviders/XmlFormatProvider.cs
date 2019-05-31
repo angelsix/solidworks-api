@@ -46,14 +46,14 @@ namespace AngelSix.SolidDna
         public async Task<bool> GetStringAsync(ResourceDefinition resource, string name, string culture, Action<string> onResult)
         {
             // Get string document for this culture
-            var document = await GetResourceDocumentAsync(resource, (stream) => { return XDocument.Load(stream); }, culture).ConfigureAwait(false);
+            var document = await GetResourceDocumentAsync(resource, XDocument.Load, culture).ConfigureAwait(false);
 
             // If it is null, try and find the default culture if specified
             if (document == null)
             {
                 if (resource.UseDefaultCultureIfNotFound)
 
-                    document = await GetResourceDocumentAsync<XDocument>(resource, (stream) => { return XDocument.Load(stream); }).ConfigureAwait(false);
+                    document = await GetResourceDocumentAsync(resource, XDocument.Load).ConfigureAwait(false);
 
                 // Document not found so return false
                 if (document == null)
@@ -65,7 +65,9 @@ namespace AngelSix.SolidDna
                 return false;
 
             // Get the first element that matches the given name (ignore case)
-            var element = document.Root.Elements().FirstOrDefault(f => f.Attributes().Any(a => a.Name.LocalName == "Name") && string.Equals(name, f.Attributes().First(a => a.Name.LocalName == "Name").Value, StringComparison.CurrentCultureIgnoreCase));
+            var element = document.Root.Elements().FirstOrDefault(
+                f => f.Attributes().Any(a => a.Name.LocalName == "Name") && 
+                string.Equals(name, f.Attributes().First(a => a.Name.LocalName == "Name").Value, StringComparison.CurrentCultureIgnoreCase));
 
             // Return false if not found
             if (element == null)

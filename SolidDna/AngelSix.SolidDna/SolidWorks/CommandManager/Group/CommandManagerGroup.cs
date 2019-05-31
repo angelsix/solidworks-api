@@ -40,7 +40,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// The Id used when this command group was created
         /// </summary>
-        public int UserId { get; private set; }
+        public int UserId { get; }
 
         /// <summary>
         /// The title of this command group
