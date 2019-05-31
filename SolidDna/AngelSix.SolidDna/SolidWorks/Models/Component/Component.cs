@@ -1,12 +1,4 @@
-﻿using System;
-using SolidWorks.Interop.sldworks;
-using SolidWorks.Interop.swconst;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using System.Runtime.InteropServices;
-using static Dna.FrameworkDI;
-using Dna;
+﻿using SolidWorks.Interop.sldworks;
 
 namespace AngelSix.SolidDna
 {
@@ -28,7 +20,7 @@ namespace AngelSix.SolidDna
         public bool IsRoot => mBaseObject.IsRoot();
 
         /// <summary>
-        /// get children from this Component
+        /// Get children from this Component
         /// </summary>
         public object[] Children => mBaseObject.GetChildren() as object[];
 
@@ -46,6 +38,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         public Component(Component2 component) : base(component)
         {
+
         }
 
         #endregion

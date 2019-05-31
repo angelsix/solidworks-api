@@ -656,19 +656,19 @@ namespace AngelSix.SolidDna
         private void RecurseComponents(Action<Component, int> componentAction, Component startComponent = null, int componentDepth = 0)
         {
             // While that component is not null...
-            // Inform callback of the feature
             if (startComponent != null)
+                // Inform callback of the feature
                 componentAction(startComponent, componentDepth);
 
-            //run agains for every child
-            var ChildrenComp = startComponent.Children;
-            foreach (Component2 ChildComp in ChildrenComp)
+            // Loop each child
+            foreach (Component2 childComponent in startComponent.Children)
             {
-                //get the current component
-                using (var currentComponent = new Component(ChildComp))
+                // Get the current component
+                using (var currentComponent = new Component(childComponent))
                 {
-                    //if not null continue recursively...
+                    // If we have a component
                     if (currentComponent != null)
+                        // Recurse into it
                         RecurseComponents(componentAction, currentComponent, componentDepth + 1);
                 }
             }
