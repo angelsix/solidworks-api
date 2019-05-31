@@ -235,7 +235,7 @@ namespace AngelSix.SolidDna
             if (!pathFormat.Contains("{0}"))
                 throw new SolidDnaException(SolidDnaErrors.CreateError(
                     SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                    SolidDnaErrorCode.SolidWorksCommandGroupIvalidPathFormatError,
+                    SolidDnaErrorCode.SolidWorksCommandGroupInvalidPathFormatError,
                     Localization.GetString("ErrorSolidWorksCommandGroupIconListInvalidPathError")));
 
             // Find 20 image
