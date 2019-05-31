@@ -154,12 +154,12 @@ namespace AngelSix.SolidDna
             return SolidDnaErrors.Wrap(() =>
             {
                 // Get version string (such as 23.2.0 for 2015 SP2.0)
-                string revisionNumber = mBaseObject.RevisionNumber();
+                var revisionNumber = mBaseObject.RevisionNumber();
 
                 // Get revision string (such as sw2015_SP20)
                 // Get build number (such as d150130.002)
                 // Get the hot fix string
-                mBaseObject.GetBuildNumbers2(out string revisionString, out string buildNumber, out string hotfixString);
+                mBaseObject.GetBuildNumbers2(out var revisionString, out var buildNumber, out var hotfixString);
 
                 return new SolidWorksVersion(revisionNumber, revisionString, buildNumber, hotfixString);
             },

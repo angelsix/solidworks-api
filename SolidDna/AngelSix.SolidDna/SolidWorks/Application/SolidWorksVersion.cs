@@ -75,13 +75,13 @@
             // So far from all previous versions it is safe to assume that
             // the year (SolidWorks 20XX) of the product is the revision number
             // - 8 + 2000 so revision 23 is 2015
-            Version = int.TryParse(revisionParts[0], out int version) ? version - 8 + 2000 : versionUnknown;
+            Version = int.TryParse(revisionParts[0], out var version) ? version - 8 + 2000 : versionUnknown;
 
             // Extract the first part of the revision number for the service pack
-            ServicePackMajor = revisionParts.Length >= 2 && int.TryParse(revisionParts[1], out int major) ? major : versionUnknown;
+            ServicePackMajor = revisionParts.Length >= 2 && int.TryParse(revisionParts[1], out var major) ? major : versionUnknown;
 
             // Extract the second part of the revision number for the service pack
-            ServicePackMinor = revisionParts.Length >= 3 && int.TryParse(revisionParts[2], out int minor) ? minor : versionUnknown;
+            ServicePackMinor = revisionParts.Length >= 3 && int.TryParse(revisionParts[2], out var minor) ? minor : versionUnknown;
         }
 
         #endregion
