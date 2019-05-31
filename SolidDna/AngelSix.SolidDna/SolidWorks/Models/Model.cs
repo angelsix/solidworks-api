@@ -361,10 +361,10 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Called when a model has been saved
         /// </summary>
-        /// <param name="filename">The name of the file that has been saved</param>
+        /// <param name="fileName">The name of the file that has been saved</param>
         /// <param name="saveType">The type of file that has been saved</param>
         /// <returns></returns>
-        protected int FileSavePostNotify(int saveType, string filename)
+        protected int FileSavePostNotify(int saveType, string fileName)
         {
             // Update filepath
             FilePath = mBaseObject.GetPathName();
@@ -472,22 +472,21 @@ namespace AngelSix.SolidDna
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public AssemblyDoc AsAssembly() { return ((AssemblyDoc)mBaseObject); }
+        public AssemblyDoc AsAssembly() { return (AssemblyDoc) mBaseObject; }
 
         /// <summary>
         /// Casts the current model to a part
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public PartDoc AsPart() { return ((PartDoc)mBaseObject); }
-
+        public PartDoc AsPart() { return (PartDoc) mBaseObject; }
 
         /// <summary>
         /// Casts the current model to a drawing
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public DrawingDoc AsDrawing() { return ((DrawingDoc)mBaseObject); }
+        public DrawingDoc AsDrawing() { return (DrawingDoc) mBaseObject; }
 
         #endregion
 
