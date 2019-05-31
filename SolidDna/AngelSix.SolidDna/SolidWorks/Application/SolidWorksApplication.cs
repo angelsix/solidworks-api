@@ -68,7 +68,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// The command manager
         /// </summary>
-        public CommandManager CommandManager { get; private set; }
+        public CommandManager CommandManager { get; }
 
         /// <summary>
         /// True if the application is disposing
