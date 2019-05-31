@@ -275,7 +275,7 @@ namespace AngelSix.SolidDna
             #region Add Items
 
             // Add items
-            Items?.ForEach(item => AddCommandItem(item));
+            Items?.ForEach(AddCommandItem);
 
             #endregion
 
@@ -288,17 +288,17 @@ namespace AngelSix.SolidDna
             #region Command Tab
 
             // Add to parts tab
-            var list = Items.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForParts).ToList();
+            var list = Items?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForParts).ToList();
             if (list?.Count > 0)
                 AddItemsToTab(ModelType.Part, manager, list);
 
             // Add to assembly tab
-            list = Items.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForAssemblies).ToList();
+            list = Items?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForAssemblies).ToList();
             if (list?.Count > 0)
                 AddItemsToTab(ModelType.Assembly, manager, list);
 
             // Add to drawing tab
-            list = Items.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForDrawings).ToList();
+            list = Items?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForDrawings).ToList();
             if (list?.Count > 0)
                 AddItemsToTab(ModelType.Drawing, manager, list);
 
@@ -325,7 +325,7 @@ namespace AngelSix.SolidDna
             if (string.IsNullOrEmpty(title))
                 title = Title;
 
-            CommandManagerTab tab = null;
+            CommandManagerTab tab;
 
             // Get the tab if it already exists
             if (mTabs.Any(f => string.Equals(f.Key.Title, title) && f.Key.ModelType == type))
