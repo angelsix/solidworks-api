@@ -251,7 +251,7 @@ namespace AngelSix.SolidDna
                 if (mFileLoading != null)
                 {
                     // Check the active document
-                    using (var activeDoc = new Model((ModelDoc2)mBaseObject.ActiveDoc))
+                    using (var activeDoc = new Model(mBaseObject.IActiveDoc2))
                     {
                         // If this is the same file that is currently being loaded, ignore this event
                         if (activeDoc != null && string.Equals(mFileLoading, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
