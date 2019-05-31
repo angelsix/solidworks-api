@@ -109,7 +109,13 @@ namespace AngelSix.SolidDna
         /// SOLIDWORKS marks the file as Dirty and sets <see cref="IModelDoc2.GetSaveFlag"/>
         /// </summary>
         public event Action ModelModified = () => { };
-        
+
+        /// <summary>
+        /// Called after a model was rebuilt (any model type) or if the rollback bar position changed (for parts and assemblies).
+        /// NOTE: Does not always fire on normal rebuild (Ctrl+B) on assemblies.
+        /// </summary>
+        public event Action ModelRebuilt = () => { };
+
         /// <summary>
         /// Called as the model has been saved
         /// </summary>
@@ -195,6 +201,7 @@ namespace AngelSix.SolidDna
                     AsAssembly().DestroyNotify += FileDestroyedNotify;
                     AsAssembly().FileSavePostNotify += FileSavePostNotify;
                     AsAssembly().ModifyNotify += FileModified;
+                    AsAssembly().RegenPostNotify2 += AssemblyOrPartRebuilt;
                     AsAssembly().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsAssembly().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
@@ -203,6 +210,7 @@ namespace AngelSix.SolidDna
                     AsPart().DestroyNotify += FileDestroyedNotify;
                     AsPart().FileSavePostNotify += FileSavePostNotify;
                     AsPart().ModifyNotify += FileModified;
+                    AsPart().RegenPostNotify2 += AssemblyOrPartRebuilt;
                     AsPart().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsPart().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
@@ -214,6 +222,7 @@ namespace AngelSix.SolidDna
                     AsDrawing().DestroyNotify += FileDestroyedNotify;
                     AsDrawing().FileSavePostNotify += FileSavePostNotify;
                     AsDrawing().ModifyNotify += FileModified;
+                    AsDrawing().RegenPostNotify += DrawingRebuilt;
                     AsDrawing().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsDrawing().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
@@ -235,6 +244,20 @@ namespace AngelSix.SolidDna
 
             // Inform listeners
             ActiveConfigurationChanged();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called after an assembly or part was rebuilt or if the rollback bar position changed.
+        /// </summary>
+        /// <param name="firstFeatureBelowRollbackBar"></param>
+        /// <returns></returns>
+        protected int AssemblyOrPartRebuilt(object firstFeatureBelowRollbackBar)
+        {
+            // Inform listeners
+            ModelRebuilt();
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -274,6 +297,19 @@ namespace AngelSix.SolidDna
                 // Inform listeners
                 DrawingSheetDeleted(itemName);
             }
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called after a drawing was rebuilt.
+        /// </summary>
+        /// <returns></returns>
+        protected int DrawingRebuilt()
+        {
+            // Inform listeners
+            ModelRebuilt();
 
             // NOTE: 0 is success, anything else is an error
             return 0;
