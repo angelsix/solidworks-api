@@ -122,6 +122,18 @@ namespace AngelSix.SolidDna
         public event Action ModelSaved = () => { };
 
         /// <summary>
+        /// Called when the user cancels the save action and <see cref="ModelSaved"/> will not be fired.
+        /// </summary>
+        public event Action ModelSaveCanceled = () => { };
+
+        /// <summary>
+        /// Called before a model is saved with a new file name.
+        /// Called before the Save As dialog is shown.
+        /// Allows you to make changes that need to be included in the save. 
+        /// </summary>
+        public event Action<string> ModelSavingAs = (fileName) => { };
+
+        /// <summary>
         /// Called when any of the model properties changes
         /// </summary>
         public event Action ModelInformationChanged = () => { };
@@ -199,6 +211,8 @@ namespace AngelSix.SolidDna
                 case ModelType.Assembly:
                     AsAssembly().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
                     AsAssembly().DestroyNotify += FileDestroyedNotify;
+                    AsAssembly().FileSaveAsNotify2 += FileSaveAsPreNotify;
+                    AsAssembly().FileSavePostCancelNotify += FileSaveCanceled;
                     AsAssembly().FileSavePostNotify += FileSavePostNotify;
                     AsAssembly().ModifyNotify += FileModified;
                     AsAssembly().RegenPostNotify2 += AssemblyOrPartRebuilt;
@@ -208,6 +222,8 @@ namespace AngelSix.SolidDna
                 case ModelType.Part:
                     AsPart().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
                     AsPart().DestroyNotify += FileDestroyedNotify;
+                    AsPart().FileSaveAsNotify2 += FileSaveAsPreNotify;
+                    AsPart().FileSavePostCancelNotify += FileSaveCanceled;
                     AsPart().FileSavePostNotify += FileSavePostNotify;
                     AsPart().ModifyNotify += FileModified;
                     AsPart().RegenPostNotify2 += AssemblyOrPartRebuilt;
@@ -220,6 +236,8 @@ namespace AngelSix.SolidDna
                     AsDrawing().AddItemNotify += DrawingItemAddNotify;
                     AsDrawing().DeleteItemNotify += DrawingDeleteItemNotify;
                     AsDrawing().DestroyNotify += FileDestroyedNotify;
+                    AsDrawing().FileSaveAsNotify2 += FileSaveAsPreNotify;
+                    AsDrawing().FileSavePostCancelNotify += FileSaveCanceled;
                     AsDrawing().FileSavePostNotify += FileSavePostNotify;
                     AsDrawing().ModifyNotify += FileModified;
                     AsDrawing().RegenPostNotify += DrawingRebuilt;
@@ -328,6 +346,19 @@ namespace AngelSix.SolidDna
         }
 
         /// <summary>
+        /// Called when the user cancels the save action and <see cref="FileSavePostNotify"/> will not be fired.
+        /// </summary>
+        /// <returns></returns>
+        private int FileSaveCanceled()
+        {
+            // Inform listeners
+            ModelSaveCanceled();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
         /// Called when a model has been saved
         /// </summary>
         /// <param name="filename">The name of the file that has been saved</param>
@@ -340,6 +371,21 @@ namespace AngelSix.SolidDna
         
             // Inform listeners
             ModelSaved();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called when a model is about to be saved with a new file name.
+        /// Called before the Save As dialog is shown.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        private int FileSaveAsPreNotify(string fileName)
+        {
+            // Inform listeners
+            ModelSavingAs(fileName);
 
             // NOTE: 0 is success, anything else is an error
             return 0;
