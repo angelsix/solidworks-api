@@ -1,10 +1,12 @@
-﻿using SolidWorks.Interop.swconst;
+﻿using System;
+using SolidWorks.Interop.swconst;
 
 namespace AngelSix.SolidDna
 {
     /// <summary>
     /// The type of template for a model, from <see cref="swDocTemplateTypes_e"/>
     /// </summary>
+    [Flags]
     public enum ModelTemplateType
     {
         /// <summary>

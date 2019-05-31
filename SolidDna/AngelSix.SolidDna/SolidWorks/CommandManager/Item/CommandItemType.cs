@@ -1,10 +1,12 @@
-﻿using SolidWorks.Interop.swconst;
+﻿using System;
+using SolidWorks.Interop.swconst;
 
 namespace AngelSix.SolidDna
 {
     /// <summary>
     /// The type of command item in the <see cref="swCommandItemType_e"/> 
     /// </summary>
+    [Flags]
     public enum CommandItemType
     {
         /// <summary>
