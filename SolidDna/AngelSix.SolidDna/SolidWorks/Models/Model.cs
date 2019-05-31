@@ -105,9 +105,33 @@ namespace AngelSix.SolidDna
         public event Action ModelClosing = () => { };
 
         /// <summary>
+        /// Called when the model is first modified since it was last saved.
+        /// SOLIDWORKS marks the file as Dirty and sets <see cref="IModelDoc2.GetSaveFlag"/>
+        /// </summary>
+        public event Action ModelModified = () => { };
+
+        /// <summary>
+        /// Called after a model was rebuilt (any model type) or if the rollback bar position changed (for parts and assemblies).
+        /// NOTE: Does not always fire on normal rebuild (Ctrl+B) on assemblies.
+        /// </summary>
+        public event Action ModelRebuilt = () => { };
+
+        /// <summary>
         /// Called as the model has been saved
         /// </summary>
         public event Action ModelSaved = () => { };
+
+        /// <summary>
+        /// Called when the user cancels the save action and <see cref="ModelSaved"/> will not be fired.
+        /// </summary>
+        public event Action ModelSaveCanceled = () => { };
+
+        /// <summary>
+        /// Called before a model is saved with a new file name.
+        /// Called before the Save As dialog is shown.
+        /// Allows you to make changes that need to be included in the save. 
+        /// </summary>
+        public event Action<string> ModelSavingAs = (fileName) => { };
 
         /// <summary>
         /// Called when any of the model properties changes
@@ -187,14 +211,22 @@ namespace AngelSix.SolidDna
                 case ModelType.Assembly:
                     AsAssembly().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
                     AsAssembly().DestroyNotify += FileDestroyedNotify;
+                    AsAssembly().FileSaveAsNotify2 += FileSaveAsPreNotify;
+                    AsAssembly().FileSavePostCancelNotify += FileSaveCanceled;
                     AsAssembly().FileSavePostNotify += FileSavePostNotify;
+                    AsAssembly().ModifyNotify += FileModified;
+                    AsAssembly().RegenPostNotify2 += AssemblyOrPartRebuilt;
                     AsAssembly().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsAssembly().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
                 case ModelType.Part:
                     AsPart().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
                     AsPart().DestroyNotify += FileDestroyedNotify;
+                    AsPart().FileSaveAsNotify2 += FileSaveAsPreNotify;
+                    AsPart().FileSavePostCancelNotify += FileSaveCanceled;
                     AsPart().FileSavePostNotify += FileSavePostNotify;
+                    AsPart().ModifyNotify += FileModified;
+                    AsPart().RegenPostNotify2 += AssemblyOrPartRebuilt;
                     AsPart().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsPart().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
@@ -204,7 +236,11 @@ namespace AngelSix.SolidDna
                     AsDrawing().AddItemNotify += DrawingItemAddNotify;
                     AsDrawing().DeleteItemNotify += DrawingDeleteItemNotify;
                     AsDrawing().DestroyNotify += FileDestroyedNotify;
+                    AsDrawing().FileSaveAsNotify2 += FileSaveAsPreNotify;
+                    AsDrawing().FileSavePostCancelNotify += FileSaveCanceled;
                     AsDrawing().FileSavePostNotify += FileSavePostNotify;
+                    AsDrawing().ModifyNotify += FileModified;
+                    AsDrawing().RegenPostNotify += DrawingRebuilt;
                     AsDrawing().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsDrawing().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
@@ -226,6 +262,20 @@ namespace AngelSix.SolidDna
 
             // Inform listeners
             ActiveConfigurationChanged();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called after an assembly or part was rebuilt or if the rollback bar position changed.
+        /// </summary>
+        /// <param name="firstFeatureBelowRollbackBar"></param>
+        /// <returns></returns>
+        protected int AssemblyOrPartRebuilt(object firstFeatureBelowRollbackBar)
+        {
+            // Inform listeners
+            ModelRebuilt();
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -271,6 +321,19 @@ namespace AngelSix.SolidDna
         }
 
         /// <summary>
+        /// Called after a drawing was rebuilt.
+        /// </summary>
+        /// <returns></returns>
+        protected int DrawingRebuilt()
+        {
+            // Inform listeners
+            ModelRebuilt();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
         /// Called when the user changes the selected objects
         /// </summary>
         /// <returns></returns>
@@ -283,18 +346,46 @@ namespace AngelSix.SolidDna
         }
 
         /// <summary>
+        /// Called when the user cancels the save action and <see cref="FileSavePostNotify"/> will not be fired.
+        /// </summary>
+        /// <returns></returns>
+        private int FileSaveCanceled()
+        {
+            // Inform listeners
+            ModelSaveCanceled();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
         /// Called when a model has been saved
         /// </summary>
-        /// <param name="filename">The name of the file that has been saved</param>
+        /// <param name="fileName">The name of the file that has been saved</param>
         /// <param name="saveType">The type of file that has been saved</param>
         /// <returns></returns>
-        protected int FileSavePostNotify(int saveType, string filename)
+        protected int FileSavePostNotify(int saveType, string fileName)
         {
             // Update filepath
             FilePath = mBaseObject.GetPathName();
         
             // Inform listeners
             ModelSaved();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called when a model is about to be saved with a new file name.
+        /// Called before the Save As dialog is shown.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        private int FileSaveAsPreNotify(string fileName)
+        {
+            // Inform listeners
+            ModelSavingAs(fileName);
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -313,6 +404,19 @@ namespace AngelSix.SolidDna
             // This is a pre-notify but we are going to be dead
             // so dispose ourselves (our underlying COM objects)
             Dispose();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called when the model is first modified since it was last saved.
+        /// </summary>
+        /// <returns></returns>
+        protected int FileModified()
+        {
+            // Inform listeners
+            ModelModified();
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -368,22 +472,21 @@ namespace AngelSix.SolidDna
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public AssemblyDoc AsAssembly() { return ((AssemblyDoc)mBaseObject); }
+        public AssemblyDoc AsAssembly() { return (AssemblyDoc) mBaseObject; }
 
         /// <summary>
         /// Casts the current model to a part
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public PartDoc AsPart() { return ((PartDoc)mBaseObject); }
-
+        public PartDoc AsPart() { return (PartDoc) mBaseObject; }
 
         /// <summary>
         /// Casts the current model to a drawing
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public DrawingDoc AsDrawing() { return ((DrawingDoc)mBaseObject); }
+        public DrawingDoc AsDrawing() { return (DrawingDoc) mBaseObject; }
 
         #endregion
 

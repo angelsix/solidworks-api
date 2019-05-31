@@ -85,6 +85,11 @@ namespace AngelSix.SolidDna
         public event Action<Model> ActiveModelInformationChanged = (model) => { };
 
         /// <summary>
+        /// Called when a new file has been created
+        /// </summary>
+        public event Action<Model> FileCreated = (model) => { };
+
+        /// <summary>
         /// Called when a file has been opened
         /// </summary>
         public event Action<string, Model> FileOpened = (path, model) => { };
@@ -120,6 +125,7 @@ namespace AngelSix.SolidDna
             mBaseObject.ActiveModelDocChangeNotify += ActiveModelChanged;
             mBaseObject.FileOpenPreNotify += FileOpenPreNotify;
             mBaseObject.FileOpenPostNotify += FileOpenPostNotify;
+            mBaseObject.FileNewNotify2 += FileNewPostNotify;
 
             // Get command manager
             CommandManager = new CommandManager(UnsafeObject.GetCommandManager(mSwCookie));
@@ -171,6 +177,27 @@ namespace AngelSix.SolidDna
         #endregion
 
         #region SolidWorks Event Methods
+
+        #region File New
+
+        /// <summary>
+        /// Called after a new file has been created.
+        /// <see cref="ActiveModel"/> is updated to the new file before this event is called.
+        /// </summary>
+        /// <param name="newDocument"></param>
+        /// <param name="documentType"></param>
+        /// <param name="templatePath"></param>
+        /// <returns></returns>
+        private int FileNewPostNotify(object newDocument, int documentType, string templatePath)
+        {
+            // Inform listeners
+            FileCreated(mActiveModel);
+
+            // NOTE: 0 is OK, anything else is an error
+            return 0;
+        }
+
+        #endregion
 
         #region File Open
 
@@ -431,8 +458,7 @@ namespace AngelSix.SolidDna
                 SolidDnaErrorCode.SolidWorksApplicationGetMaterialsError,
                 Localization.GetString("SolidWorksApplicationGetMaterialsError"));
         }
-
-
+        
         /// <summary>
         /// Attempts to find the material from a SolidWorks material database file (SLDMAT)
         /// If found, returns the full information about the material
