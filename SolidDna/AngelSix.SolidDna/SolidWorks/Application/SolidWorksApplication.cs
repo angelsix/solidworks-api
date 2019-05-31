@@ -254,7 +254,7 @@ namespace AngelSix.SolidDna
                     using (var activeDoc = new Model(mBaseObject.IActiveDoc2))
                     {
                         // If this is the same file that is currently being loaded, ignore this event
-                        if (activeDoc != null && string.Equals(mFileLoading, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(mFileLoading, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
                             return;
                     }
                 }
@@ -480,10 +480,6 @@ namespace AngelSix.SolidDna
                 {
                     // Try and parse the Xml
                     var xmlDoc = XDocument.Load(stream);
-
-                    // Make sure we got something
-                    if (xmlDoc == null)
-                        throw new ArgumentNullException(Localization.GetString("SolidWorksApplicationGetMaterialsXmlNotLoadedError"));
 
                     var materials = new List<Material>();
 
