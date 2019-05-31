@@ -105,6 +105,12 @@ namespace AngelSix.SolidDna
         public event Action ModelClosing = () => { };
 
         /// <summary>
+        /// Called when the model is first modified since it was last saved.
+        /// SOLIDWORKS marks the file as Dirty and sets <see cref="IModelDoc2.GetSaveFlag"/>
+        /// </summary>
+        public event Action ModelModified = () => { };
+        
+        /// <summary>
         /// Called as the model has been saved
         /// </summary>
         public event Action ModelSaved = () => { };
@@ -188,6 +194,7 @@ namespace AngelSix.SolidDna
                     AsAssembly().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
                     AsAssembly().DestroyNotify += FileDestroyedNotify;
                     AsAssembly().FileSavePostNotify += FileSavePostNotify;
+                    AsAssembly().ModifyNotify += FileModified;
                     AsAssembly().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsAssembly().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
@@ -195,6 +202,7 @@ namespace AngelSix.SolidDna
                     AsPart().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
                     AsPart().DestroyNotify += FileDestroyedNotify;
                     AsPart().FileSavePostNotify += FileSavePostNotify;
+                    AsPart().ModifyNotify += FileModified;
                     AsPart().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsPart().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
@@ -205,6 +213,7 @@ namespace AngelSix.SolidDna
                     AsDrawing().DeleteItemNotify += DrawingDeleteItemNotify;
                     AsDrawing().DestroyNotify += FileDestroyedNotify;
                     AsDrawing().FileSavePostNotify += FileSavePostNotify;
+                    AsDrawing().ModifyNotify += FileModified;
                     AsDrawing().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsDrawing().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
@@ -313,6 +322,19 @@ namespace AngelSix.SolidDna
             // This is a pre-notify but we are going to be dead
             // so dispose ourselves (our underlying COM objects)
             Dispose();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called when the model is first modified since it was last saved.
+        /// </summary>
+        /// <returns></returns>
+        protected int FileModified()
+        {
+            // Inform listeners
+            ModelModified();
 
             // NOTE: 0 is success, anything else is an error
             return 0;
