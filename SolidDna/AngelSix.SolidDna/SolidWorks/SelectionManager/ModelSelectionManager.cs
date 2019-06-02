@@ -6,16 +6,16 @@ using System.Collections.Generic;
 namespace AngelSix.SolidDna
 {
     /// <summary>
-    /// Represents a SolidWorks model selection manager
+    /// Represents a SolidWorks selection manager
     /// </summary>
-    public class ModelSelectionManager : SolidDnaObject<SelectionMgr>
+    public class SelectionManager : SolidDnaObject<SelectionMgr>
     {
         #region Constructor
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public ModelSelectionManager(SelectionMgr model) : base(model)
+        public SelectionManager(SelectionMgr model) : base(model)
         {
 
         }

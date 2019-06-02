@@ -1,4 +1,5 @@
 ﻿using SolidWorks.Interop.sldworks;
+using System;
 using System.Linq;
 
 namespace AngelSix.SolidDna
@@ -58,6 +59,69 @@ namespace AngelSix.SolidDna
         /// Rotates the view so the selected line in the view is vertical
         /// </summary>
         public void AlignViewVertically() => mBaseObject.AlignVert();
+
+        #endregion
+
+        #region Balloon Methods
+
+        /// <summary>
+        /// Automatically inserts BOM balloons in selected drawing views
+        /// </summary>
+        /// <param name="options">The balloon options</param>
+        /// <param name="onSuccess">Callback containing all created notes if successful</param>
+        /// <returns>An array of the created <see cref="Note"/> objects</returns>
+        /// <remarks>
+        ///     This method automatically inserts BOM balloons for bill of materials 
+        ///     items in selected drawing views. If a drawing sheet is selected, BOM 
+        ///     balloons are automatically inserted for all of the drawing views on that 
+        ///     drawing sheet. 
+        ///     
+        ///     To automatically insert BOM balloons, select one or more views or sheets
+        ///     for which to automatically create BOM balloons, then call this method.
+        /// </remarks>
+        public void AutoBalloon(AutoBalloonOptions options, Action<Note[]> onSuccess = null)
+        {
+            // Create native options
+            var nativeOptions = mBaseObject.CreateAutoBalloonOptions();
+
+            // Fill options
+            nativeOptions.CustomSize = options.CustomSize;
+            nativeOptions.EditBalloonOption = (int)options.EditBalloonOptions;
+            nativeOptions.EditBalloons = options.EditBalloons;
+            nativeOptions.FirstItem = options.FirstItem;
+            nativeOptions.IgnoreMultiple = options.IgnoreMultiple;
+            nativeOptions.InsertMagneticLine = options.InsertMagnaticLine;
+            nativeOptions.ItemNumberIncrement = options.ItemNumberIncrement;
+            nativeOptions.ItemNumberStart = options.ItemNumberStart;
+            nativeOptions.ItemOrder = (int)options.ItemOrder;
+            nativeOptions.Layername = options.LayerName;
+            nativeOptions.Layout = (int)options.Layout;
+            nativeOptions.LeaderAttachmentToFaces = options.LeaderAttachmentToFaces;
+            nativeOptions.LowerText = options.LowerText;
+            nativeOptions.LowerTextContent = (int)options.LowerTextContent;
+            nativeOptions.ReverseDirection = options.ReverseDirection;
+            nativeOptions.Size = (int)options.Size;
+            nativeOptions.Style = (int)options.Style;
+            nativeOptions.UpperText = options.UpperText;
+            nativeOptions.UpperTextContent = (int)options.UpperTextContent;
+
+            // Create the notes
+            var nativeNotes = (object[])mBaseObject.AutoBalloon5(nativeOptions);
+
+            // If we have a callback, and have notes...
+            if (onSuccess != null && nativeNotes?.Length > 0)
+            {
+                // Create all note classes
+                var notes = nativeNotes.Select(f => new Note((INote)f)).ToArray();
+
+                // Inform listeners
+                onSuccess.Invoke(notes);
+
+                // Dispose them
+                foreach (var note in notes)
+                    note.Dispose();
+            }
+        }
 
         #endregion
 

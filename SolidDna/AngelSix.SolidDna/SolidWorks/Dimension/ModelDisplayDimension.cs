@@ -24,7 +24,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         public ModelDisplayDimension(IDisplayDimension model) : base(model)
         {
-
+            
         }
 
         #endregion

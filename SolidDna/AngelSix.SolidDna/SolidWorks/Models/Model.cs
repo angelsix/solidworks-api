@@ -58,7 +58,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// The selection manager for this model
         /// </summary>
-        public ModelSelectionManager SelectionManager { get; protected set; }
+        public SelectionManager SelectionManager { get; protected set; }
 
         /// <summary>
         /// Get the number of configurations
@@ -193,7 +193,7 @@ namespace AngelSix.SolidDna
             ActiveConfiguration = new ModelConfiguration(BaseObject.IGetActiveConfiguration());
 
             // Get the selection manager
-            SelectionManager = new ModelSelectionManager(BaseObject.ISelectionManager);
+            SelectionManager = new SelectionManager(BaseObject.ISelectionManager);
 
             // Set drawing access
             Drawing = IsDrawing ? new DrawingDocument((DrawingDoc)BaseObject) : null;
