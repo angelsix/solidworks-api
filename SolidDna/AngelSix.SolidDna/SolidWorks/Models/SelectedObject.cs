@@ -79,7 +79,7 @@ namespace AngelSix.SolidDna
             SolidDnaErrors.Wrap(() =>
             {
                 // Create feature
-                using (var model = new ModelFeature((Feature)mBaseObject))
+                using (var model = new ModelFeature((Feature)BaseObject))
                 {
                     // Run action
                     action(model);
@@ -101,7 +101,7 @@ namespace AngelSix.SolidDna
             SolidDnaErrors.Wrap(() =>
             {
                 // Create feature
-                using (var model = new ModelDisplayDimension((IDisplayDimension)mBaseObject))
+                using (var model = new ModelDisplayDimension((IDisplayDimension)BaseObject))
                 {
                     // Run action
                     action(model);

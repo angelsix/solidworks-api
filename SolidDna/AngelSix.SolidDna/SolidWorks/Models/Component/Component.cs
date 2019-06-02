@@ -12,22 +12,22 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Get the Model from the component
         /// </summary>
-        public Model AsModel => new Model (mBaseObject.GetModelDoc2() as ModelDoc2);
+        public Model AsModel => new Model (BaseObject.GetModelDoc2() as ModelDoc2);
 
         /// <summary>
         /// Check if the Component is Root
         /// </summary>
-        public bool IsRoot => mBaseObject.IsRoot();
+        public bool IsRoot => BaseObject.IsRoot();
 
         /// <summary>
         /// Get children from this Component
         /// </summary>
-        public object[] Children => mBaseObject.GetChildren() as object[];
+        public object[] Children => BaseObject.GetChildren() as object[];
 
         /// <summary>
         /// Get the name of the component
         /// </summary>
-        public string Name => mBaseObject.Name2;
+        public string Name => BaseObject.Name2;
 
         #endregion
 

@@ -44,7 +44,7 @@ namespace AngelSix.SolidDna
         {
             // TODO: Add error checking and exception catching
 
-            return new CustomPropertyEditor(mBaseObject.CustomPropertyManager[configuration]);
+            return new CustomPropertyEditor(BaseObject.CustomPropertyManager[configuration]);
         }
 
         #endregion
@@ -80,10 +80,10 @@ namespace AngelSix.SolidDna
                 //
                 if (SolidWorksEnvironment.Application.SolidWorksVersion.Version < 2016)
                     // NOTE: 2 is best accuracy
-                    massProps = (double[])mBaseObject.GetMassProperties(2, ref status);
+                    massProps = (double[])BaseObject.GetMassProperties(2, ref status);
                 else
                     // NOTE: 2 is best accuracy
-                    massProps = (double[])mBaseObject.GetMassProperties2(2, out status, false);
+                    massProps = (double[])BaseObject.GetMassProperties2(2, out status, false);
 
                 // Make sure it succeeded
                 if (status == (int)swMassPropertiesStatus_e.swMassPropertiesStatus_UnknownError)

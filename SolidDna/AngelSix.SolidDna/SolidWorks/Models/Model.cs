@@ -63,12 +63,12 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Get the number of configurations
         /// </summary>
-        public int ConfigurationCount => mBaseObject.GetConfigurationCount();
+        public int ConfigurationCount => BaseObject.GetConfigurationCount();
 
         /// <summary>
         /// Gets the configuration names
         /// </summary>
-        public List<string> ConfigurationNames => new List<string>((string[])mBaseObject.GetConfigurationNames());
+        public List<string> ConfigurationNames => new List<string>((string[])BaseObject.GetConfigurationNames());
 
         /// <summary>
         /// The mass properties of the part
@@ -177,32 +177,32 @@ namespace AngelSix.SolidDna
             DisposeAllReferences();
 
             // Can't do much if there is no document
-            if (mBaseObject == null)
+            if (BaseObject == null)
                 return;
 
             // Get the file path
-            FilePath = mBaseObject.GetPathName();
+            FilePath = BaseObject.GetPathName();
 
             // Get the models type
-            ModelType = (ModelType)mBaseObject.GetType();
+            ModelType = (ModelType)BaseObject.GetType();
 
             // Get the extension
-            Extension = new ModelExtension(mBaseObject.Extension, this);
+            Extension = new ModelExtension(BaseObject.Extension, this);
 
             // Get the active configuration
-            ActiveConfiguration = new ModelConfiguration(mBaseObject.IGetActiveConfiguration());
+            ActiveConfiguration = new ModelConfiguration(BaseObject.IGetActiveConfiguration());
 
             // Get the selection manager
-            SelectionManager = new ModelSelectionManager(mBaseObject.ISelectionManager);
+            SelectionManager = new ModelSelectionManager(BaseObject.ISelectionManager);
 
             // Set drawing access
-            Drawing = IsDrawing ? new DrawingDocument((DrawingDoc)mBaseObject) : null;
+            Drawing = IsDrawing ? new DrawingDocument((DrawingDoc)BaseObject) : null;
 
             // Set part access
-            Part = IsPart ? new PartDocument((PartDoc)mBaseObject) : null;
+            Part = IsPart ? new PartDocument((PartDoc)BaseObject) : null;
 
             // Set assembly access
-            Assembly = IsAssembly ? new AssemblyDocument((AssemblyDoc)mBaseObject) : null;
+            Assembly = IsAssembly ? new AssemblyDocument((AssemblyDoc)BaseObject) : null;
 
             // Inform listeners
             ModelInformationChanged();            
@@ -376,7 +376,7 @@ namespace AngelSix.SolidDna
         protected int FileSavePostNotify(int saveType, string fileName)
         {
             // Update filepath
-            FilePath = mBaseObject.GetPathName();
+            FilePath = BaseObject.GetPathName();
         
             // Inform listeners
             ModelSaved();
@@ -481,21 +481,21 @@ namespace AngelSix.SolidDna
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public AssemblyDoc AsAssembly() { return (AssemblyDoc) mBaseObject; }
+        public AssemblyDoc AsAssembly() { return (AssemblyDoc) BaseObject; }
 
         /// <summary>
         /// Casts the current model to a part
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public PartDoc AsPart() { return (PartDoc) mBaseObject; }
+        public PartDoc AsPart() { return (PartDoc) BaseObject; }
 
         /// <summary>
         /// Casts the current model to a drawing
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public DrawingDoc AsDrawing() { return (DrawingDoc) mBaseObject; }
+        public DrawingDoc AsDrawing() { return (DrawingDoc) BaseObject; }
 
         /// <summary>
         /// Accesses the current model as a drawing to expose all Drawing API calls.
@@ -601,7 +601,7 @@ namespace AngelSix.SolidDna
             return SolidDnaErrors.Wrap(() =>
             {
                 // Get the Id's
-                var idString = mBaseObject.MaterialIdName;
+                var idString = BaseObject.MaterialIdName;
 
                 // Make sure we have some data
                 if (idString == null || !idString.Contains("|"))
@@ -831,11 +831,11 @@ namespace AngelSix.SolidDna
             return SolidDnaErrors.Wrap(() =>
             {
                 // Try and save the model using the SaveAs method
-                mBaseObject.Extension.SaveAs(savePath, (int)version, (int)options, pdfExportData?.ExportData, ref errors, ref warnings);
+                BaseObject.Extension.SaveAs(savePath, (int)version, (int)options, pdfExportData?.ExportData, ref errors, ref warnings);
 
                 // If this fails, try another way
                 if (errors != 0)
-                    mBaseObject.SaveAs4(savePath, (int)version, (int)options, ref errors, ref warnings);
+                    BaseObject.SaveAs4(savePath, (int)version, (int)options, ref errors, ref warnings);
 
                 // Add any warnings
                 results.Warnings = (SaveAsWarnings)warnings;

@@ -62,10 +62,10 @@ namespace AngelSix.SolidDna
         /// </summary>
         public ModelTemplateType MenuVisibleInDocumentTypes
         {
-            get => (ModelTemplateType)mBaseObject.ShowInDocumentType;
+            get => (ModelTemplateType)BaseObject.ShowInDocumentType;
             set =>
                 // Set base object
-                mBaseObject.ShowInDocumentType = (int)value;
+                BaseObject.ShowInDocumentType = (int)value;
         }
 
         /// <summary>
@@ -74,10 +74,10 @@ namespace AngelSix.SolidDna
         /// </summary>
         public bool HasMenu
         {
-            get => mBaseObject.HasMenu;
+            get => BaseObject.HasMenu;
             set =>
                 // Set base object
-                mBaseObject.HasMenu = value;
+                BaseObject.HasMenu = value;
         }
 
         /// <summary>
@@ -86,8 +86,8 @@ namespace AngelSix.SolidDna
         /// </summary>
         public bool HasToolbar
         {
-            get => mBaseObject.HasToolbar;
-            set => mBaseObject.HasToolbar = value;
+            get => BaseObject.HasToolbar;
+            set => BaseObject.HasToolbar = value;
         }
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace AngelSix.SolidDna
         public void AddCommandItem(CommandManagerItem item)
         {
             // Add the item
-            var id = mBaseObject.AddCommandItem2(item.Name, item.Position, item.Hint, item.Tooltip, item.ImageIndex, $"Callback({item.CallbackId})", null, UserId, (int)item.ItemType);
+            var id = BaseObject.AddCommandItem2(item.Name, item.Position, item.Hint, item.Tooltip, item.ImageIndex, $"Callback({item.CallbackId})", null, UserId, (int)item.ItemType);
 
             // Set the Id we got
             item.UniqueId = id;
@@ -255,19 +255,19 @@ namespace AngelSix.SolidDna
             var icons = GetIconListPaths();
 
             // 2016+ support
-            mBaseObject.IconList = icons;
+            BaseObject.IconList = icons;
 
             // <2016 support
             if (icons.Length > 0)
             {
                 // Largest icon for this one
-                mBaseObject.LargeIconList = icons.Last();
+                BaseObject.LargeIconList = icons.Last();
 
                 // The list of icons
-                mBaseObject.MainIconList = icons;
+                BaseObject.MainIconList = icons;
 
                 // Smallest icon for this one
-                mBaseObject.SmallIconList = icons.First();
+                BaseObject.SmallIconList = icons.First();
             }
 
             #endregion
@@ -280,10 +280,10 @@ namespace AngelSix.SolidDna
             #endregion
 
             // Activate the command group
-            mCreated = mBaseObject.Activate();
+            mCreated = BaseObject.Activate();
 
             // Get command Ids
-            Items?.ForEach(item => item.CommandId = mBaseObject.CommandID[item.UniqueId]);
+            Items?.ForEach(item => item.CommandId = BaseObject.CommandID[item.UniqueId]);
 
             #region Command Tab
 

@@ -74,7 +74,7 @@ namespace AngelSix.SolidDna
         /// Gets the SolidWorks feature name, such as Sketch1
         /// </summary>
         /// <returns></returns>
-        public string FeatureName => mBaseObject.Name;
+        public string FeatureName => BaseObject.Name;
 
         /// <summary>
         /// The specific feature for this feature, if any.
@@ -795,7 +795,7 @@ namespace AngelSix.SolidDna
         /// <returns>True if operation was successful</returns>
         public bool SetSuppressionState(ModelFeatureSuppressionState state, ModelConfigurationOptions configurationOption, string[] configurationNames = null)
         {
-            return mBaseObject.SetSuppression2((int)state, (int)configurationOption, configurationNames);
+            return BaseObject.SetSuppression2((int)state, (int)configurationOption, configurationNames);
         }
 
         /// <summary>
@@ -806,7 +806,7 @@ namespace AngelSix.SolidDna
         /// <returns>Array of Booleans indicating the suppression states for the feature in the specified configurations</returns>
         public bool[] IsSuppressed(ModelConfigurationOptions configurationOption, string[] configurationNames = null)
         {
-            return (bool[])mBaseObject.IsSuppressed2((int)configurationOption, configurationNames);
+            return (bool[])BaseObject.IsSuppressed2((int)configurationOption, configurationNames);
         }
 
         #endregion
@@ -820,7 +820,7 @@ namespace AngelSix.SolidDna
         protected string GetFeatureTypeName()
         {
             // TODO: Handle Intant3D feature, then call GetTypeName instead of 2
-            return mBaseObject.GetTypeName2();
+            return BaseObject.GetTypeName2();
         }
 
         #endregion
