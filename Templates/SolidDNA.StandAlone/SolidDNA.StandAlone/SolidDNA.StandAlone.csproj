@@ -87,6 +87,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="References\SolidWorks.Interop.sldworks.dll" />
+    <Content Include="References\SolidWorks.Interop.sw3dprinter.dll" />
+    <Content Include="References\SolidWorks.Interop.swcommands.dll" />
+    <Content Include="References\SolidWorks.Interop.swconst.dll" />
+    <Content Include="References\SolidWorks.Interop.swdimxpert.dll" />
+    <Content Include="References\SolidWorks.Interop.swdocumentmgr.dll" />
+    <Content Include="References\SolidWorks.Interop.swmotionstudy.dll" />
+    <Content Include="References\SolidWorks.Interop.swpublished.dll" />
+    <Content Include="References\SolidWorks.Interop.SWRoutingLib.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="AngelSix.SolidDna">
       <Version>1.0.1.9</Version>
     </PackageReference>
