@@ -38,12 +38,30 @@ namespace AngelSix.SolidDna
         /// <returns>True if the sheet was activated, false if SOLIDWORKS generated an error</returns>
         public bool ActivateSheet(string sheetName) => mBaseObject.ActivateSheet(sheetName);
 
+        #endregion
+
+        #region View Methods
+
         /// <summary>
         /// Activates the specified drawing view
         /// </summary>
         /// <param name="viewName">Name of the drawing view</param>
         /// <returns>True if successful, false if not</returns>
         public bool ActivateView(string viewName) => mBaseObject.ActivateView(viewName);
+
+        /// <summary>
+        /// Rotates the view so the selected line in the view is horizontal
+        /// </summary>
+        public void AlignViewHorizontally() => mBaseObject.AlignHorz();
+
+        /// <summary>
+        /// Rotates the view so the selected line in the view is vertical
+        /// </summary>
+        public void AlignViewVertically() => mBaseObject.AlignVert();
+
+        #endregion
+
+        #region Dimension Methods
 
         /// <summary>
         /// Adds a chamfer dimension to the selected edges
@@ -66,6 +84,15 @@ namespace AngelSix.SolidDna
         /// <remarks>Make sure to select the hole sketch circle before running this command</remarks>
         public ModelDisplayDimension AddHoleCutout(double x, double y, double z)
             => new ModelDisplayDimension((IDisplayDimension)mBaseObject.AddHoleCallout2(x, y, z)).CreateOrNull();
+
+        /// <summary>
+        /// Re-aligns the selected ordinate dimension if it was previously broken
+        /// </summary>
+        public void AlignOrdinateDimension() => mBaseObject.AlignOrdinate();
+
+        #endregion
+
+        #region Line Style Methods
 
         /// <summary>
         /// Adds a line style to the drawing document
