@@ -51,13 +51,20 @@ namespace AngelSix.SolidDna
         /// <param name="y">Y dimension</param>
         /// <param name="z">Z dimension</param>
         /// <returns>The chamfer <see cref="ModelDisplayDimension"/> if successful. Null if not.</returns>
-        /// <remarks>Make sure to select the 2 edges of the chamfer before adding.</remarks>
+        /// <remarks>Make sure to select the 2 edges of the chamfer before running this command</remarks>
         public ModelDisplayDimension AddChamferDimension(double x, double y, double z)
-        {
-            var dimension = (IDisplayDimension)mBaseObject.AddChamferDim(x, y, z);
+            => new ModelDisplayDimension((IDisplayDimension)mBaseObject.AddChamferDim(x, y, z)).CreateOrNull();
 
-            return dimension != null ? new ModelDisplayDimension(dimension) : null;
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x">X dimension</param>
+        /// <param name="y">Y dimension</param>
+        /// <param name="z">Z dimension</param>
+        /// <returns>The hole cutout <see cref="ModelDisplayDimension"/> if successful. Null if not.</returns>
+        /// <remarks>Make sure to select the hole sketch circle before running this command</remarks>
+        public ModelDisplayDimension AddHoleCutout(double x, double y, double z)
+            => new ModelDisplayDimension((IDisplayDimension)mBaseObject.AddHoleCallout2(x, y, z)).CreateOrNull();
 
         #endregion
     }
