@@ -92,6 +92,26 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region Annotation Methods
+
+        /// <summary>
+        /// Attaches an existing annotation to a drawing sheet or view
+        /// </summary>
+        /// <param name="option">The attach option</param>
+        /// <returns>True if successful, false if not</returns>
+        /// <remarks>
+        ///     Remember to select the annotation and if attaching to a view select an
+        ///     element on the view also before running this command
+        /// </remarks>
+        public bool AttachAnnotation(AttachAnnotationOption option) => mBaseObject.AttachAnnotation((int)option);
+
+        /// <summary>
+        /// Attempts to attach unattached dimensions, for example in an imported DXF file
+        /// </summary>
+        public void AttachDimensions() => mBaseObject.AttachDimensions();
+
+        #endregion
+
         #region Line Style Methods
 
         /// <summary>
