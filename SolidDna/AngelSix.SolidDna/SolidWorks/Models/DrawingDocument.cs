@@ -1,4 +1,5 @@
 ﻿using SolidWorks.Interop.sldworks;
+using System.Linq;
 
 namespace AngelSix.SolidDna
 {
@@ -65,6 +66,30 @@ namespace AngelSix.SolidDna
         /// <remarks>Make sure to select the hole sketch circle before running this command</remarks>
         public ModelDisplayDimension AddHoleCutout(double x, double y, double z)
             => new ModelDisplayDimension((IDisplayDimension)mBaseObject.AddHoleCallout2(x, y, z)).CreateOrNull();
+
+        /// <summary>
+        /// Adds a line style to the drawing document
+        /// </summary>
+        /// <param name="styleName">The name of the style</param>
+        /// <param name="boldLineEnds">True to have bold dots at each end of the line</param>
+        /// <param name="segments">Segments. Positive numbers are dashes, negative are gaps</param>
+        /// <returns></returns>
+        /// <example>
+        ///     AddLineStyle("NewStyle", true, 1.25,-0.5,0.5,-0.5);
+        ///     To add a new line like this:
+        ///     -----  --  -----  --  -----  --
+        /// </example>
+        public bool AddLineStyle(string styleName, bool boldLineEnds, params double[] segments)
+        {
+            // Set line end style
+            var segmentString = boldLineEnds ? "B," : "A,";
+
+            // Add segments
+            segmentString += string.Join(",", segments.Select(f => f.ToString()));
+
+            // Add line style
+            return mBaseObject.AddLineStyle(styleName, segmentString);
+        }
 
         #endregion
     }
