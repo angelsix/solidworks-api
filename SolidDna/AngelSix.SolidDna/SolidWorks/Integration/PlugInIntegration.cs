@@ -144,12 +144,8 @@ namespace AngelSix.SolidDna
             }
             else
             {
-                // Log it
-                Logger.LogDebugSource($"Disposing SolidWorks COM reference...");
-
-                // Dispose SolidWorks COM
-                AddInIntegration.SolidWorks?.Dispose();
-                AddInIntegration.SolidWorks = null;
+                // Tear down SolidWorks references
+                AddInIntegration.TearDown();
             }
         }
 

@@ -127,8 +127,10 @@ namespace AngelSix.SolidDna
             mBaseObject.FileOpenPostNotify += FileOpenPostNotify;
             mBaseObject.FileNewNotify2 += FileNewPostNotify;
 
-            // Get command manager
-            CommandManager = new CommandManager(UnsafeObject.GetCommandManager(mSwCookie));
+            // If we have a cookie...
+            if (cookie > 0)
+                // Get command manager
+                CommandManager = new CommandManager(UnsafeObject.GetCommandManager(mSwCookie));
 
             // Get whatever the current model is on load
             ReloadActiveModelInformation();
