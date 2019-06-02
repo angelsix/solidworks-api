@@ -195,6 +195,15 @@ namespace AngelSix.SolidDna
             // Get the selection manager
             SelectionManager = new ModelSelectionManager(mBaseObject.ISelectionManager);
 
+            // Set drawing access
+            Drawing = IsDrawing ? new DrawingDocument((DrawingDoc)mBaseObject) : null;
+
+            // Set part access
+            Part = IsPart ? new PartDocument((PartDoc)mBaseObject) : null;
+
+            // Set assembly access
+            Assembly = IsAssembly ? new AssemblyDocument((AssemblyDoc)mBaseObject) : null;
+
             // Inform listeners
             ModelInformationChanged();            
         }
@@ -487,6 +496,24 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <returns></returns>
         public DrawingDoc AsDrawing() { return (DrawingDoc) mBaseObject; }
+
+        /// <summary>
+        /// Accesses the current model as a drawing to expose all Drawing API calls.
+        /// Check <see cref="IsDrawing"/> before calling into this.
+        /// </summary>
+        public DrawingDocument Drawing { get; private set; }
+
+        /// <summary>
+        /// Accesses the current model as a part to expose all Part API calls.
+        /// Check <see cref="IsPart"/> before calling into this.
+        /// </summary>
+        public PartDocument Part { get; private set; }
+
+        /// <summary>
+        /// Accesses the current model as an assembly to expose all Assembly API calls.
+        /// Check <see cref="IsAssembly"/> before calling into this.
+        /// </summary>
+        public AssemblyDocument Assembly { get; private set; }
 
         #endregion
 
