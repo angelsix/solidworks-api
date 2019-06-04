@@ -119,7 +119,7 @@ namespace AngelSix.SolidDna
             //         We then pass that into our domain
             //
             // Setup callback info
-            // var ok = mBaseObject.SetAddinCallbackInfo2(0, this, cookie);
+            // var ok = BaseObject.SetAddinCallbackInfo2(0, this, cookie);
 
             // Hook into main events
             BaseObject.ActiveModelDocChangeNotify += ActiveModelChanged;
