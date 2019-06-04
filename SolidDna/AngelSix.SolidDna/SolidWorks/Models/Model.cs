@@ -10,7 +10,7 @@ namespace AngelSix.SolidDna
     /// <summary>
     /// Represents a SolidWorks model of any type (Drawing, Part or Assembly)
     /// </summary>
-    public class Model : SolidDnaObject<ModelDoc2>
+    public class Model : SharedSolidDnaObject<ModelDoc2>
     {
         #region Public Properties
 
