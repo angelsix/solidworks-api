@@ -68,7 +68,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// The command manager
         /// </summary>
-        public CommandManager CommandManager { get; private set; }
+        public CommandManager CommandManager { get; }
 
         /// <summary>
         /// True if the application is disposing
@@ -83,6 +83,11 @@ namespace AngelSix.SolidDna
         /// Called when any information about the currently active model has changed
         /// </summary>
         public event Action<Model> ActiveModelInformationChanged = (model) => { };
+
+        /// <summary>
+        /// Called when a new file has been created
+        /// </summary>
+        public event Action<Model> FileCreated = (model) => { };
 
         /// <summary>
         /// Called when a file has been opened
@@ -114,15 +119,18 @@ namespace AngelSix.SolidDna
             //         We then pass that into our domain
             //
             // Setup callback info
-            // var ok = mBaseObject.SetAddinCallbackInfo2(0, this, cookie);
+            // var ok = BaseObject.SetAddinCallbackInfo2(0, this, cookie);
 
             // Hook into main events
-            mBaseObject.ActiveModelDocChangeNotify += ActiveModelChanged;
-            mBaseObject.FileOpenPreNotify += FileOpenPreNotify;
-            mBaseObject.FileOpenPostNotify += FileOpenPostNotify;
+            BaseObject.ActiveModelDocChangeNotify += ActiveModelChanged;
+            BaseObject.FileOpenPreNotify += FileOpenPreNotify;
+            BaseObject.FileOpenPostNotify += FileOpenPostNotify;
+            BaseObject.FileNewNotify2 += FileNewPostNotify;
 
-            // Get command manager
-            CommandManager = new CommandManager(UnsafeObject.GetCommandManager(mSwCookie));
+            // If we have a cookie...
+            if (cookie > 0)
+                // Get command manager
+                CommandManager = new CommandManager(UnsafeObject.GetCommandManager(mSwCookie));
 
             // Get whatever the current model is on load
             ReloadActiveModelInformation();
@@ -154,20 +162,14 @@ namespace AngelSix.SolidDna
             return SolidDnaErrors.Wrap(() =>
             {
                 // Get version string (such as 23.2.0 for 2015 SP2.0)
-                var revisionNumber = mBaseObject.RevisionNumber();
+                var revisionNumber = BaseObject.RevisionNumber();
 
                 // Get revision string (such as sw2015_SP20)
                 // Get build number (such as d150130.002)
                 // Get the hot fix string
-                mBaseObject.GetBuildNumbers2(out var revisionString, out var buildNumber, out var hotfixString);
+                BaseObject.GetBuildNumbers2(out var revisionString, out var buildNumber, out var hotfixString);
 
-                return new SolidWorksVersion
-                {
-                    RevisionNumber = revisionNumber,
-                    Revision = revisionString,
-                    BuildNumber = buildNumber,
-                    Hotfix = hotfixString
-                };
+                return new SolidWorksVersion(revisionNumber, revisionString, buildNumber, hotfixString);
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksApplicationVersionError,
@@ -177,6 +179,27 @@ namespace AngelSix.SolidDna
         #endregion
 
         #region SolidWorks Event Methods
+
+        #region File New
+
+        /// <summary>
+        /// Called after a new file has been created.
+        /// <see cref="ActiveModel"/> is updated to the new file before this event is called.
+        /// </summary>
+        /// <param name="newDocument"></param>
+        /// <param name="documentType"></param>
+        /// <param name="templatePath"></param>
+        /// <returns></returns>
+        private int FileNewPostNotify(object newDocument, int documentType, string templatePath)
+        {
+            // Inform listeners
+            FileCreated(mActiveModel);
+
+            // NOTE: 0 is OK, anything else is an error
+            return 0;
+        }
+
+        #endregion
 
         #region File Open
 
@@ -257,10 +280,10 @@ namespace AngelSix.SolidDna
                 if (mFileLoading != null)
                 {
                     // Check the active document
-                    using (var activeDoc = new Model((ModelDoc2)mBaseObject.ActiveDoc))
+                    using (var activeDoc = new Model(BaseObject.IActiveDoc2))
                     {
                         // If this is the same file that is currently being loaded, ignore this event
-                        if (activeDoc != null && string.Equals(mFileLoading, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(mFileLoading, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
                             return;
                     }
                 }
@@ -291,10 +314,10 @@ namespace AngelSix.SolidDna
             CleanActiveModelData();
 
             // Now get the new data
-            if (mBaseObject.IActiveDoc2 == null)
+            if (BaseObject.IActiveDoc2 == null)
                 mActiveModel = null;
             else
-                mActiveModel = new Model(mBaseObject.IActiveDoc2);
+                mActiveModel = new Model(BaseObject.IActiveDoc2);
 
             // Listen out for events
             if (mActiveModel != null)
@@ -364,7 +387,7 @@ namespace AngelSix.SolidDna
                     // Now if we have none open, reload information
                     // ActiveDoc is quickly set to null after the last document is closed
                     // GetDocumentCount takes longer to go to zero for big assemblies, but it might be a more reliable indicator.
-                    if (mBaseObject?.ActiveDoc == null || mBaseObject?.GetDocumentCount() == 0)
+                    if (BaseObject?.ActiveDoc == null || BaseObject?.GetDocumentCount() == 0)
                         ReloadActiveModelInformation();
                     
                 }
@@ -396,7 +419,7 @@ namespace AngelSix.SolidDna
             // NOTE: No point making our own enumerator for the export file type
             //       as right now and for many years it's only ever been
             //       1 for PDF. I do not see this ever changing
-            return mBaseObject.GetExportFileData((int)swExportDataFileType_e.swExportPdfData) as IExportPdfData;
+            return BaseObject.GetExportFileData((int)swExportDataFileType_e.swExportPdfData) as IExportPdfData;
         }
 
         #endregion
@@ -422,7 +445,7 @@ namespace AngelSix.SolidDna
                 {
                     // Otherwise, get all known ones
                     // Get the list of material databases (full paths to SLDMAT files)
-                    var databases = (string[])mBaseObject.GetMaterialDatabases();
+                    var databases = (string[])BaseObject.GetMaterialDatabases();
 
                     // Get materials from each
                     if (databases != null)
@@ -437,8 +460,7 @@ namespace AngelSix.SolidDna
                 SolidDnaErrorCode.SolidWorksApplicationGetMaterialsError,
                 Localization.GetString("SolidWorksApplicationGetMaterialsError"));
         }
-
-
+        
         /// <summary>
         /// Attempts to find the material from a SolidWorks material database file (SLDMAT)
         /// If found, returns the full information about the material
@@ -469,7 +491,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="database">The database to read</param>
         /// <param name="list">The list to add materials to</param>
-        private void ReadMaterials(string database, ref List<Material> list)
+        private static void ReadMaterials(string database, ref List<Material> list)
         {
             // First make sure the file exists
             if (!File.Exists(database))
@@ -486,10 +508,6 @@ namespace AngelSix.SolidDna
                 {
                     // Try and parse the Xml
                     var xmlDoc = XDocument.Load(stream);
-
-                    // Make sure we got something
-                    if (xmlDoc == null)
-                        throw new ArgumentNullException(Localization.GetString("SolidWorksApplicationGetMaterialsXmlNotLoadedError"));
 
                     var materials = new List<Material>();
 
@@ -545,7 +563,7 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public double GetUserPreferencesDouble(swUserPreferenceDoubleValue_e preference)
         {
-            return mBaseObject.GetUserPreferenceDoubleValue((int)preference);
+            return BaseObject.GetUserPreferenceDoubleValue((int)preference);
         }
 
         #endregion
@@ -563,7 +581,7 @@ namespace AngelSix.SolidDna
             return SolidDnaErrors.Wrap<Taskpane>(() =>
             {
                 // Attempt to create the taskpane
-                var comTaskpane = mBaseObject.CreateTaskpaneView2(iconPath, toolTip);
+                var comTaskpane = BaseObject.CreateTaskpaneView2(iconPath, toolTip);
 
                 // If we fail, return null
                 if (comTaskpane == null)
@@ -590,7 +608,7 @@ namespace AngelSix.SolidDna
         public SolidWorksMessageBoxResult ShowMessageBox(string message, SolidWorksMessageBoxIcon icon = SolidWorksMessageBoxIcon.Information, SolidWorksMessageBoxButtons buttons = SolidWorksMessageBoxButtons.Ok)
         {
             // Send message to user
-            return (SolidWorksMessageBoxResult) mBaseObject.SendMsgToUser2(message, (int)icon, (int) buttons);
+            return (SolidWorksMessageBoxResult) BaseObject.SendMsgToUser2(message, (int)icon, (int) buttons);
         }
 
         #endregion

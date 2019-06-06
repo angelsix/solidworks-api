@@ -31,17 +31,17 @@ namespace AngelSix.SolidDna
         /// </summary>
         public override void Dispose()
         {
-            if (mBaseObject == null)
+            if (BaseObject == null)
                 return;
 
             // Do any specific disposal
-            SolidDnaObjectDisposal.Dispose<T>(mBaseObject);
+            SolidDnaObjectDisposal.Dispose<T>(BaseObject);
 
             // COM release object
-            Marshal.ReleaseComObject(mBaseObject);
+            Marshal.ReleaseComObject(BaseObject);
 
             // Clear reference
-            mBaseObject = default(T);
+            BaseObject = default(T);
         }
 
         #endregion

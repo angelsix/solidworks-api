@@ -14,7 +14,6 @@
   <String Name="SolidWorksApplicationGetMaterialsError">An error occurred attempting to read the SolidWorks Materials databases</String>
   <String Name="SolidWorksApplicationGetMaterialsFileNotFoundError">An error occurred attempting to read the SolidWorks Materials databases because the database file does not exist</String>
   <String Name="SolidWorksApplicationGetMaterialsFileFormatError">An error occurred attempting to read the SolidWorks Materials databases because the file was of an unexpected format</String>
-  <String Name="SolidWorksApplicationGetMaterialsXmlNotLoadedError">An error occurred attempting to read the SolidWorks Materials databases because the Xml document returned null</String>
   <String Name="SolidWorksApplicationFindMaterialsError">An error occurred attempting to find a material from a SolidWorks Materials database file</String>
   <String Name="SolidWorksApplicationVersionError">An error occurred attempting to get the SolidWorks version information</String>
 
@@ -31,6 +30,8 @@
   <String Name="SolidWorksModelGetMassModelNotPartError">An error occurred trying to get the mass of a SolidWorks model because it is not a Part or Assembly</String>
   <String Name="SolidWorksModelGetMassModelStatusFailed">An error occurred trying to get the mass of a SolidWorks model because SolidWorks reported a non-success status</String>
   <String Name="SolidWorksModelSelectedObjectCastError">An error occurred trying to cast a selected object to a specific type</String>
+  <String Name="SolidWorksModelAssemblyGetFeatureByNameError">An error occurred trying to get the feature by name from an assembly document</String>
+  <String Name="SolidWorksModelPartGetFeatureByNameError">An error occurred trying to get the feature by name from a part document</String>
 
   <!-- Thread Helpers -->
   <String Name="ErrorThreadInvokerNullError">Unable to find UI thread as Thread Invoker Enable was never called on a UI thread</String>

@@ -13,7 +13,7 @@ namespace AngelSix.SolidDna
         /// The selection name for this dimension that can be used to select it.
         /// For example D1@Sketch1
         /// </summary>
-        public string SelectionName => mBaseObject.GetNameForSelection();
+        public string SelectionName => BaseObject.GetNameForSelection();
 
         #endregion
 
@@ -24,7 +24,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         public ModelDisplayDimension(IDisplayDimension model) : base(model)
         {
-
+            
         }
 
         #endregion

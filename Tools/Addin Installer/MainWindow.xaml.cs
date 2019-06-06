@@ -197,6 +197,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
                     // Redirect input and output
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
                 }
@@ -205,7 +206,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
             process.Start();
             
             // Read the output
-            var result = process.StandardOutput.ReadToEnd();
+            var result = process.StandardError.ReadToEnd();
             process.WaitForExit();
 
             // If it exit successfully
@@ -239,15 +240,16 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
                     // Redirect input and output
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
                 }
             };
-
+            
             process.Start();
 
             // Read the output
-            var result = process.StandardOutput.ReadToEnd();
+            var result = process.StandardError.ReadToEnd();
             process.WaitForExit();
 
             // If it exit successfully

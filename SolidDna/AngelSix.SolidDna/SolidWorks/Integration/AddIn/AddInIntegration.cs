@@ -1,14 +1,14 @@
 ﻿using Dna;
+using Microsoft.Extensions.DependencyInjection;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swpublished;
 using System;
-using System.Runtime.InteropServices;
-using Microsoft.Extensions.DependencyInjection;
-using static Dna.FrameworkDI;
-using System.IO;
 using System.Collections.Generic;
-using System.Reflection;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using static Dna.FrameworkDI;
 
 namespace AngelSix.SolidDna
 {
@@ -78,7 +78,11 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Default constructor
         /// </summary>
-        public AddInIntegration()
+        /// <param name="standAlone">
+        ///     If true, sets the SolidWorks Application to the active instance
+        ///     (if available) so the environment can be used from a stand alone application.
+        /// </param>
+        public AddInIntegration(bool standAlone = false)
         {
             try
             {
@@ -112,6 +116,11 @@ namespace AngelSix.SolidDna
                 Logger.LogDebugSource($"DI Setup complete");
                 Logger.LogDebugSource($"Assembly File Path {assemblyFilePath}");
                 Logger.LogDebugSource($"Assembly Path {assemblyPath}");
+
+                // If we are in stand-alone mode...
+                if (standAlone)
+                    // Connect to active SolidWorks
+                    ConnectToActiveSolidWork();
             }
             catch (Exception ex)
             {
@@ -171,15 +180,14 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Called when SolidWorks has loaded our add-in and wants us to do our connection logic
         /// </summary>
-        /// <param name="ThisSW">The current SolidWorks instance</param>
-        /// <param name="Cookie">The current SolidWorks cookie Id</param>
+        /// <param name="thisSw">The current SolidWorks instance</param>
+        /// <param name="cookie">The current SolidWorks cookie Id</param>
         /// <returns></returns>
-        public bool ConnectToSW(object ThisSW, int Cookie)
+        public bool ConnectToSW(object thisSw, int cookie)
         {
             try
             {
-                // Get the path to this actual add-in dll
-                var assemblyFilePath = this.AssemblyFilePath();
+                // Get the directory path to this actual add-in dll
                 var assemblyPath = this.AssemblyPath();
 
                 // Log it
@@ -203,13 +211,13 @@ namespace AngelSix.SolidDna
                 Logger.LogDebugSource($"Setting AddinCallbackInfo...");
 
                 // Setup callback info
-                var ok = ((SldWorks)ThisSW).SetAddinCallbackInfo2(0, this, Cookie);
+                var ok = ((SldWorks)thisSw).SetAddinCallbackInfo2(0, this, cookie);
 
                 // Log it
                 Logger.LogDebugSource($"PlugInIntegration Setup...");
 
                 // Setup plug-in application domain
-                PlugInIntegration.Setup(assemblyPath, ((SldWorks)ThisSW).RevisionNumber(), Cookie);
+                PlugInIntegration.Setup(assemblyPath, ((SldWorks)thisSw).RevisionNumber(), cookie);
 
                 // Log it
                 Logger.LogDebugSource($"Firing PreLoadPlugIns...");
@@ -276,10 +284,6 @@ namespace AngelSix.SolidDna
 
             // Clean up plug-in app domain
             PlugInIntegration.Teardown();
-
-            // Dispose SolidWorks COM
-            //SolidWorks?.Dispose();
-            //SolidWorks = null;
 
             // Return ok
             return true;
@@ -392,6 +396,55 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region Stand Alone Methods
+
+        /// <summary>
+        /// Attempts to set the SolidWorks property to the active SolidWorks instance
+        /// </summary>
+        /// <returns></returns>
+        public bool ConnectToActiveSolidWork()
+        {
+            try
+            {
+                // Clean up old one
+                TearDown();
+
+                // Try and get the active SolidWorks instance
+                SolidWorks = new SolidWorksApplication((SldWorks)Marshal.GetActiveObject("SldWorks.Application"), 0);
+
+                // Log it
+                Logger.LogDebugSource($"Aquired active instance SolidWorks in Stand-Alone mode");
+
+                // Return if successful
+                return SolidWorks != null;
+            }
+            // If we failed to get active instance...
+            catch (COMException)
+            {
+                // Log it
+                Logger.LogDebugSource($"Failed to get active instance of SolidWorks in Stand-Alone mode");
+
+                // Return failure
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Attempts to set the SolidWorks property to the active SolidWorks instance.
+        /// Remember to call <see cref="TearDown"/> once done.
+        /// </summary>
+        /// <returns></returns>
+        public static bool ConnectToActiveSolidWorks()
+        {
+            // Create new blank add-in
+            var addin = new BlankAddInIntegration();
+
+            // Return if we successfully got an instance
+            return addin.ConnectToActiveSolidWork();
+        }
+
+        #endregion
+
         #region Assembly Resolve Methods
 
         /// <summary>
@@ -458,6 +511,29 @@ namespace AngelSix.SolidDna
                 // as it's an expected failure if not found
                 return Assembly.LoadFrom(filePath);
             }
+        }
+
+        #endregion
+
+        #region Tear Down
+
+        /// <summary>
+        /// Cleans up the SolidWorks instance
+        /// </summary>
+        public static void TearDown()
+        {
+            // If we have an reference...
+            if (SolidWorks != null)
+            {
+                // Log it
+                Logger.LogDebugSource($"Disposing SolidWorks COM reference...");
+
+                // Dispose SolidWorks COM
+                SolidWorks?.Dispose();
+            }
+
+            // Set to null
+            SolidWorks = null;
         }
 
         #endregion

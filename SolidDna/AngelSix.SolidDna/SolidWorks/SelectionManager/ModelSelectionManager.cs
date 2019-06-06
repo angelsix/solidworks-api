@@ -6,16 +6,16 @@ using System.Collections.Generic;
 namespace AngelSix.SolidDna
 {
     /// <summary>
-    /// Represents a SolidWorks model selection manager
+    /// Represents a SolidWorks selection manager
     /// </summary>
-    public class ModelSelectionManager : SolidDnaObject<SelectionMgr>
+    public class SelectionManager : SolidDnaObject<SelectionMgr>
     {
         #region Constructor
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public ModelSelectionManager(SelectionMgr model) : base(model)
+        public SelectionManager(SelectionMgr model) : base(model)
         {
 
         }
@@ -38,7 +38,7 @@ namespace AngelSix.SolidDna
             try
             {
                 // Get selection count
-                var count = mBaseObject.GetSelectedObjectCount2(-1);
+                var count = BaseObject.GetSelectedObjectCount2(-1);
 
                 // If we have none, we are done
                 if (count <= 0)
@@ -51,10 +51,10 @@ namespace AngelSix.SolidDna
                 for (var i = 0; i < count; i++)
                 {
                     // Get the object itself
-                    var selected = new SelectedObject(mBaseObject.GetSelectedObject6(i + 1, -1))
+                    var selected = new SelectedObject(BaseObject.GetSelectedObject6(i + 1, -1))
                     {
                         // Get the type
-                        ObjectType = (swSelectType_e)mBaseObject.GetSelectedObjectType3(i + 1, -1)
+                        ObjectType = (swSelectType_e)BaseObject.GetSelectedObjectType3(i + 1, -1)
                     };
 
                     // Add to the list

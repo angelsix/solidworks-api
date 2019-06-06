@@ -12,7 +12,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// The command tab box for this tab
         /// </summary>
-        public CommandManagerTabBox Box { get; private set; }
+        public CommandManagerTabBox Box { get; }
 
         #endregion
 
@@ -24,7 +24,7 @@ namespace AngelSix.SolidDna
         public CommandManagerTab(ICommandTab tab) : base(tab)
         {
             // Adds the command tab box on creation
-            Box = new CommandManagerTabBox(mBaseObject.AddCommandTabBox());
+            Box = new CommandManagerTabBox(BaseObject.AddCommandTabBox());
         }
 
         #endregion

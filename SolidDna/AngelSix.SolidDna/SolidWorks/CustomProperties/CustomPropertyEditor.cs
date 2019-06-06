@@ -45,7 +45,7 @@ namespace AngelSix.SolidDna
             // TODO: Add error checking and exception catching
 
             // Get custom property
-            mBaseObject.Get5(name, false, out var val, out var resolvedVal, out var wasResolved);
+            BaseObject.Get5(name, false, out var val, out var resolvedVal, out var wasResolved);
 
             // Return desired result
             return resolve ? resolvedVal : val;
@@ -70,7 +70,7 @@ namespace AngelSix.SolidDna
             //
 
             // Set new one
-            mBaseObject.Add3(name, (int)type, value, (int)swCustomPropertyAddOption_e.swCustomPropertyDeleteAndAdd);
+            BaseObject.Add3(name, (int)type, value, (int)swCustomPropertyAddOption_e.swCustomPropertyDeleteAndAdd);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace AngelSix.SolidDna
         {
             // TODO: Add error checking and exception catching
 
-            mBaseObject.Delete2(name);
+            BaseObject.Delete2(name);
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace AngelSix.SolidDna
             var list = new List<CustomProperty>();
 
             // Get all properties
-            var names = (string[])mBaseObject.GetNames();
+            var names = (string[])BaseObject.GetNames();
 
             // Create custom property objects for each
             if (names?.Length > 0)

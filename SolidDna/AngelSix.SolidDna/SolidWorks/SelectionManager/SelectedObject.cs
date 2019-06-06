@@ -5,7 +5,7 @@ using System;
 namespace AngelSix.SolidDna
 {
     /// <summary>
-    /// Represents a selected object of a SolidWorks model.
+    /// Represents a selected object of a SolidWorks object.
     /// The type can be one of many different things
     /// 
     /// NOTE: All mappings from selected entities to specific objects are here
@@ -61,7 +61,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         public SelectedObject(object model) : base(model)
         {
-
+            
         }
 
         #endregion
@@ -79,7 +79,7 @@ namespace AngelSix.SolidDna
             SolidDnaErrors.Wrap(() =>
             {
                 // Create feature
-                using (var model = new ModelFeature((Feature)mBaseObject))
+                using (var model = new ModelFeature((Feature)BaseObject))
                 {
                     // Run action
                     action(model);
@@ -101,7 +101,7 @@ namespace AngelSix.SolidDna
             SolidDnaErrors.Wrap(() =>
             {
                 // Create feature
-                using (var model = new ModelDisplayDimension((IDisplayDimension)mBaseObject))
+                using (var model = new ModelDisplayDimension((IDisplayDimension)BaseObject))
                 {
                     // Run action
                     action(model);

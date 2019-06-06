@@ -10,7 +10,7 @@ namespace AngelSix.SolidDna
     /// <summary>
     /// Represents a SolidWorks model of any type (Drawing, Part or Assembly)
     /// </summary>
-    public class Model : SolidDnaObject<ModelDoc2>
+    public class Model : SharedSolidDnaObject<ModelDoc2>
     {
         #region Public Properties
 
@@ -58,17 +58,17 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// The selection manager for this model
         /// </summary>
-        public ModelSelectionManager SelectionManager { get; protected set; }
+        public SelectionManager SelectionManager { get; protected set; }
 
         /// <summary>
         /// Get the number of configurations
         /// </summary>
-        public int ConfigurationCount => mBaseObject.GetConfigurationCount();
+        public int ConfigurationCount => BaseObject.GetConfigurationCount();
 
         /// <summary>
         /// Gets the configuration names
         /// </summary>
-        public List<string> ConfigurationNames => new List<string>((string[])mBaseObject.GetConfigurationNames());
+        public List<string> ConfigurationNames => new List<string>((string[])BaseObject.GetConfigurationNames());
 
         /// <summary>
         /// The mass properties of the part
@@ -105,9 +105,33 @@ namespace AngelSix.SolidDna
         public event Action ModelClosing = () => { };
 
         /// <summary>
+        /// Called when the model is first modified since it was last saved.
+        /// SOLIDWORKS marks the file as Dirty and sets <see cref="IModelDoc2.GetSaveFlag"/>
+        /// </summary>
+        public event Action ModelModified = () => { };
+
+        /// <summary>
+        /// Called after a model was rebuilt (any model type) or if the rollback bar position changed (for parts and assemblies).
+        /// NOTE: Does not always fire on normal rebuild (Ctrl+B) on assemblies.
+        /// </summary>
+        public event Action ModelRebuilt = () => { };
+
+        /// <summary>
         /// Called as the model has been saved
         /// </summary>
         public event Action ModelSaved = () => { };
+
+        /// <summary>
+        /// Called when the user cancels the save action and <see cref="ModelSaved"/> will not be fired.
+        /// </summary>
+        public event Action ModelSaveCanceled = () => { };
+
+        /// <summary>
+        /// Called before a model is saved with a new file name.
+        /// Called before the Save As dialog is shown.
+        /// Allows you to make changes that need to be included in the save. 
+        /// </summary>
+        public event Action<string> ModelSavingAs = (fileName) => { };
 
         /// <summary>
         /// Called when any of the model properties changes
@@ -153,23 +177,32 @@ namespace AngelSix.SolidDna
             DisposeAllReferences();
 
             // Can't do much if there is no document
-            if (mBaseObject == null)
+            if (BaseObject == null)
                 return;
 
             // Get the file path
-            FilePath = mBaseObject.GetPathName();
+            FilePath = BaseObject.GetPathName();
 
             // Get the models type
-            ModelType = (ModelType)mBaseObject.GetType();
+            ModelType = (ModelType)BaseObject.GetType();
 
             // Get the extension
-            Extension = new ModelExtension(mBaseObject.Extension, this);
+            Extension = new ModelExtension(BaseObject.Extension, this);
 
             // Get the active configuration
-            ActiveConfiguration = new ModelConfiguration(mBaseObject.IGetActiveConfiguration());
+            ActiveConfiguration = new ModelConfiguration(BaseObject.IGetActiveConfiguration());
 
             // Get the selection manager
-            SelectionManager = new ModelSelectionManager(mBaseObject.ISelectionManager);
+            SelectionManager = new SelectionManager(BaseObject.ISelectionManager);
+
+            // Set drawing access
+            Drawing = IsDrawing ? new DrawingDocument((DrawingDoc)BaseObject) : null;
+
+            // Set part access
+            Part = IsPart ? new PartDocument((PartDoc)BaseObject) : null;
+
+            // Set assembly access
+            Assembly = IsAssembly ? new AssemblyDocument((AssemblyDoc)BaseObject) : null;
 
             // Inform listeners
             ModelInformationChanged();            
@@ -187,14 +220,22 @@ namespace AngelSix.SolidDna
                 case ModelType.Assembly:
                     AsAssembly().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
                     AsAssembly().DestroyNotify += FileDestroyedNotify;
+                    AsAssembly().FileSaveAsNotify2 += FileSaveAsPreNotify;
+                    AsAssembly().FileSavePostCancelNotify += FileSaveCanceled;
                     AsAssembly().FileSavePostNotify += FileSavePostNotify;
+                    AsAssembly().ModifyNotify += FileModified;
+                    AsAssembly().RegenPostNotify2 += AssemblyOrPartRebuilt;
                     AsAssembly().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsAssembly().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
                 case ModelType.Part:
                     AsPart().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
                     AsPart().DestroyNotify += FileDestroyedNotify;
+                    AsPart().FileSaveAsNotify2 += FileSaveAsPreNotify;
+                    AsPart().FileSavePostCancelNotify += FileSaveCanceled;
                     AsPart().FileSavePostNotify += FileSavePostNotify;
+                    AsPart().ModifyNotify += FileModified;
+                    AsPart().RegenPostNotify2 += AssemblyOrPartRebuilt;
                     AsPart().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsPart().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
@@ -204,7 +245,11 @@ namespace AngelSix.SolidDna
                     AsDrawing().AddItemNotify += DrawingItemAddNotify;
                     AsDrawing().DeleteItemNotify += DrawingDeleteItemNotify;
                     AsDrawing().DestroyNotify += FileDestroyedNotify;
+                    AsDrawing().FileSaveAsNotify2 += FileSaveAsPreNotify;
+                    AsDrawing().FileSavePostCancelNotify += FileSaveCanceled;
                     AsDrawing().FileSavePostNotify += FileSavePostNotify;
+                    AsDrawing().ModifyNotify += FileModified;
+                    AsDrawing().RegenPostNotify += DrawingRebuilt;
                     AsDrawing().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsDrawing().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
@@ -226,6 +271,20 @@ namespace AngelSix.SolidDna
 
             // Inform listeners
             ActiveConfigurationChanged();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called after an assembly or part was rebuilt or if the rollback bar position changed.
+        /// </summary>
+        /// <param name="firstFeatureBelowRollbackBar"></param>
+        /// <returns></returns>
+        protected int AssemblyOrPartRebuilt(object firstFeatureBelowRollbackBar)
+        {
+            // Inform listeners
+            ModelRebuilt();
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -271,6 +330,19 @@ namespace AngelSix.SolidDna
         }
 
         /// <summary>
+        /// Called after a drawing was rebuilt.
+        /// </summary>
+        /// <returns></returns>
+        protected int DrawingRebuilt()
+        {
+            // Inform listeners
+            ModelRebuilt();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
         /// Called when the user changes the selected objects
         /// </summary>
         /// <returns></returns>
@@ -283,18 +355,46 @@ namespace AngelSix.SolidDna
         }
 
         /// <summary>
+        /// Called when the user cancels the save action and <see cref="FileSavePostNotify"/> will not be fired.
+        /// </summary>
+        /// <returns></returns>
+        private int FileSaveCanceled()
+        {
+            // Inform listeners
+            ModelSaveCanceled();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
         /// Called when a model has been saved
         /// </summary>
-        /// <param name="filename">The name of the file that has been saved</param>
+        /// <param name="fileName">The name of the file that has been saved</param>
         /// <param name="saveType">The type of file that has been saved</param>
         /// <returns></returns>
-        protected int FileSavePostNotify(int saveType, string filename)
+        protected int FileSavePostNotify(int saveType, string fileName)
         {
             // Update filepath
-            FilePath = mBaseObject.GetPathName();
+            FilePath = BaseObject.GetPathName();
         
             // Inform listeners
             ModelSaved();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called when a model is about to be saved with a new file name.
+        /// Called before the Save As dialog is shown.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        private int FileSaveAsPreNotify(string fileName)
+        {
+            // Inform listeners
+            ModelSavingAs(fileName);
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -313,6 +413,19 @@ namespace AngelSix.SolidDna
             // This is a pre-notify but we are going to be dead
             // so dispose ourselves (our underlying COM objects)
             Dispose();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called when the model is first modified since it was last saved.
+        /// </summary>
+        /// <returns></returns>
+        protected int FileModified()
+        {
+            // Inform listeners
+            ModelModified();
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -368,22 +481,39 @@ namespace AngelSix.SolidDna
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public AssemblyDoc AsAssembly() { return ((AssemblyDoc)mBaseObject); }
+        public AssemblyDoc AsAssembly() { return (AssemblyDoc) BaseObject; }
 
         /// <summary>
         /// Casts the current model to a part
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public PartDoc AsPart() { return ((PartDoc)mBaseObject); }
-
+        public PartDoc AsPart() { return (PartDoc) BaseObject; }
 
         /// <summary>
         /// Casts the current model to a drawing
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public DrawingDoc AsDrawing() { return ((DrawingDoc)mBaseObject); }
+        public DrawingDoc AsDrawing() { return (DrawingDoc) BaseObject; }
+
+        /// <summary>
+        /// Accesses the current model as a drawing to expose all Drawing API calls.
+        /// Check <see cref="IsDrawing"/> before calling into this.
+        /// </summary>
+        public DrawingDocument Drawing { get; private set; }
+
+        /// <summary>
+        /// Accesses the current model as a part to expose all Part API calls.
+        /// Check <see cref="IsPart"/> before calling into this.
+        /// </summary>
+        public PartDocument Part { get; private set; }
+
+        /// <summary>
+        /// Accesses the current model as an assembly to expose all Assembly API calls.
+        /// Check <see cref="IsAssembly"/> before calling into this.
+        /// </summary>
+        public AssemblyDocument Assembly { get; private set; }
 
         #endregion
 
@@ -471,7 +601,7 @@ namespace AngelSix.SolidDna
             return SolidDnaErrors.Wrap(() =>
             {
                 // Get the Id's
-                var idString = mBaseObject.MaterialIdName;
+                var idString = BaseObject.MaterialIdName;
 
                 // Make sure we have some data
                 if (idString == null || !idString.Contains("|"))
@@ -576,7 +706,7 @@ namespace AngelSix.SolidDna
         /// <param name="featureAction">The callback action that is called for each feature in the model</param>
         /// <param name="startFeature">The feature to start at</param>
         /// <param name="featureDepth">The current depth of the sub-features based on the original calling feature</param>
-        private void RecurseFeatures(Action<ModelFeature, int> featureAction, Feature startFeature = null, int featureDepth = 0)
+        private static void RecurseFeatures(Action<ModelFeature, int> featureAction, Feature startFeature = null, int featureDepth = 0)
         {
             // Get the current feature
             var currentFeature = startFeature;
@@ -634,6 +764,50 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region Components
+
+        /// <summary>
+        /// Recurses the model for all of it's components and sub-components
+        /// </summary>
+        /// <param name="componentAction">The callback action that is called for each component in the model</param>
+        public void Components(Action<Component, int> componentAction)
+        {
+            RecurseComponents(componentAction, new Component(ActiveConfiguration.UnsafeObject?.GetRootComponent3(true)));
+        }
+
+        #region Private Component Helpers
+
+        /// <summary>
+        /// Recurses components and sub-components and provides a callback action to process and work with each components
+        /// </summary>
+        /// <param name="componentAction">The callback action that is called for each components in the component</param>
+        /// <param name="startComponent">The components to start at</param>
+        /// <param name="componentDepth">The current depth of the sub-components based on the original calling components</param>
+        private void RecurseComponents(Action<Component, int> componentAction, Component startComponent = null, int componentDepth = 0)
+        {
+            // While that component is not null...
+            if (startComponent != null)
+                // Inform callback of the feature
+                componentAction(startComponent, componentDepth);
+
+            // Loop each child
+            foreach (Component2 childComponent in startComponent.Children)
+            {
+                // Get the current component
+                using (var currentComponent = new Component(childComponent))
+                {
+                    // If we have a component
+                    if (currentComponent != null)
+                        // Recurse into it
+                        RecurseComponents(componentAction, currentComponent, componentDepth + 1);
+                }
+            }
+        }
+
+        #endregion
+
+        #endregion
+
         #region Saving
 
         /// <summary>
@@ -657,11 +831,11 @@ namespace AngelSix.SolidDna
             return SolidDnaErrors.Wrap(() =>
             {
                 // Try and save the model using the SaveAs method
-                mBaseObject.Extension.SaveAs(savePath, (int)version, (int)options, pdfExportData?.ExportData, ref errors, ref warnings);
+                BaseObject.Extension.SaveAs(savePath, (int)version, (int)options, pdfExportData?.ExportData, ref errors, ref warnings);
 
                 // If this fails, try another way
                 if (errors != 0)
-                    mBaseObject.SaveAs4(savePath, (int)version, (int)options, ref errors, ref warnings);
+                    BaseObject.SaveAs4(savePath, (int)version, (int)options, ref errors, ref warnings);
 
                 // Add any warnings
                 results.Warnings = (SaveAsWarnings)warnings;

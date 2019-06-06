@@ -36,7 +36,7 @@ namespace AngelSix.SolidDna
             return SolidDnaErrors.Wrap<T>(() =>
             {
                 // Attempt to create the taskpane
-                return (T)mBaseObject.AddControl(progId, licenseKey);
+                return (T)BaseObject.AddControl(progId, licenseKey);
             },
                 SolidDnaErrorTypeCode.SolidWorksTaskpane,
                 SolidDnaErrorCode.SolidWorksTaskpaneAddControlError,

@@ -39,7 +39,7 @@ namespace AngelSix.SolidDna
 
             while (ex != null)
             {
-                text = ex.ToString() + System.Environment.NewLine + text;
+                text = ex + Environment.NewLine + text;
 
                 ex = ex.InnerException;
             }

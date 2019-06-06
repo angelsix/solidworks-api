@@ -82,7 +82,7 @@ namespace SolidDna.CustomProperties
             };
 
             // Add to taskpane
-            Task.Run(() => mTaskpane.AddToTaskpaneAsync());
+            mTaskpane.AddToTaskpaneAsync();
         }
 
         public override void DisconnectedFromSolidWorks()

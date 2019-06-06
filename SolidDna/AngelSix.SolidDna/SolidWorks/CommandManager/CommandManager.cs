@@ -41,7 +41,7 @@ namespace AngelSix.SolidDna
         /// <param name="tooltip">Tool tip for the CommandGroup</param>
         /// <param name="hint">Text displayed in SOLIDWORKS status bar when a user's mouse pointer is over the CommandGroup</param>
         /// <param name="position">Position of the CommandGroup in the CommandManager for all document templates.
-        /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandMananger, or specify -1 to add it to the end of the CommandManager.
+        /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandManager, or specify -1 to add it to the end of the CommandManager.
         /// NOTE: You can also use ICommandGroup::MenuPosition to control the position of the CommandGroup in specific document templates.</param>
         /// <param name="ignorePreviousVersion">True to remove all previously saved customization and toolbar information before creating a new CommandGroup, false to not.
         /// Call CommandManager.GetGroupDataFromRegistry before calling this method to determine how to set IgnorePreviousVersion. Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
@@ -85,7 +85,7 @@ namespace AngelSix.SolidDna
         /// <param name="tooltip">The tool tip</param>
         /// <param name="hint">The hint</param>
         /// <param name="position">Position of the CommandGroup in the CommandManager for all document templates.
-        /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandMananger, or specify -1 to add it to the end of the CommandManager.
+        /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandManager, or specify -1 to add it to the end of the CommandManager.
         /// NOTE: You can also use ICommandGroup::MenuPosition to control the position of the CommandGroup in specific document templates.</param>
         /// <param name="ignorePreviousVersion">True to remove all previously saved customization and toolbar information before creating a new CommandGroup, false to not.
         ///     Call CommandManager.GetGroupDataFromRegistry before calling this method to determine how to set IgnorePreviousVersion.
@@ -109,7 +109,7 @@ namespace AngelSix.SolidDna
             var errors = -1;
 
             // Attempt to create the command group
-            var unsafeCommandGroup = mBaseObject.CreateCommandGroup2(id, title, tooltip, hint, position, ignorePreviousVersion, ref errors);
+            var unsafeCommandGroup = BaseObject.CreateCommandGroup2(id, title, tooltip, hint, position, ignorePreviousVersion, ref errors);
 
             // Check for errors
             if (errors != (int)swCreateCommandGroupErrors.swCreateCommandGroup_Success)
@@ -140,7 +140,7 @@ namespace AngelSix.SolidDna
         {
             lock (mCommandGroups)
             {
-                mBaseObject.RemoveCommandGroup2(group.UserId, runtimeOnly);
+                BaseObject.RemoveCommandGroup2(group.UserId, runtimeOnly);
             }
         }
 
@@ -159,7 +159,7 @@ namespace AngelSix.SolidDna
         public CommandManagerTab GetCommandTab(ModelType type, string title, bool createIfNotExist = true, bool clearExistingItems = true)
         {
             // Try and get the tab
-            var unsafeTab = mBaseObject.GetCommandTab((int)type, title);
+            var unsafeTab = BaseObject.GetCommandTab((int)type, title);
 
             // If we did not get it, just ignore
             if (unsafeTab == null && !createIfNotExist)
@@ -169,18 +169,18 @@ namespace AngelSix.SolidDna
             while (clearExistingItems && unsafeTab != null)
             {
                 // Remove it
-                mBaseObject.RemoveCommandTab(unsafeTab);
+                BaseObject.RemoveCommandTab(unsafeTab);
 
                 // Clean COM object
                 Marshal.ReleaseComObject(unsafeTab);
 
                 // Try and get another
-                unsafeTab = mBaseObject.GetCommandTab((int)type, title);
+                unsafeTab = BaseObject.GetCommandTab((int)type, title);
             }
 
             // Create it if it doesn't exist
             if (unsafeTab == null)
-                unsafeTab = mBaseObject.AddCommandTab((int)type, title);
+                unsafeTab = BaseObject.AddCommandTab((int)type, title);
 
             // If it's still null, we failed
             if (unsafeTab == null)
