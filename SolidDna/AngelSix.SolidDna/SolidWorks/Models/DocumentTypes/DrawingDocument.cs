@@ -1,5 +1,6 @@
 ﻿using SolidWorks.Interop.sldworks;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AngelSix.SolidDna
@@ -69,6 +70,35 @@ namespace AngelSix.SolidDna
         /// Rotates the view so the selected line in the view is vertical
         /// </summary>
         public void AlignViewVertically() => mBaseObject.AlignVert();
+
+        /// <summary>
+        /// Gets all the views of the drawing
+        /// </summary>
+        /// <param name="viewsCallback">The callback containing all views</param>
+        public void Views(Action<List<DrawingView>> viewsCallback)
+        {
+            // List of all views
+            var views = new List<DrawingView>();
+
+            // Get all views as an array of arrays
+            var sheetArray = (object[])mBaseObject.GetViews();
+
+            // Get all views
+            foreach (object[] viewArray in sheetArray)
+                foreach (View view in viewArray)
+                    views.Add(new DrawingView((View)view));
+
+            try
+            {
+                // Callback
+                viewsCallback(views);
+            }
+            finally
+            {
+                // Dispose all views
+                views.ForEach(view => view.Dispose());
+            }
+        }
 
         #endregion
 
