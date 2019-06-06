@@ -17,6 +17,16 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region Public Properties
+
+        /// <summary>
+        /// The raw underlying COM object
+        /// WARNING: Use with caution. You must handle all disposal from this point on
+        /// </summary>
+        public PartDoc UnsafeObject => mBaseObject;
+
+        #endregion
+
         #region Constructor
 
         /// <summary>
