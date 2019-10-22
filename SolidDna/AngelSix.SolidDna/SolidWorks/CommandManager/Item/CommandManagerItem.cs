@@ -80,6 +80,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         public Action OnClick { get; set; }
 
+        /// <summary>
+        /// True if the command should be added to the tab
+        /// </summary>
+        public bool AddToTab { get; set; } = true;
+
         #endregion
     }
 }

@@ -65,8 +65,24 @@ namespace AngelSix.SolidDna
         /// Call CommandManager.GetGroupDataFromRegistry before calling this method to determine how to set IgnorePreviousVersion. Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
         /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
+        /// <param name="addDropdownBoxForParts">If true, adds a command box to the toolbar for parts that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
+        /// <param name="addDropdownBoxForAssemblies">If true, adds a command box to the toolbar for assemblies that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
+        /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <returns></returns>
-        public CommandManagerGroup CreateCommands(string title, List<CommandManagerItem> items, List<CommandManagerFlyout> flyoutItems, string iconListsPath = "", string tooltip = "", string hint = "", int position = -1, bool ignorePreviousVersion = true, bool hasMenu = true, bool hasToolbar = true)
+        public CommandManagerGroup CreateCommandGroupAndTabs(
+            string title, 
+            List<CommandManagerItem> items, 
+            List<CommandManagerFlyout> flyoutItems,
+            string iconListsPath = "", 
+            string tooltip = "",
+            string hint = "", 
+            int position = -1, 
+            bool ignorePreviousVersion = true,
+            bool hasMenu = true, 
+            bool hasToolbar = true,
+            bool addDropdownBoxForParts = false,
+            bool addDropdownBoxForAssemblies = false,
+            bool addDropdownBoxForDrawings = false)
         {
             // Wrap any error creating the taskpane in a SolidDna exception
             return SolidDnaErrors.Wrap(() =>
@@ -75,7 +91,19 @@ namespace AngelSix.SolidDna
                 lock (mCommandGroups)
                 {
                     // Create the command group
-                    var group = CreateCommandGroup(title, items, flyoutItems, tooltip, hint, position, ignorePreviousVersion, hasMenu, hasToolbar);
+                    var group = CreateCommandGroup(
+                        title,
+                        items, 
+                        flyoutItems,
+                        tooltip,
+                        hint, 
+                        position,
+                        ignorePreviousVersion, 
+                        hasMenu,
+                        hasToolbar,
+                        addDropdownBoxForParts,
+                        addDropdownBoxForAssemblies,
+                        addDropdownBoxForDrawings);
 
                     // Track all flyouts
                     mCommandFlyouts = flyoutItems;
@@ -179,8 +207,23 @@ namespace AngelSix.SolidDna
         ///     Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
         /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
+        /// <param name="addDropdownBoxForParts">If true, adds a command box to the toolbar for parts that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
+        /// <param name="addDropdownBoxForAssemblies">If true, adds a command box to the toolbar for assemblies that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
+        /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <returns></returns>
-        private CommandManagerGroup CreateCommandGroup(string title, List<CommandManagerItem> items, List<CommandManagerFlyout> flyoutItems, string tooltip = "", string hint = "", int position = -1, bool ignorePreviousVersion = true, bool hasMenu = true, bool hasToolbar = true)
+        private CommandManagerGroup CreateCommandGroup(
+            string title, 
+            List<CommandManagerItem> items,
+            List<CommandManagerFlyout> flyoutItems, 
+            string tooltip = "", 
+            string hint = "", 
+            int position = -1, 
+            bool ignorePreviousVersion = true, 
+            bool hasMenu = true,
+            bool hasToolbar = true,
+            bool addDropdownBoxForParts = false,
+            bool addDropdownBoxForAssemblies = false,
+            bool addDropdownBoxForDrawings = false)
         {
             // NOTE: We may need to look carefully at this Id if things get removed and re-added based on this SolidWorks note:
             //     
@@ -212,7 +255,19 @@ namespace AngelSix.SolidDna
             }
 
             // Otherwise we got the command group
-            var group = new CommandManagerGroup(unsafeCommandGroup, items, flyoutItems, id, title, tooltip, hint, hasMenu, hasToolbar);
+            var group = new CommandManagerGroup(
+                unsafeCommandGroup, 
+                items, 
+                flyoutItems, 
+                id, 
+                title, 
+                tooltip, 
+                hint, 
+                hasMenu, 
+                hasToolbar,
+                addDropdownBoxForParts,
+                addDropdownBoxForAssemblies,
+                addDropdownBoxForDrawings);
 
             // Return it
             return group;
@@ -299,12 +354,10 @@ namespace AngelSix.SolidDna
         public override void Dispose()
         {
             // Remove all command groups
-            for (var i = mCommandGroups.Count - 1; i >= 0; i--)
-                RemoveCommandGroup(mCommandGroups[i]);
+            mCommandGroups?.ForEach(f => RemoveCommandGroup(f));
 
             // Remove all command flyouts
-            for (var i = mCommandFlyouts.Count - 1; i >= 0; i--)
-                RemoveCommandFlyout(mCommandFlyouts[i]);
+            mCommandFlyouts?.ForEach(f => RemoveCommandFlyout(f));
 
             base.Dispose();
         }

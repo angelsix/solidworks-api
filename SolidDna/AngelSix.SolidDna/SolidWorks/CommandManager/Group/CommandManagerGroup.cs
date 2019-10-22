@@ -1,4 +1,5 @@
 ﻿using SolidWorks.Interop.sldworks;
+using SolidWorks.Interop.swconst;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -56,6 +57,27 @@ namespace AngelSix.SolidDna
         /// The tooltip of this command group
         /// </summary>
         public string Tooltip { get; set; }
+
+        /// <summary>
+        /// If true, adds a command box to the toolbar for parts that has a dropdown
+        /// of all commands that are part of this group. The tooltip of the command 
+        /// group is used as the name.
+        /// </summary>
+        public bool AddDropdownBoxForParts { get; set; }
+
+        /// <summary>
+        /// If true, adds a command box to the toolbar for assemblies that has a dropdown
+        /// of all commands that are part of this group. The tooltip of the command 
+        /// group is used as the name.
+        /// </summary>
+        public bool AddDropdownBoxForAssemblies { get; set; }
+
+        /// <summary>
+        /// If true, adds a command box to the toolbar for drawings that has a dropdown
+        /// of all commands that are part of this group. The tooltip of the command 
+        /// group is used as the name.
+        /// </summary>
+        public bool AddDropdownBoxForDrawings { get; set; }
 
         /// <summary>
         /// The type of documents to show this command group in as a menu
@@ -116,7 +138,22 @@ namespace AngelSix.SolidDna
         /// <param name="tooltip">The tool tip</param>
         /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
-        public CommandManagerGroup(ICommandGroup commandGroup, List<CommandManagerItem> items, List<CommandManagerFlyout> flyoutItems, int userId, string title, string hint, string tooltip, bool hasMenu, bool hasToolbar) : base(commandGroup)
+        /// <param name="addDropdownBoxForParts">If true, adds a command box to the toolbar for parts that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
+        /// <param name="addDropdownBoxForAssemblies">If true, adds a command box to the toolbar for assemblies that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
+        /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
+        public CommandManagerGroup(
+            ICommandGroup commandGroup, 
+            List<CommandManagerItem> items, 
+            List<CommandManagerFlyout> flyoutItems, 
+            int userId, 
+            string title, 
+            string hint,
+            string tooltip,
+            bool hasMenu, 
+            bool hasToolbar,
+            bool addDropdownBoxForParts = false,
+            bool addDropdownBoxForAssemblies = false,
+            bool addDropdownBoxForDrawings = false) : base(commandGroup)
         {
             // Store user Id, used to remove the command group
             UserId = userId;
@@ -146,6 +183,11 @@ namespace AngelSix.SolidDna
 
             // Have a toolbar
             HasToolbar = hasToolbar;
+
+            // Dropdowns
+            AddDropdownBoxForParts = addDropdownBoxForParts;
+            AddDropdownBoxForAssemblies = addDropdownBoxForAssemblies;
+            AddDropdownBoxForDrawings = addDropdownBoxForDrawings;
 
             // Listen out for callbacks
             PlugInIntegration.CallbackFired += PlugInIntegration_CallbackFired;
@@ -303,22 +345,72 @@ namespace AngelSix.SolidDna
             #region Command Tab
 
             // Add to parts tab
-            var items = Items?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForParts).ToList();
+            var items = Items?.Where(f => f.AddToTab && f.TabView != CommandManagerItemTabView.None && f.VisibleForParts).ToList();
             var flyouts = Flyouts?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForParts).ToList();
 
+            // Add items
             AddItemsToTab(ModelType.Part, manager, items, flyouts);
 
+            // Add dropdown box?
+            if (AddDropdownBoxForParts)
+                AddItemsToTab(
+                    ModelType.Part,
+                    manager,
+                    new List<CommandManagerItem>
+                    {
+                        new CommandManagerItem {
+                            // Use this groups toolbar ID
+                            CommandId = BaseObject.ToolbarId,
+                            // Default style to text below for now
+                            TabView = CommandManagerItemTabView.IconWithTextBelow
+                        }
+                    },
+                    null);
+
             // Add to assembly tab
-            items = Items?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForAssemblies).ToList();
+            items = Items?.Where(f => f.AddToTab && f.TabView != CommandManagerItemTabView.None && f.VisibleForAssemblies).ToList();
             flyouts = Flyouts?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForAssemblies).ToList();
-            
+
+            // Add items
             AddItemsToTab(ModelType.Assembly, manager, items, flyouts);
 
+            // Add dropdown box?
+            if (AddDropdownBoxForAssemblies)
+                AddItemsToTab(
+                    ModelType.Assembly,
+                    manager,
+                    new List<CommandManagerItem>
+                    {
+                        new CommandManagerItem {
+                            // Use this groups toolbar ID
+                            CommandId = BaseObject.ToolbarId,
+                            // Default style to text below for now
+                            TabView = CommandManagerItemTabView.IconWithTextBelow
+                        }
+                    },
+                    null);
             // Add to drawing tab
-            items = Items?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForDrawings).ToList();
+            items = Items?.Where(f => f.AddToTab && f.TabView != CommandManagerItemTabView.None && f.VisibleForDrawings).ToList();
             flyouts = Flyouts?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForDrawings).ToList();
-               
+
+            // Add items
             AddItemsToTab(ModelType.Drawing, manager, items, flyouts);
+
+            // Add dropdown box?
+            if (AddDropdownBoxForDrawings)
+                AddItemsToTab(
+                    ModelType.Drawing,
+                    manager,
+                    new List<CommandManagerItem>
+                    {
+                        new CommandManagerItem {
+                            // Use this groups toolbar ID
+                            CommandId = BaseObject.ToolbarId,
+                            // Default style to text below for now
+                            TabView = CommandManagerItemTabView.IconWithTextBelow
+                        }
+                    },
+                    null);
 
             #endregion
 
@@ -379,7 +471,7 @@ namespace AngelSix.SolidDna
                 ids.Add(item.CommandId);
 
                 // Add style
-                styles.Add((int)item.TabView);
+                styles.Add((int)item.TabView | (int)swCommandTabButtonFlyoutStyle_e.swCommandTabButton_ActionFlyout);
             });
 
             // If there are items to add...
