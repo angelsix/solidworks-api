@@ -63,7 +63,7 @@ namespace SolidDna.Exporting
         public override void ConnectedToSolidWorks()
         {
             // Part commands
-            var partGroup = Application.CommandManager.CreateCommands(
+            var partGroup = Application.CommandManager.CreateCommandGroupAndTabs(
                 title: "Export Part",
                 items: new List<CommandManagerItem>(new[] {
 
@@ -94,12 +94,13 @@ namespace SolidDna.Exporting
                     },
 
                 }),
+                flyoutItems: null,
                 iconListsPath: "icons{0}.png",
                 hint: "Export parts in other formats",
                 tooltip: "Such as DXF, STEP and IGES");
 
             // Assembly commands
-            var assemblyGroup = Application.CommandManager.CreateCommands(
+            var assemblyGroup = Application.CommandManager.CreateCommandGroupAndTabs(
                 title: "Export Assembly",
                 items: new List<CommandManagerItem>(new[] {
 
@@ -117,12 +118,13 @@ namespace SolidDna.Exporting
                     },
 
                 }),
+                flyoutItems: null,
                 iconListsPath: "icons{0}.png",
                 hint: "Export assemblies in other formats",
                 tooltip: "Such as Step");
 
             // Drawing commands
-            var drawingGroup = Application.CommandManager.CreateCommands(
+            var drawingGroup = Application.CommandManager.CreateCommandGroupAndTabs(
                 title: "Export Drawing",
                 items: new List<CommandManagerItem>(new[] {
 
@@ -140,6 +142,7 @@ namespace SolidDna.Exporting
                     },
 
                 }),
+                flyoutItems: null,
                 iconListsPath: "icons{0}.png",
                 hint: "Export drawing to other formats",
                 tooltip: "Such as PDF");
