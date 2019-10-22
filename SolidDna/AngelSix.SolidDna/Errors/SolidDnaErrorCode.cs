@@ -163,6 +163,11 @@
         /// </summary>
         SolidWorksCommandGroupCreateTabError = 12006,
 
+        /// <summary>
+        /// There was an error while trying to activate a Command Group that was already activated
+        /// </summary>
+        SolidWorksCommandFlyoutReActivateError = 12007,
+
         #endregion
 
         #region Export Data (13,000)

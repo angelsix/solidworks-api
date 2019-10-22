@@ -43,6 +43,7 @@
   <String Name="ErrorSolidWorksCommandGroupIconListInvalidPathError">An error occurred setting a SolidWorks Command Group Icon list path. The string was an invalid format</String>
   <String Name="ErrorSolidWorksCommandGroupActivateError">An error occurred activating a SolidWorks Command Group</String>
   <String Name="ErrorSolidWorksCommandCreateTabError">An error occurred creating a SolidWorks Command Group Tab</String>
+  <String Name="ErrorSolidWorksCommandFlyoutReCreateError">An error occurred activating a SolidWorks Command Flyout. It was already activated so must be removed before re-activating</String>
 
   <!-- Export Data -->
   <String Name="SolidWorksExportDataError">An unknown error occurred in the Export Data class</String>

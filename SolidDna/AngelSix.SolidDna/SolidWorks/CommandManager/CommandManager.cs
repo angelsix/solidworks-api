@@ -1,6 +1,8 @@
 ﻿using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -14,6 +16,21 @@ namespace AngelSix.SolidDna
         /// A list of all created command groups
         /// </summary>
         private List<CommandManagerGroup> mCommandGroups = new List<CommandManagerGroup>();
+
+        /// <summary>
+        /// A list of all created command flyouts
+        /// </summary>
+        private List<CommandManagerFlyout> mCommandFlyouts = new List<CommandManagerFlyout>();
+
+        /// <summary>
+        /// Unique Id for flyouts (just increment every time we add one)
+        /// </summary>
+        private int mFlyoutIdCount = 1000;
+
+        /// <summary>
+        /// List of icon sizes used by SOLIDWORKS. Icons are square, so these values are both width and height.
+        /// </summary>
+        private readonly int[] mIconSizes = { 20, 32, 40, 64, 96, 128 };
 
         #endregion
 
@@ -36,6 +53,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="title">Name of the CommandGroup to create (see Remarks)</param>
         /// <param name="items">The command items to add</param>
+        /// <param name="flyoutItems">The flyout command items that contain a list of other commands</param>
         /// <param name="iconListsPath">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
         ///     For example C:\Folder\myiconlist{0}.png</param>
         /// <param name="tooltip">Tool tip for the CommandGroup</param>
@@ -48,7 +66,7 @@ namespace AngelSix.SolidDna
         /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
         /// <returns></returns>
-        public CommandManagerGroup CreateCommands(string title, List<CommandManagerItem> items, string iconListsPath = "", string tooltip = "", string hint = "", int position = -1, bool ignorePreviousVersion = true, bool hasMenu = true, bool hasToolbar = true)
+        public CommandManagerGroup CreateCommands(string title, List<CommandManagerItem> items, List<CommandManagerFlyout> flyoutItems, string iconListsPath = "", string tooltip = "", string hint = "", int position = -1, bool ignorePreviousVersion = true, bool hasMenu = true, bool hasToolbar = true)
         {
             // Wrap any error creating the taskpane in a SolidDna exception
             return SolidDnaErrors.Wrap(() =>
@@ -57,7 +75,10 @@ namespace AngelSix.SolidDna
                 lock (mCommandGroups)
                 {
                     // Create the command group
-                    var group = CreateCommandGroup(title, items, tooltip, hint, position, ignorePreviousVersion, hasMenu, hasToolbar);
+                    var group = CreateCommandGroup(title, items, flyoutItems, tooltip, hint, position, ignorePreviousVersion, hasMenu, hasToolbar);
+
+                    // Track all flyouts
+                    mCommandFlyouts = flyoutItems;
 
                     // Set icon list
                     group.SetIconLists(iconListsPath);
@@ -78,10 +99,76 @@ namespace AngelSix.SolidDna
         }
 
         /// <summary>
+        /// Create a command group flyout containing a list of <see cref="CommandManagerItem"/> items
+        /// </summary>
+        /// <param name="title">Name of the flyout to create</param>
+        /// <param name="items">The command items to add</param>
+        /// <param name="pathFormat">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
+        ///     For example C:\Folder\myiconlist{0}.png</param>
+        /// <param name="tooltip">Tool tip for the new flyout</param>
+        /// <param name="hint">Text displayed in SOLIDWORKS status bar when a user's mouse pointer is over the flyout</param>
+        /// <returns></returns>
+        public CommandManagerFlyout CreateFlyoutGroup(string title, List<CommandManagerItem> items, string pathFormat, string tooltip = "", string hint = "")
+        {
+            #region Icons 
+
+            // Make sure the path format contains "{0}"
+            if (pathFormat == null || !pathFormat.Contains("{0}"))
+                throw new SolidDnaException(SolidDnaErrors.CreateError(
+                    SolidDnaErrorTypeCode.SolidWorksCommandManager,
+                    SolidDnaErrorCode.SolidWorksCommandGroupInvalidPathFormatError,
+                    Localization.GetString("ErrorSolidWorksCommandGroupIconListInvalidPathError")));
+
+            var iconListPaths = new Dictionary<int, string>();
+
+            // Fill the dictionary with all paths that exist
+            foreach (var iconSize in mIconSizes)
+            {
+                var path = string.Format(pathFormat, iconSize);
+                if (File.Exists(path))
+                {
+                    iconListPaths.Add(iconSize, path);
+                }
+            }
+
+            // Get icon paths
+            var icons = iconListPaths.Values.ToArray();
+
+            #endregion
+
+            // Create unique callback Id
+            var callbackId = Guid.NewGuid().ToString("N");
+
+            // Attempt to create the command flyout
+            var unsafeCommandFlyout = BaseObject.CreateFlyoutGroup2(
+                mFlyoutIdCount,
+                title,
+                tooltip,
+                hint,
+                icons,
+                icons,
+                $"Callback({callbackId})",
+                null);
+
+            // Create managed object
+            var flyout = new CommandManagerFlyout(
+                unsafeCommandFlyout,
+                mFlyoutIdCount++,
+                callbackId,
+                items, 
+                title,
+                hint, tooltip);
+
+            // Return it
+            return flyout;
+        }
+
+        /// <summary>
         /// Creates a command group
         /// </summary>
         /// <param name="title">The title</param>
         /// <param name="items">The command items to add</param>
+        /// <param name="flyoutItems">The flyout command items that contain a list of other commands</param>
         /// <param name="tooltip">The tool tip</param>
         /// <param name="hint">The hint</param>
         /// <param name="position">Position of the CommandGroup in the CommandManager for all document templates.
@@ -93,7 +180,7 @@ namespace AngelSix.SolidDna
         /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
         /// <returns></returns>
-        private CommandManagerGroup CreateCommandGroup(string title, List<CommandManagerItem> items, string tooltip = "", string hint = "", int position = -1, bool ignorePreviousVersion = true, bool hasMenu = true, bool hasToolbar = true)
+        private CommandManagerGroup CreateCommandGroup(string title, List<CommandManagerItem> items, List<CommandManagerFlyout> flyoutItems, string tooltip = "", string hint = "", int position = -1, bool ignorePreviousVersion = true, bool hasMenu = true, bool hasToolbar = true)
         {
             // NOTE: We may need to look carefully at this Id if things get removed and re-added based on this SolidWorks note:
             //     
@@ -125,12 +212,23 @@ namespace AngelSix.SolidDna
             }
 
             // Otherwise we got the command group
-            var group = new CommandManagerGroup(unsafeCommandGroup, items, id, title, tooltip, hint, hasMenu, hasToolbar);
+            var group = new CommandManagerGroup(unsafeCommandGroup, items, flyoutItems, id, title, tooltip, hint, hasMenu, hasToolbar);
 
             // Return it
             return group;
         }
 
+        /// <summary>
+        /// Removes the specific command flyout
+        /// </summary>
+        /// <param name="flyout">The command flyout to remove</param>
+        public void RemoveCommandFlyout(CommandManagerFlyout flyout)
+        {
+            lock (mCommandFlyouts)
+            {
+                BaseObject.RemoveFlyoutGroup(flyout.UserId);
+            }
+        }
         /// <summary>
         /// Removes the specific command group
         /// </summary>
@@ -203,6 +301,10 @@ namespace AngelSix.SolidDna
             // Remove all command groups
             for (var i = mCommandGroups.Count - 1; i >= 0; i--)
                 RemoveCommandGroup(mCommandGroups[i]);
+
+            // Remove all command flyouts
+            for (var i = mCommandFlyouts.Count - 1; i >= 0; i--)
+                RemoveCommandFlyout(mCommandFlyouts[i]);
 
             base.Dispose();
         }

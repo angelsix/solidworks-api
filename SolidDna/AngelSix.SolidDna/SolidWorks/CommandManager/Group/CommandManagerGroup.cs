@@ -95,6 +95,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         public List<CommandManagerItem> Items { get; set; }
 
+        /// <summary>
+        /// The command flyouts to add to this group
+        /// </summary>
+        public List<CommandManagerFlyout> Flyouts { get; set; }
+
         #endregion
 
         #region Constructor
@@ -104,19 +109,23 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="commandGroup">The SolidWorks command group</param>
         /// <param name="items">The command items to add</param>
+        /// <param name="flyoutItems">The flyout command items that contain a list of other commands</param>
         /// <param name="userId">The unique Id this group was assigned with when created</param>
         /// <param name="title">The title</param>
         /// <param name="hint">The hint</param>
         /// <param name="tooltip">The tool tip</param>
         /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
-        public CommandManagerGroup(ICommandGroup commandGroup, List<CommandManagerItem> items, int userId, string title, string hint, string tooltip, bool hasMenu, bool hasToolbar) : base(commandGroup)
+        public CommandManagerGroup(ICommandGroup commandGroup, List<CommandManagerItem> items, List<CommandManagerFlyout> flyoutItems, int userId, string title, string hint, string tooltip, bool hasMenu, bool hasToolbar) : base(commandGroup)
         {
             // Store user Id, used to remove the command group
             UserId = userId;
 
             // Set items
             Items = items;
+
+            // Set flyouts
+            Flyouts = flyoutItems;
 
             // Set title
             Title = title;
@@ -201,10 +210,16 @@ namespace AngelSix.SolidDna
         private void PlugInIntegration_CallbackFired(string name)
         {
             // Find the item, if any
-            var item = Items.FirstOrDefault(f => f.CallbackId == name);
+            var item = Items?.FirstOrDefault(f => f.CallbackId == name);
 
             // Call the action
             item?.OnClick?.Invoke();
+
+            // Find the flyout, if any
+            var flyout = Flyouts?.FirstOrDefault(f => f.CallbackId == name);
+
+            // Call the action
+            flyout?.OnClick?.Invoke();
         }
 
         #endregion
@@ -266,8 +281,8 @@ namespace AngelSix.SolidDna
                 // The list of icons
                 BaseObject.MainIconList = icons;
 
-                // Smallest icon for this one
-                BaseObject.SmallIconList = icons.First();
+                // Use largest icon still (otherwise command groups are always small icons)
+                BaseObject.SmallIconList = icons.Last();
             }
 
             #endregion
@@ -288,19 +303,22 @@ namespace AngelSix.SolidDna
             #region Command Tab
 
             // Add to parts tab
-            var list = Items?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForParts).ToList();
-            if (list?.Count > 0)
-                AddItemsToTab(ModelType.Part, manager, list);
+            var items = Items?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForParts).ToList();
+            var flyouts = Flyouts?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForParts).ToList();
+
+            AddItemsToTab(ModelType.Part, manager, items, flyouts);
 
             // Add to assembly tab
-            list = Items?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForAssemblies).ToList();
-            if (list?.Count > 0)
-                AddItemsToTab(ModelType.Assembly, manager, list);
+            items = Items?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForAssemblies).ToList();
+            flyouts = Flyouts?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForAssemblies).ToList();
+            
+            AddItemsToTab(ModelType.Assembly, manager, items, flyouts);
 
             // Add to drawing tab
-            list = Items?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForDrawings).ToList();
-            if (list?.Count > 0)
-                AddItemsToTab(ModelType.Drawing, manager, list);
+            items = Items?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForDrawings).ToList();
+            flyouts = Flyouts?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForDrawings).ToList();
+               
+            AddItemsToTab(ModelType.Drawing, manager, items, flyouts);
 
             #endregion
 
@@ -318,8 +336,9 @@ namespace AngelSix.SolidDna
         /// <param name="type">The tab for this type of model</param>
         /// <param name="manager">The command manager</param>
         /// <param name="items">Items to add</param>
+        /// <param name="items">Flyout Items to add</param>
         /// <param name="title">The title of the tab</param>
-        public void AddItemsToTab(ModelType type, CommandManager manager, List<CommandManagerItem> items, string title = "")
+        public void AddItemsToTab(ModelType type, CommandManager manager, List<CommandManagerItem> items, List<CommandManagerFlyout> flyoutItems, string title = "")
         {
             // Use default title if not specified
             if (string.IsNullOrEmpty(title))
@@ -345,7 +364,7 @@ namespace AngelSix.SolidDna
             var styles = new List<int>();
 
             // Add each items Id and style
-            items.ForEach(item =>
+            items?.ForEach(item =>
             {
                 // Add command Id
                 ids.Add(item.CommandId);
@@ -354,8 +373,19 @@ namespace AngelSix.SolidDna
                 styles.Add((int)item.TabView);
             });
 
-            // Add all the items
-            tab.Box.UnsafeObject.AddCommands(ids.ToArray(), styles.ToArray());
+            flyoutItems?.ForEach(item =>
+            {
+                // Add command Id
+                ids.Add(item.CommandId);
+
+                // Add style
+                styles.Add((int)item.TabView);
+            });
+
+            // If there are items to add...
+            if (ids?.Count > 0)
+                // Add all the items
+                tab.Box.UnsafeObject.AddCommands(ids.ToArray(), styles.ToArray());
         }
 
         #endregion
