@@ -395,7 +395,7 @@ namespace AngelSix.SolidDna
             //       We could keep checking the COM instance BaseObject doesn't throw
             //       an error to detect when it got disposed but I think the idle
             //       is less intensive and works fine so far
-            if (false) //wasNewFile)
+            if (wasNewFile)
             {
                 void refreshEvent()
                 {
