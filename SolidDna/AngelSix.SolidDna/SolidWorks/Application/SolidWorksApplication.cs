@@ -602,10 +602,42 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="preference">The preference to get</param>
         /// <returns></returns>
-        public double GetUserPreferencesDouble(swUserPreferenceDoubleValue_e preference)
-        {
-            return BaseObject.GetUserPreferenceDoubleValue((int)preference);
-        }
+        public double GetUserPreferencesDouble(swUserPreferenceDoubleValue_e preference) => BaseObject.GetUserPreferenceDoubleValue((int)preference);
+
+        /// <summary>
+        /// Sets the specified user preference value
+        /// </summary>
+        /// <param name="preference">The preference to set</param>
+        /// <returns></returns>
+        public bool SetUserPreferencesDouble(swUserPreferenceDoubleValue_e preference, double value) => BaseObject.SetUserPreferenceDoubleValue((int)preference, value);
+
+        /// <summary>
+        /// Gets the specified user preference value
+        /// </summary>
+        /// <param name="preference">The preference to get</param>
+        /// <returns></returns>
+        public int GetUserPreferencesInteger(swUserPreferenceIntegerValue_e preference) => BaseObject.GetUserPreferenceIntegerValue((int)preference);
+
+        /// <summary>
+        /// Sets the specified user preference value
+        /// </summary>
+        /// <param name="preference">The preference to set</param>
+        /// <returns></returns>
+        public bool SetUserPreferencesInteger(swUserPreferenceIntegerValue_e preference, int value) => BaseObject.SetUserPreferenceIntegerValue((int)preference, value);
+
+        /// <summary>
+        /// Gets the specified user preference value
+        /// </summary>
+        /// <param name="preference">The preference to get</param>
+        /// <returns></returns>
+        public bool GetUserPreferencesToggle(swUserPreferenceToggle_e preference) => BaseObject.GetUserPreferenceToggle((int)preference);
+
+        /// <summary>
+        /// Sets the specified user preference value
+        /// </summary>
+        /// <param name="preference">The preference to set</param>
+        /// <returns></returns>
+        public void SetUserPreferencesToggle(swUserPreferenceToggle_e preference, bool value) => BaseObject.SetUserPreferenceToggle((int)preference, value);
 
         #endregion
 

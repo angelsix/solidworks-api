@@ -50,6 +50,41 @@ namespace AngelSix.SolidDna
         /// <returns>True if the sheet was activated, false if SOLIDWORKS generated an error</returns>
         public bool ActivateSheet(string sheetName) => mBaseObject.ActivateSheet(sheetName);
 
+        /// <summary>
+        /// Gets the name of the currently active sheet
+        /// </summary>
+        /// <returns></returns>
+        public string CurrentActiveSheet()
+        {
+            using (var sheet = new DrawingSheet((Sheet)mBaseObject.GetCurrentSheet(), this))
+            {
+                return sheet.SheetName;
+            }
+        }
+
+        /// <summary>
+        /// Gets the sheet names of the drawing
+        /// </summary>
+        /// <returns></returns>
+        public string[] SheetNames() => (string[])mBaseObject.GetSheetNames();
+        
+        public void ForEachSheet(Action<DrawingSheet> sheetsCallback)
+        {
+            // Get each sheet name
+            var sheetNames = SheetNames();
+
+            // Get all sheet names
+            foreach (var sheetName in sheetNames)
+            {
+                // Get instance of sheet
+                using (var sheet = new DrawingSheet(mBaseObject.Sheet[sheetName], this))
+                {
+                    // Callback
+                    sheetsCallback(sheet);
+                }
+            }
+        }
+
         #endregion
 
         #region View Methods

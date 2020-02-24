@@ -506,21 +506,21 @@ namespace AngelSix.SolidDna
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public AssemblyDoc AsAssembly() { return (AssemblyDoc) BaseObject; }
+        public AssemblyDoc AsAssembly() => (AssemblyDoc)BaseObject;
 
         /// <summary>
         /// Casts the current model to a part
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public PartDoc AsPart() { return (PartDoc) BaseObject; }
+        public PartDoc AsPart() => (PartDoc)BaseObject;
 
         /// <summary>
         /// Casts the current model to a drawing
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public DrawingDoc AsDrawing() { return (DrawingDoc) BaseObject; }
+        public DrawingDoc AsDrawing() => (DrawingDoc)BaseObject;
 
         /// <summary>
         /// Accesses the current model as a drawing to expose all Drawing API calls.
