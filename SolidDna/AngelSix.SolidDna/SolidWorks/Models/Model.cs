@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AngelSix.SolidDna
 {
@@ -375,11 +376,35 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         protected int FileSavePostNotify(int saveType, string fileName)
         {
+            // Were we saved or is this a new file?
+            var wasNewFile = !HasBeenSaved;
+
             // Update filepath
             FilePath = BaseObject.GetPathName();
         
             // Inform listeners
             ModelSaved();
+
+            // NOTE: Due to bug in SolidWorks, saving new files refreshes the COM reference
+            //       without it ever being so kind as to inform us via ANY callback in 
+            //       the SolidWorksApplication or this model
+            //      
+            //       So to fix, wait for an idle moment and refresh our info.
+            //       Best fix I can think of for now.
+            //
+            //       We could keep checking the COM instance BaseObject doesn't throw
+            //       an error to detect when it got disposed but I think the idle
+            //       is less intensive and works fine so far
+            if (false) //wasNewFile)
+            {
+                void refreshEvent()
+                {
+                    SolidWorksEnvironment.Application.RequestActiveModelChanged();
+                    SolidWorksEnvironment.Application.Idle -= refreshEvent;
+                }
+
+                SolidWorksEnvironment.Application.Idle += refreshEvent;
+            }
 
             // NOTE: 0 is success, anything else is an error
             return 0;

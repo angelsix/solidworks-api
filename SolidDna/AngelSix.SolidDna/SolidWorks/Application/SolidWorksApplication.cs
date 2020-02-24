@@ -99,6 +99,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         public event Action<string, Model> ActiveFileSaved = (path, model) => { };
 
+        /// <summary>
+        /// Called when SolidWorks is idle
+        /// </summary>
+        public event Action Idle = () => { };
+
         #endregion
 
         #region Constructor
@@ -126,6 +131,7 @@ namespace AngelSix.SolidDna
             BaseObject.FileOpenPreNotify += FileOpenPreNotify;
             BaseObject.FileOpenPostNotify += FileOpenPostNotify;
             BaseObject.FileNewNotify2 += FileNewPostNotify;
+            BaseObject.OnIdleNotify += OnIdleNotify;
 
             // If we have a cookie...
             if (cookie > 0)
@@ -180,6 +186,26 @@ namespace AngelSix.SolidDna
 
         #region SolidWorks Event Methods
 
+        /// <summary>
+        ///  Called when SolidWorks is idle
+        /// </summary>
+        /// <returns></returns>
+        private int OnIdleNotify()
+        {
+            // Wrap any error
+            SolidDnaErrors.Wrap(() =>
+            {
+                // Inform listeners
+                Idle();
+            },
+                SolidDnaErrorTypeCode.SolidWorksApplication,
+                SolidDnaErrorCode.SolidWorksApplicationError,
+                Localization.GetString("SolidWorksApplicationOnIdleNotificationError"));
+
+            // NOTE: 0 is OK, anything else is an error
+            return 0;
+        }
+
         #region File New
 
         /// <summary>
@@ -194,6 +220,21 @@ namespace AngelSix.SolidDna
         {
             // Inform listeners
             FileCreated(mActiveModel);
+
+            // IMPORTANT: This is needed after a new file is created as the model COM reference
+            //            is created on ActiveModelChanged, and then the file is created after
+            // 
+            //            This gives a COM reference that fires the FileSaveAsPreNotify event
+            //            but then gets disposed and we no longer have any hooks to the active
+            //            file so no further events of file save or anything to do with the 
+            //            active model fire.
+            //
+            //            Reloading them at this moment fixes that issue. Then the next issue
+            //            is that after the model FileSavePostNotify is fired, it will dispose
+            //            of its COM reference again if this is the first time the file is 
+            //            saved. To fix that we wait for idle and reload the model information
+            //            again. This fix is inside Model.cs FileSavePostNotify
+            ReloadActiveModelInformation();
 
             // NOTE: 0 is OK, anything else is an error
             return 0;
