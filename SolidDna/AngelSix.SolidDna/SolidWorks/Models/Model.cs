@@ -257,6 +257,69 @@ namespace AngelSix.SolidDna
             }
         }
 
+        /// <summary>
+        /// Unhooks model-specific events when model becomes inactive.
+        /// Model becomes inactive when it is closed or when another model becomes the active model.
+        /// </summary>
+        protected void ClearModelEventHandlers()
+        {
+            switch (ModelType)
+            {
+                case ModelType.Part when AsPart() == null:
+                case ModelType.Assembly when AsAssembly() == null:
+                case ModelType.Drawing when AsDrawing() == null:
+                {
+                    // Happens in multiple cases:
+                    // 1: When SolidWorks is being closed
+                    // 1: When the non-last model is being closed
+                    // 2: When the first model is opened after all models were closed.
+                    return;
+                }
+            }
+
+            // Based on the type of model this is...
+            switch (ModelType)
+            {
+                // Hook into the save and destroy events to keep data fresh
+                case ModelType.Assembly:
+                    AsAssembly().ActiveConfigChangePostNotify -= ActiveConfigChangePostNotify;
+                    AsAssembly().DestroyNotify -= FileDestroyedNotify;
+                    AsAssembly().FileSaveAsNotify2 -= FileSaveAsPreNotify;
+                    AsAssembly().FileSavePostCancelNotify -= FileSaveCanceled;
+                    AsAssembly().FileSavePostNotify -= FileSavePostNotify;
+                    AsAssembly().ModifyNotify -= FileModified;
+                    AsAssembly().RegenPostNotify2 -= AssemblyOrPartRebuilt;
+                    AsAssembly().UserSelectionPostNotify -= UserSelectionPostNotify;
+                    AsAssembly().ClearSelectionsNotify -= UserSelectionPostNotify;
+                    break;
+                case ModelType.Part:
+                    AsPart().ActiveConfigChangePostNotify -= ActiveConfigChangePostNotify;
+                    AsPart().DestroyNotify -= FileDestroyedNotify;
+                    AsPart().FileSaveAsNotify2 -= FileSaveAsPreNotify;
+                    AsPart().FileSavePostCancelNotify -= FileSaveCanceled;
+                    AsPart().FileSavePostNotify -= FileSavePostNotify;
+                    AsPart().ModifyNotify -= FileModified;
+                    AsPart().RegenPostNotify2 -= AssemblyOrPartRebuilt;
+                    AsPart().UserSelectionPostNotify -= UserSelectionPostNotify;
+                    AsPart().ClearSelectionsNotify -= UserSelectionPostNotify;
+                    break;
+                case ModelType.Drawing:
+                    AsDrawing().ActivateSheetPostNotify -= SheetActivatePostNotify;
+                    AsDrawing().ActivateSheetPreNotify -= SheetActivatePreNotify;
+                    AsDrawing().AddItemNotify -= DrawingItemAddNotify;
+                    AsDrawing().DeleteItemNotify -= DrawingDeleteItemNotify;
+                    AsDrawing().DestroyNotify -= FileDestroyedNotify;
+                    AsDrawing().FileSaveAsNotify2 -= FileSaveAsPreNotify;
+                    AsDrawing().FileSavePostCancelNotify -= FileSaveCanceled;
+                    AsDrawing().FileSavePostNotify -= FileSavePostNotify;
+                    AsDrawing().ModifyNotify -= FileModified;
+                    AsDrawing().RegenPostNotify -= DrawingRebuilt;
+                    AsDrawing().UserSelectionPostNotify -= UserSelectionPostNotify;
+                    AsDrawing().ClearSelectionsNotify -= UserSelectionPostNotify;
+                    break;
+            }
+        }
+
         #endregion
 
         #region Model Event Methods
@@ -909,6 +972,9 @@ namespace AngelSix.SolidDna
             // Selection manager
             SelectionManager?.Dispose();
             SelectionManager = null;
+
+            // Unhook all events
+            ClearModelEventHandlers();
         }
 
         public override void Dispose()
