@@ -16,165 +16,167 @@
                 <Image Source="part.png" MaxWidth="100" Margin="10" />
                 <TextBlock HorizontalAlignment="Center" Text="Please open a part" />
             </StackPanel>
+
+            <ScrollViewer x:Name="MainContent">
+                <StackPanel>
+
+                    <!-- #################### -->
+                    <!--    Action Buttons    -->
+                    <!-- #################### -->
+                    <Grid Margin="0 0 0 10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0" Margin="0 0 10 0" Content="Apply" Click="ApplyButton_Click" />
+                        <Button Grid.Column="1" Margin="5 0 5 0" Content="Reset" Click="ResetButton_Click" />
+                        <Button Grid.Column="2" Margin="10 0 0 0" Content="Refesh" Click="ReadButton_Click" />
+                    </Grid>
+
+                    <!-- #################### -->
+                    <!--   Pulse Properties   -->
+                    <!-- #################### -->
+                    <TextBlock Text="Pulse Properties" Margin="0 0 0 5" FontWeight="Bold" />
+
+                    <!-- Description -->
+                    <TextBlock Text="Description" />
+                    <TextBox x:Name="DescriptionText" Padding="2"  />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Status -->
+                        <StackPanel Margin="0 0 10 0">
+                            <TextBlock Text="Status" />
+                            <TextBox x:Name="StatusText" IsReadOnly="True" Background="#eee" Padding="2"  />
+                        </StackPanel>
+
+                        <!-- Revision -->
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Revision" />
+                            <TextBox x:Name="RevisionText" IsReadOnly="True" Background="#eee" Padding="2"  />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Part Number -->
+                    <TextBlock Text="Part Number" />
+                    <TextBox x:Name="PartNumberText" IsReadOnly="True" Background="#eee" Padding="2"  />
+
+
+                    <!-- #################### -->
+                    <!--     Raw Material     -->
+                    <!-- #################### -->
+                    <TextBlock Text="Raw Material" Margin="0 10 0 5" FontWeight="Bold" />
+
+                    <!-- Material -->
+                    <TextBlock Text="Material" />
+                    <ComboBox x:Name="RawMaterialList" />
+
+
+                    <!-- #################### -->
+                    <!--  Manufacturing Info  -->
+                    <!-- #################### -->
+                    <TextBlock Text="Manufacturing Information" Margin="0 10 0 5" FontWeight="Bold" />
+
+                    <!-- Work centres -->
+                    <TextBlock Text="Work Centres" Margin="0 0 0 5" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <CheckBox x:Name="MaterialWeldCheck" Content="Weld" />
+                            <CheckBox x:Name="MaterialAssemblyCheck" Content="Assembly" Checked="MaterialAssemblyCheck_Checked" />
+                            <CheckBox x:Name="MaterialPlasmaCheck" Content="Plasma" Checked="MaterialPlasmaCheck_Checked" />
+                            <CheckBox x:Name="MaterialLaserCheck" Content="Laser" />
+                            <CheckBox x:Name="MaterialPurchaseCheck" Content="Purchase" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1">
+                            <CheckBox x:Name="MaterialLatheCheck" Content="Lathe" />
+                            <CheckBox x:Name="MaterialDrillCheck" Content="Drill" />
+                            <CheckBox x:Name="MaterialFoldCheck" Content="Fold" />
+                            <CheckBox x:Name="MaterialRollCheck" Content="Roll" />
+                            <CheckBox x:Name="MaterialSawCheck" Content="Saw" />
+                        </StackPanel>
+
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <!-- Length / Thickness -->
+                            <TextBlock Text="Length" Margin="0 5 0 0" />
+                            <TextBox x:Name="SheetMetalLengthText" Padding="2"  />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Margin="10 0 0 0">
+                            <!-- Length / Thickness -->
+                            <TextBlock Text="Evaluated" Margin="0 5 0 0" />
+                            <TextBox x:Name="SheetMetalLengthEvaluatedText"  IsReadOnly="True" Background="#eee" Padding="2"  />
+                        </StackPanel>
+
+                    </Grid>
+
+
+                    <!-- Width / Mass -->
+                    <TextBlock Text="Mass" Margin="0 5 0 0" />
+                    <TextBox x:Name="MassText" IsReadOnly="True" Background="#eee" Padding="2"  />
+
+                    <!-- Finish -->
+                    <TextBlock Text="Finish" Margin="0 5 0 0" />
+                    <ComboBox x:Name="FinishList" SelectedIndex="0">
+                        <ComboBoxItem>Painted</ComboBoxItem>
+                        <ComboBoxItem>Galvanized</ComboBoxItem>
+                        <ComboBoxItem>Zinc Plated</ComboBoxItem>
+                    </ComboBox>
+
+                    <!-- Purchase Information -->
+                    <TextBlock Text="Purchase Information" Margin="0 5 0 0" />
+                    <ComboBox x:Name="PurchaseInformationList" SelectedIndex="0">
+                        <ComboBoxItem>Rubber</ComboBoxItem>
+                        <ComboBoxItem>Nylon</ComboBoxItem>
+                        <ComboBoxItem>Belt</ComboBoxItem>
+                        <ComboBoxItem>Roller</ComboBoxItem>
+                        <ComboBoxItem>Bearing</ComboBoxItem>
+                        <ComboBoxItem>Motor</ComboBoxItem>
+                        <ComboBoxItem>Valve</ComboBoxItem>
+                        <ComboBoxItem>Electrical</ComboBoxItem>
+                    </ComboBox>
+
+                    <!-- Supplier Name -->
+                    <TextBlock Text="Supplier Name" Margin="0 5 0 0" />
+                    <TextBox x:Name="SupplierNameText" Padding="2"  />
+
+                    <!-- Supplier Code -->
+                    <TextBlock Text="Supplier Code" Margin="0 5 0 0" />
+                    <TextBox x:Name="SupplierCodeText" Padding="2"  />
+
+
+                    <!-- #################### -->
+                    <!--    Additional Info   -->
+                    <!-- #################### -->
+                    <TextBlock Text="Additional Information" Margin="0 10 0 5" FontWeight="Bold" />
+
+                    <!-- Work centres -->
+                    <TextBlock Text="Note" Margin="0 5 0 0" />
+                    <TextBox x:Name="NoteText" Padding="2"  />
+
+                </StackPanel>
+            </ScrollViewer>
             
-            <StackPanel x:Name="MainContent">
-
-                <!-- #################### -->
-                <!--    Action Buttons    -->
-                <!-- #################### -->
-                <Grid Margin="0 0 0 10">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <Button Grid.Column="0" Margin="0 0 10 0" Content="Apply" Click="ApplyButton_Click" />
-                    <Button Grid.Column="1" Margin="5 0 5 0" Content="Reset" Click="ResetButton_Click" />
-                    <Button Grid.Column="2" Margin="10 0 0 0" Content="Refesh" Click="ReadButton_Click" />
-                </Grid>
-
-                <!-- #################### -->
-                <!--   Pulse Properties   -->
-                <!-- #################### -->
-                <TextBlock Text="Pulse Properties" Margin="0 0 0 5" FontWeight="Bold" />
-
-                <!-- Description -->
-                <TextBlock Text="Description" />
-                <TextBox x:Name="DescriptionText" Padding="2"  />
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Status -->
-                    <StackPanel Margin="0 0 10 0">
-                        <TextBlock Text="Status" />
-                        <TextBox x:Name="StatusText" IsReadOnly="True" Background="#eee" Padding="2"  />
-                    </StackPanel>
-
-                    <!-- Revision -->
-                    <StackPanel Grid.Column="1">
-                        <TextBlock Text="Revision" />
-                        <TextBox x:Name="RevisionText" IsReadOnly="True" Background="#eee" Padding="2"  />
-                    </StackPanel>
-                </Grid>
-
-                <!-- Part Number -->
-                <TextBlock Text="Part Number" />
-                <TextBox x:Name="PartNumberText" IsReadOnly="True" Background="#eee" Padding="2"  />
-
-
-                <!-- #################### -->
-                <!--     Raw Material     -->
-                <!-- #################### -->
-                <TextBlock Text="Raw Material" Margin="0 10 0 5" FontWeight="Bold" />
-
-                <!-- Material -->
-                <TextBlock Text="Material" />
-                <ComboBox x:Name="RawMaterialList" />
-
-
-                <!-- #################### -->
-                <!--  Manufacturing Info  -->
-                <!-- #################### -->
-                <TextBlock Text="Manufacturing Information" Margin="0 10 0 5" FontWeight="Bold" />
-
-                <!-- Work centres -->
-                <TextBlock Text="Work Centres" Margin="0 0 0 5" />
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel>
-                        <CheckBox x:Name="MaterialWeldCheck" Content="Weld" />
-                        <CheckBox x:Name="MaterialAssemblyCheck" Content="Assembly" Checked="MaterialAssemblyCheck_Checked" />
-                        <CheckBox x:Name="MaterialPlasmaCheck" Content="Plasma" Checked="MaterialPlasmaCheck_Checked" />
-                        <CheckBox x:Name="MaterialLaserCheck" Content="Laser" />
-                        <CheckBox x:Name="MaterialPurchaseCheck" Content="Purchase" />
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="1">
-                        <CheckBox x:Name="MaterialLatheCheck" Content="Lathe" />
-                        <CheckBox x:Name="MaterialDrillCheck" Content="Drill" />
-                        <CheckBox x:Name="MaterialFoldCheck" Content="Fold" />
-                        <CheckBox x:Name="MaterialRollCheck" Content="Roll" />
-                        <CheckBox x:Name="MaterialSawCheck" Content="Saw" />
-                    </StackPanel>
-
-                </Grid>
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel>
-                        <!-- Length / Thickness -->
-                        <TextBlock Text="Length" Margin="0 5 0 0" />
-                        <TextBox x:Name="SheetMetalLengthText" Padding="2"  />
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="1" Margin="10 0 0 0">
-                        <!-- Length / Thickness -->
-                        <TextBlock Text="Evaluated" Margin="0 5 0 0" />
-                        <TextBox x:Name="SheetMetalLengthEvaluatedText"  IsReadOnly="True" Background="#eee" Padding="2"  />
-                    </StackPanel>
-
-                </Grid>
-
-
-                <!-- Width / Mass -->
-                <TextBlock Text="Mass" Margin="0 5 0 0" />
-                <TextBox x:Name="MassText" IsReadOnly="True" Background="#eee" Padding="2"  />
-
-                <!-- Finish -->
-                <TextBlock Text="Finish" Margin="0 5 0 0" />
-                <ComboBox x:Name="FinishList" SelectedIndex="0">
-                    <ComboBoxItem>Painted</ComboBoxItem>
-                    <ComboBoxItem>Galvanized</ComboBoxItem>
-                    <ComboBoxItem>Zinc Plated</ComboBoxItem>
-                </ComboBox>
-
-                <!-- Purchase Information -->
-                <TextBlock Text="Purchase Information" Margin="0 5 0 0" />
-                <ComboBox x:Name="PurchaseInformationList" SelectedIndex="0">
-                    <ComboBoxItem>Rubber</ComboBoxItem>
-                    <ComboBoxItem>Nylon</ComboBoxItem>
-                    <ComboBoxItem>Belt</ComboBoxItem>
-                    <ComboBoxItem>Roller</ComboBoxItem>
-                    <ComboBoxItem>Bearing</ComboBoxItem>
-                    <ComboBoxItem>Motor</ComboBoxItem>
-                    <ComboBoxItem>Valve</ComboBoxItem>
-                    <ComboBoxItem>Electrical</ComboBoxItem>
-                </ComboBox>
-
-                <!-- Supplier Name -->
-                <TextBlock Text="Supplier Name" Margin="0 5 0 0" />
-                <TextBox x:Name="SupplierNameText" Padding="2"  />
-
-                <!-- Supplier Code -->
-                <TextBlock Text="Supplier Code" Margin="0 5 0 0" />
-                <TextBox x:Name="SupplierCodeText" Padding="2"  />
-
-
-                <!-- #################### -->
-                <!--    Additional Info   -->
-                <!-- #################### -->
-                <TextBlock Text="Additional Information" Margin="0 10 0 5" FontWeight="Bold" />
-
-                <!-- Work centres -->
-                <TextBlock Text="Note" Margin="0 5 0 0" />
-                <TextBox x:Name="NoteText" Padding="2"  />
-
-            </StackPanel>
-
         </Grid>
 
     </Border>
