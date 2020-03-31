@@ -14,6 +14,11 @@ namespace AngelSix.SolidDna
         #region Private Members
 
         /// <summary>
+        /// A list of all tabs that have been created
+        /// </summary>
+        private static readonly Dictionary<CommandManagerTabKey, CommandManagerTab> Tabs = new Dictionary<CommandManagerTabKey, CommandManagerTab>();
+
+        /// <summary>
         /// Keeps track if this group has been created already
         /// </summary>
         private bool mCreated;
@@ -28,11 +33,6 @@ namespace AngelSix.SolidDna
         /// List of icon sizes used by SOLIDWORKS. Icons are square, so these values are both width and height.
         /// </summary>
         private readonly int[] mIconSizes = {20, 32, 40, 64, 96, 128};
-
-        /// <summary>
-        /// A list of all tabs that have been created
-        /// </summary>
-        private readonly Dictionary<CommandManagerTabKey, CommandManagerTab> mTabs = new Dictionary<CommandManagerTabKey, CommandManagerTab>();
 
         #endregion
 
@@ -439,8 +439,8 @@ namespace AngelSix.SolidDna
             CommandManagerTab tab;
 
             // Get the tab if it already exists
-            if (mTabs.Any(f => string.Equals(f.Key.Title, title) && f.Key.ModelType == type))
-                tab = mTabs.First(f => string.Equals(f.Key.Title, title) && f.Key.ModelType == type).Value;
+            if (Tabs.Any(f => string.Equals(f.Key.Title, title) && f.Key.ModelType == type))
+                tab = Tabs.First(f => string.Equals(f.Key.Title, title) && f.Key.ModelType == type).Value;
             // Otherwise create it
             else
             {
@@ -448,7 +448,7 @@ namespace AngelSix.SolidDna
                 tab = manager.GetCommandTab(type, title, createIfNotExist: true);
 
                 // Keep track of this tab
-                mTabs.Add(new CommandManagerTabKey { ModelType = type, Title = title }, tab);
+                Tabs.Add(new CommandManagerTabKey { ModelType = type, Title = title }, tab);
             }
 
             // New list of values
@@ -493,7 +493,7 @@ namespace AngelSix.SolidDna
             PlugInIntegration.CallbackFired -= PlugInIntegration_CallbackFired;
 
             // Dispose all tabs
-            foreach (var tab in mTabs.Values)
+            foreach (var tab in Tabs.Values)
                 tab.Dispose();
 
             base.Dispose();
