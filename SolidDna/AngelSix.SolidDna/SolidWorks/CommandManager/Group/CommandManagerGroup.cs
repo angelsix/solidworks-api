@@ -476,8 +476,40 @@ namespace AngelSix.SolidDna
 
             // If there are items to add...
             if (ids?.Count > 0)
+            {
                 // Add all the items
                 tab.Box.UnsafeObject.AddCommands(ids.ToArray(), styles.ToArray());
+
+                // Add a separator before each item that wants one.
+                AddSeparators(items, tab);
+            }
+        }
+
+        /// <summary>
+        /// Add a separator before each <see cref="CommandManagerItem"/> that needs one.
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="tab"></param>
+        private static void AddSeparators(List<CommandManagerItem> items, CommandManagerTab tab)
+        {
+            // Get the current tab box
+            var tabBox = (CommandTabBox) tab.Box.UnsafeObject;
+
+            // Add a separator before each item that wants one
+            var itemsThatNeedSeparator = items.Where(f => f.AddSeparatorBeforeThisItem).ToList();
+            foreach (var item in itemsThatNeedSeparator)
+            {
+                // Add the separator and split the current tab box in two.
+                // Returns the newly created tab box that contains the current items and all items on the right of it.
+                var newTabBox = tab.UnsafeObject.AddSeparator(tabBox, item.CommandId);
+
+                // Stop if the don't receive a new tab box.
+                if (newTabBox == null)
+                    break;
+                
+                // Use the new tab box to create the next separator.
+                tabBox = newTabBox;
+            }
         }
 
         #endregion
