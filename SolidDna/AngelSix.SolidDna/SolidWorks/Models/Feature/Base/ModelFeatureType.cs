@@ -726,7 +726,7 @@
         /// <summary>
         /// This feature is <see cref="FeatureSweepData"/>
         /// </summary>
-        SurfaceSweep,
+        SurfaceSweepData,
 
         /// <summary>
         /// This feature does not have an interface
@@ -761,7 +761,7 @@
         /// <summary>
         /// This feature is <see cref="FeatureAngleMateData"/>
         /// </summary>
-        AngleMate,
+        AngleMateData,
 
         /// <summary>
         /// This feature is <see cref="FeatureCamFollowerMateData"/>

@@ -68,7 +68,7 @@ namespace AngelSix.SolidDna
                     return VersionYear < 2019 ? ModelFeatureType.Mate : ModelFeatureType.PerpendicularMateData;
 
                 case "MatePlanarAngleDim":
-                    return VersionYear < 2018 ? ModelFeatureType.Mate : ModelFeatureType.AngleMate;
+                    return VersionYear < 2018 ? ModelFeatureType.Mate : ModelFeatureType.AngleMateData;
 
                 case "MateProfileCenter":
                     return ModelFeatureType.ProfileCenterMateData;
@@ -715,7 +715,7 @@ namespace AngelSix.SolidDna
 
                 // NOTE: No interface until 2018
                 case "SweepRefSurface":
-                    return VersionYear < 2018 ? ModelFeatureType.None : ModelFeatureType.SurfaceSweep;
+                    return VersionYear < 2018 ? ModelFeatureType.None : ModelFeatureType.SurfaceSweepData;
 
                 case "TrimRefSurface":
                     return ModelFeatureType.SurfaceTrimData;

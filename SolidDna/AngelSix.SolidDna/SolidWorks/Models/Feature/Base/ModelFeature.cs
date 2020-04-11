@@ -8,9 +8,9 @@ namespace AngelSix.SolidDna
 
         From the feature, I then need to get the specific feature. This is where the fun begins.
  
-        I call feature. GetTypeName2 to get the type. Then from this list http://help.solidworks.com/2016/english/api/sldworksapi/SOLIDWORKS.Interop.sldworks~SOLIDWORKS.Interop.sldworks.IFeature~GetTypeName2.html I figure out what type of feature I should expect from GetSpecificFeature2.
+        I call feature. GetTypeName2 to get the type. Then from this list http://help.solidworks.com/2020/english/api/sldworksapi/SOLIDWORKS.Interop.sldworks~SOLIDWORKS.Interop.sldworks.IFeature~GetTypeName2.html I figure out what type of feature I should expect from GetSpecificFeature2.
  
-        I’ve mapped everything then I come to check out the document for GetSpecificFeature2 http://help.solidworks.com/2016/english/api/sldworksapi/SOLIDWORKS.Interop.sldworks~SOLIDWORKS.Interop.sldworks.IFeature~GetSpecificFeature2.html
+        I’ve mapped everything then I come to check out the document for GetSpecificFeature2 http://help.solidworks.com/2020/english/api/sldworksapi/SOLIDWORKS.Interop.sldworks~SOLIDWORKS.Interop.sldworks.IFeature~GetSpecificFeature2.html
  
         It states it returns IAttribute, IBodyFolder etc... Now this list doesn’t match up. 
  
@@ -232,6 +232,16 @@ namespace AngelSix.SolidDna
         #region Feature Data
 
         /// <summary>
+        /// Checks if this feature's specific type is Advanced Hole Wizard data
+        /// </summary>
+        public bool IsAdvancedHoleWizardData => FeatureType == ModelFeatureType.AdvancedHoleWizardData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is  data
+        /// </summary>
+        public bool IsAngleMateData => FeatureType == ModelFeatureType.AngleMateData;
+
+        /// <summary>
         /// Checks if this feature's specific type is Base Flange data
         /// </summary>
         public bool IsBaseFlangeData => FeatureType == ModelFeatureType.BaseFlangeData;
@@ -410,6 +420,11 @@ namespace AngelSix.SolidDna
         /// Checks if this feature's specific type is Gear Mate data
         /// </summary>
         public bool IsGearMateData => FeatureType == ModelFeatureType.GearMateData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is Ground Plane data
+        /// </summary>
+        public bool IsGroundPlaneData => FeatureType == ModelFeatureType.GroundPlane;
 
         /// <summary>
         /// Checks if this feature's specific type is Gusset data
@@ -810,6 +825,11 @@ namespace AngelSix.SolidDna
         /// Checks if this feature's specific type is Surface Ruled data
         /// </summary>
         public bool IsSurfaceRuledData => FeatureType == ModelFeatureType.SurfaceRuledData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is Surface Sweep data
+        /// </summary>
+        public bool IsSurfaceSweepData => FeatureType == ModelFeatureType.SurfaceSweepData;
 
         /// <summary>
         /// Checks if this feature's specific type is Surface Trim data
