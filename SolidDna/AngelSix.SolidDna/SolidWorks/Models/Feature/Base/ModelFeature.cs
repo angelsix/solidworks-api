@@ -36,9 +36,10 @@ namespace AngelSix.SolidDna
     /// 
     /// TODO: See if we can add support for non-interface types
     ///        
-    ///       Bending (Flex), Deform, Imported, GridFeature (Grid), 
-    ///       AEMTorsionalSpring (TorsionalSpring), FormToolInstance (FormTool), 
-    ///       BlendRefSurface (Surface-Loft), RefSurface (Surface-Imported),
+    ///       AsmExploder (AssemblyExplodedView), CompExplodeStep (AssemblyExplodeStep), Bending (Flex),
+    ///       BodyExplodeStep (MultiBodyPartExplodeStep), Deform, Imported, GridFeature (Grid),
+    ///       AEMTorsionalSpring (TorsionalSpring), FormToolInstance (FormTool), BlendRefSurface (Surface-Loft),
+    ///       PrtExploder (MultiBodyPartExplodedView), RefSurface (Surface-Imported),
     ///       SweepRefSurface (Surface-Sweep), UnTrimRefSurf (Surface-Untrim)
     /// </summary>
     public class ModelFeature : SharedSolidDnaObject<Feature>

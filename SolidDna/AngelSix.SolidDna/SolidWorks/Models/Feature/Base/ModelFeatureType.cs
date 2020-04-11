@@ -724,7 +724,8 @@
         SurfaceImported,
 
         /// <summary>
-        /// This feature is <see cref="FeatureSweepData"/>
+        /// This feature is <see cref="FeatureSweepData"/>.
+        /// This feature had no interface before SOLIDWORKS 2018.
         /// </summary>
         SurfaceSweepData,
 
@@ -901,6 +902,26 @@
         /// <summary>
         /// This feature is <see cref="FeatureSheetMetalFolder"/>
         /// </summary>
-        SheetMetalFolder
+        SheetMetalFolder,
+
+        /// <summary>
+        /// This feature does not have an interface
+        /// </summary>
+        AssemblyExplodedView,
+
+        /// <summary>
+        /// This feature does not have an interface
+        /// </summary>
+        AssemblyExplodeStep,
+
+        /// <summary>
+        /// This feature does not have an interface
+        /// </summary>
+        MultiBodyPartExplodeStep,
+
+        /// <summary>
+        /// This feature does not have an interface
+        /// </summary>
+        MultiBodyPartExplodedView
     }
 }

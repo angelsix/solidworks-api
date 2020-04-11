@@ -23,9 +23,13 @@ namespace AngelSix.SolidDna
             {
                 #region Assembly
 
+                // NOTE: No interface
                 case "AsmExploder":
+                    return ModelFeatureType.AssemblyExplodedView;
+
+                // NOTE: No interface
                 case "CompExplodeStep":
-                    return ModelFeatureType.None;
+                    return ModelFeatureType.AssemblyExplodeStep;
 
                 case "ExplodeLineProfileFeature":
                     return ModelFeatureType.Sketch;
@@ -122,8 +126,9 @@ namespace AngelSix.SolidDna
                 case "BlendCut":
                     return ModelFeatureType.LoftData;
 
+                // NOTE: No interface
                 case "BodyExplodeStep":
-                    return ModelFeatureType.None;
+                    return ModelFeatureType.MultiBodyPartExplodeStep;
 
                 case "Boss":
                 case "BossThin":
@@ -238,8 +243,9 @@ namespace AngelSix.SolidDna
                 case "NetBlend":
                     return ModelFeatureType.BoundaryBossData;
 
+                // NOTE: No interface
                 case "PrtExploder":
-                    return ModelFeatureType.None;
+                    return ModelFeatureType.MultiBodyPartExplodedView;
 
                 case "Punch":
                     return ModelFeatureType.IndentData;
@@ -715,7 +721,7 @@ namespace AngelSix.SolidDna
 
                 // NOTE: No interface until 2018
                 case "SweepRefSurface":
-                    return VersionYear < 2018 ? ModelFeatureType.None : ModelFeatureType.SurfaceSweepData;
+                    return ModelFeatureType.SurfaceSweepData;
 
                 case "TrimRefSurface":
                     return ModelFeatureType.SurfaceTrimData;
