@@ -5,14 +5,14 @@ namespace AngelSix.SolidDna
     /// <summary>
     /// Represents a SolidWorks Weldment Member feature data
     /// </summary>
-    public class FeatureWeldmentMemberData : SolidDnaObject<IWeldmentTrimExtendFeatureData>
+    public class FeatureWeldmentMemberData : SolidDnaObject<IStructuralMemberFeatureData>
     {
         #region Constructor
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public FeatureWeldmentMemberData(IWeldmentTrimExtendFeatureData model) : base(model)
+        public FeatureWeldmentMemberData(IStructuralMemberFeatureData model) : base(model)
         {
 
         }
