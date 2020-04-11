@@ -7,7 +7,7 @@
     <Authors>Luke Malpass</Authors>
     <Company>AngelSix Ltd</Company>
     <Description>The new SolidDNA SDK, making the SolidWorks API easier, well behaved and modern</Description>
-    <Copyright>Copyright © 2016-2019</Copyright>
+    <Copyright>Copyright © 2016-2020</Copyright>
     <PackageProjectUrl>https://github.com/angelsix/solidworks-api</PackageProjectUrl>
     <RepositoryUrl>https://github.com/angelsix/solidworks-api</RepositoryUrl>
     <PackageTags>soliddna solidworks angelsix luke malpass api</PackageTags>
