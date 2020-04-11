@@ -896,7 +896,7 @@
         /// <summary>
         /// This feature is <see cref="FeatureNormalCutData"/>
         /// </summary>
-        NormalCut,
+        NormalCutData,
 
         /// <summary>
         /// This feature is <see cref="FeatureSheetMetalFolder"/>

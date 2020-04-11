@@ -568,7 +568,7 @@ namespace AngelSix.SolidDna
                     return ModelFeatureType.LoftedBendsData;
 
                 case "NormalCut":
-                    return ModelFeatureType.NormalCut;
+                    return ModelFeatureType.NormalCutData;
 
                 case "OneBend":
                     return ModelFeatureType.OneBendData;
