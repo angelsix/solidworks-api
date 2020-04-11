@@ -108,11 +108,6 @@ namespace AngelSix.SolidDna
         public bool IsBom => FeatureType == ModelFeatureType.Bom;
 
         /// <summary>
-        /// Checks if this feature's specific type is a Bounding Box
-        /// </summary>
-        public bool IsBoundingBox => FeatureType == ModelFeatureType.BoundingBox;
-
-        /// <summary>
         /// Checks if this feature's specific type is a Camera
         /// </summary>
         public bool IsCamera => FeatureType == ModelFeatureType.Camera;
@@ -255,6 +250,11 @@ namespace AngelSix.SolidDna
         /// Checks if this feature's specific type is Boundary Boss data
         /// </summary>
         public bool IsBoundaryBossData => FeatureType == ModelFeatureType.BoundaryBossData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is Bounding Box data
+        /// </summary>
+        public bool IsBoundingBoxData => FeatureType == ModelFeatureType.BoundingBoxData;
 
         /// <summary>
         /// Checks if this feature's specific type is Break Corner data
@@ -424,7 +424,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Checks if this feature's specific type is Ground Plane data
         /// </summary>
-        public bool IsGroundPlaneData => FeatureType == ModelFeatureType.GroundPlane;
+        public bool IsGroundPlaneData => FeatureType == ModelFeatureType.GroundPlaneData;
 
         /// <summary>
         /// Checks if this feature's specific type is Gusset data

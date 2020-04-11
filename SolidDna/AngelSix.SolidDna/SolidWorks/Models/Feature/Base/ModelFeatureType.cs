@@ -886,12 +886,12 @@
         /// <summary>
         /// This feature is <see cref="FeatureBoundingBoxData"/>
         /// </summary>
-        BoundingBox,
+        BoundingBoxData,
 
         /// <summary>
         /// This feature is <see cref="FeatureGroundPlaneData"/>
         /// </summary>
-        GroundPlane,
+        GroundPlaneData,
 
         /// <summary>
         /// This feature is <see cref="FeatureNormalCutData"/>

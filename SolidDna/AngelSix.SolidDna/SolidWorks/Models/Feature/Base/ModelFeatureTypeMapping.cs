@@ -493,13 +493,13 @@ namespace AngelSix.SolidDna
                 #region Reference Geometry
 
                 case "BoundingBox":
-                    return ModelFeatureType.BoundingBox;
+                    return ModelFeatureType.BoundingBoxData;
 
                 case "CoordSys":
                     return ModelFeatureType.CoordinateSystemData;
 
                 case "GroundPlane":
-                    return ModelFeatureType.GroundPlane;
+                    return ModelFeatureType.GroundPlaneData;
 
                 case "RefAxis":
 
