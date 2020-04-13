@@ -10,7 +10,7 @@
         /// <summary>
         /// The editor used for this custom property
         /// </summary>
-        private CustomPropertyEditor mEditor;
+        private readonly CustomPropertyEditor mEditor;
 
         #endregion
 
@@ -19,7 +19,7 @@
         /// <summary>
         /// The name of the custom property
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         /// <summary>
         /// The value of the custom property.
