@@ -124,6 +124,11 @@
         /// </summary>
         SolidWorksModelPartGetFeatureByNameError = 11007,
 
+        /// <summary>
+        /// There was an error getting the custom property editor for a feature.
+        /// </summary>
+        SolidWorksModelFeatureGetCustomPropertyEditor = 11008,
+
         #endregion
 
         #region SolidWorks Command Manager (12,000)

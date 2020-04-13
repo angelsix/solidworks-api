@@ -33,6 +33,7 @@
   <String Name="SolidWorksModelSelectedObjectCastError">An error occurred trying to cast a selected object to a specific type</String>
   <String Name="SolidWorksModelAssemblyGetFeatureByNameError">An error occurred trying to get the feature by name from an assembly document</String>
   <String Name="SolidWorksModelPartGetFeatureByNameError">An error occurred trying to get the feature by name from a part document</String>
+  <String Name="SolidWorksModelFeatureGetCustomPropertyEditor">An error occurred trying to get the custom property editor because the feature is not a cut list folder or the weldment feature</String>
 
   <!-- Thread Helpers -->
   <String Name="ErrorThreadInvokerNullError">Unable to find UI thread as Thread Invoker Enable was never called on a UI thread</String>
