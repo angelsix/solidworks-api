@@ -53,6 +53,9 @@ namespace AngelSix.SolidDna
                 case "MateGearDim":
                     return ModelFeatureType.GearMateData;
 
+                case "MateGroup":
+                    return ModelFeatureType.MateGroup;
+
                 case "MateHinge":
                     return ModelFeatureType.HingeMateData;
                 
@@ -742,6 +745,9 @@ namespace AngelSix.SolidDna
 
                 case "Gusset":
                     return ModelFeatureType.GussetData;
+
+                case "Weldment":
+                    return ModelFeatureType.Weldment;
 
                 case "WeldBeadFeat":
                     return ModelFeatureType.WeldmentBeadData;

@@ -40,7 +40,7 @@ namespace AngelSix.SolidDna
     ///       BodyExplodeStep (MultiBodyPartExplodeStep), Deform, Imported, GridFeature (Grid),
     ///       AEMTorsionalSpring (TorsionalSpring), FormToolInstance (FormTool), BlendRefSurface (Surface-Loft),
     ///       PrtExploder (MultiBodyPartExplodedView), RefSurface (Surface-Imported),
-    ///       SweepRefSurface (Surface-Sweep), UnTrimRefSurf (Surface-Untrim)
+    ///       SweepRefSurface (Surface-Sweep), UnTrimRefSurf (Surface-Untrim), MateGroup (MateGroup), Weldment (Weldment)
     /// </summary>
     public class ModelFeature : SharedSolidDnaObject<Feature>
     {
@@ -154,6 +154,11 @@ namespace AngelSix.SolidDna
         public bool IsMate => FeatureType == ModelFeatureType.Mate;
 
         /// <summary>
+        /// Checks if this feature's specific type is a Mate Group
+        /// </summary>
+        public bool IsMateGroup => FeatureType == ModelFeatureType.MateGroup;
+
+        /// <summary>
         /// Checks if this feature's specific type is a Mate Reference 
         /// </summary>
         public bool IsMateReference => FeatureType == ModelFeatureType.MateReference;
@@ -222,6 +227,11 @@ namespace AngelSix.SolidDna
         /// Checks if this feature's specific type is a Table Anchor
         /// </summary>
         public bool IsTableAnchor => FeatureType == ModelFeatureType.TableAnchor;
+
+        /// <summary>
+        /// Checks if this feature's specific type is a Weldment
+        /// </summary>
+        public bool IsWeldment => FeatureType == ModelFeatureType.Weldment;
 
         #endregion
 

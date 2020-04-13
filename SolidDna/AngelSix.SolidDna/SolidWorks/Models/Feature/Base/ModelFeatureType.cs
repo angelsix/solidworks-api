@@ -922,6 +922,16 @@
         /// <summary>
         /// This feature does not have an interface
         /// </summary>
-        MultiBodyPartExplodedView
+        MultiBodyPartExplodedView,
+
+        /// <summary>
+        /// This feature does not have an interface
+        /// </summary>
+        MateGroup,
+
+        /// <summary>
+        /// This feature does not have an interface
+        /// </summary>
+        Weldment
     }
 }
