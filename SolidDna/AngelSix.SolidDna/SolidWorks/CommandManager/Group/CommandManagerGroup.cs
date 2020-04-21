@@ -141,6 +141,7 @@ namespace AngelSix.SolidDna
         /// <param name="addDropdownBoxForParts">If true, adds a command box to the toolbar for parts that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="addDropdownBoxForAssemblies">If true, adds a command box to the toolbar for assemblies that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
+        /// <param name="documentTypes">The document types where this menu/toolbar is visible</param>
         public CommandManagerGroup(
             ICommandGroup commandGroup, 
             List<CommandManagerItem> items, 
@@ -153,7 +154,8 @@ namespace AngelSix.SolidDna
             bool hasToolbar,
             bool addDropdownBoxForParts = false,
             bool addDropdownBoxForAssemblies = false,
-            bool addDropdownBoxForDrawings = false) : base(commandGroup)
+            bool addDropdownBoxForDrawings = false, 
+            ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing) : base(commandGroup)
         {
             // Store user Id, used to remove the command group
             UserId = userId;
@@ -175,8 +177,8 @@ namespace AngelSix.SolidDna
 
             // Set defaults
 
-            // Show for all types
-            MenuVisibleInDocumentTypes = ModelTemplateType.Assembly | ModelTemplateType.Part | ModelTemplateType.Drawing;
+            // Show for certain types of documents, or when no document is active.
+            MenuVisibleInDocumentTypes = documentTypes;
 
             // Have a menu
             HasMenu = hasMenu;
