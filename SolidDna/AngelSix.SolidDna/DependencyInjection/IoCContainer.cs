@@ -76,7 +76,7 @@ namespace AngelSix.SolidDna
             Framework.Construction.Build();
         }
 
-        #endregion
+        #endregion 
     }
 
     /// <summary>
@@ -100,7 +100,7 @@ namespace AngelSix.SolidDna
             catch (Exception ex)
             {
                 Logger?.LogCriticalSource($"Get '{typeof(T)}' failed. {ex.GetErrorMessage()}");
-                return default(T);
+                return default;
             }
         }
 

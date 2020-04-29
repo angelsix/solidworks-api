@@ -103,7 +103,7 @@ namespace AngelSix.SolidDna
                     if (error.InnerException != null)
                         Logger?.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
 
-                    return default(T);
+                    return default;
                 }
                 // Otherwise, throw 
                 else
@@ -180,7 +180,7 @@ namespace AngelSix.SolidDna
                         Logger?.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
 
                     // Return a default object
-                    return default(T);
+                    return default;
                 }
                 // Otherwise, throw it up
                 else
