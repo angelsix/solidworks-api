@@ -87,7 +87,7 @@ namespace AngelSix.SolidDna
                 Debugger.Break();
 
                 // Log it
-                Logger.LogCriticalSource($"OnCallback failed. {ex.GetErrorMessage()}");
+                Logger?.LogCriticalSource($"OnCallback failed. {ex.GetErrorMessage()}");
             }
         }
 
