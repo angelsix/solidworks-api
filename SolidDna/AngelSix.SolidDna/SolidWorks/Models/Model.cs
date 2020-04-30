@@ -954,6 +954,19 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region ToString
+
+        /// <summary>
+        /// Returns a user-friendly string with model properties.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"Model type: {ModelType}. File path: {FilePath}";
+        }
+
+        #endregion
+
         #region Dispose
 
         /// <summary>

@@ -86,5 +86,19 @@ namespace AngelSix.SolidDna
         public bool AddToTab { get; set; } = true;
 
         #endregion
+
+        #region ToString
+
+        /// <summary>
+        /// Returns a user-friendly string with group properties.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"Name: {Name}. Position: {Position}. Image index: {ImageIndex}. Hint: {Hint}. Tooltip: {Tooltip} ";
+        }
+
+        #endregion
+
     }
 }
