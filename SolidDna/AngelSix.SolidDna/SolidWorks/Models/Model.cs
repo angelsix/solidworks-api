@@ -4,7 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace AngelSix.SolidDna
 {
@@ -262,73 +265,85 @@ namespace AngelSix.SolidDna
             }
         }
 
-        public string PackAndGo(string outputFolder = null)
+        /// <summary>
+        /// Packs up the current model into a flattened structure to a new location
+        /// </summary>
+        /// <param name="outputFolder">The output folder. If left blank will go to Local App Data folder under a unique name</param>
+        /// <param name="filenamePrefix">A prefix to add to all files once packed</param>
+        /// <returns></returns>
+        public string PackAndGo(string outputFolder = null, string filenamePrefix = "")
         {
-            // If no output path specified...
-            if (string.IsNullOrEmpty(outputFolder))
-                // Set it to app data folder
-                outputFolder = Path.Combine(
-                    System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), 
-                    "Config",
-                    "PackAndGo", 
-                    // Unique folder name of current time
-                    DateTime.UtcNow.ToString("MM-dd-yyyy-HH-mm-ss"));
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() =>
+            {
+                // If no output path specified...
+                if (string.IsNullOrEmpty(outputFolder))
+                    // Set it to app data folder
+                    outputFolder = Path.Combine(
+                        System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData),
+                        "SolidDna",
+                        "PackAndGo",
+                        // Unique folder name of current time
+                        DateTime.UtcNow.ToString("MM-dd-yyyy-HH-mm-ss"));
 
-            // Create output folder
-            Directory.CreateDirectory(outputFolder);
+                // Create output folder
+                Directory.CreateDirectory(outputFolder);
 
-            // Get pack and go object
-            var packAndGo = BaseObject.Extension.GetPackAndGo();
+                // If folder is not empty
+                if (Directory.GetFiles(outputFolder)?.Length > 0)
+                    throw new ArgumentException("Output folder is not empty");
 
-            // Include any drawings, SOLIDWORKS Simulation results, and SOLIDWORKS Toolbox components
-            packAndGo.IncludeDrawings = true;
+                // Get pack and go object
+                var packAndGo = BaseObject.Extension.GetPackAndGo();
 
-            // NOTE: We could include more files...
-            // swPackAndGo.IncludeSimulationResults = true;
-            // swPackAndGo.IncludeToolboxComponents = true;
+                // Include any drawings, SOLIDWORKS Simulation results, and SOLIDWORKS Toolbox components
+                packAndGo.IncludeDrawings = true;
 
-            // Get current paths and filenames of the assembly's documents
-            if (!packAndGo.GetDocumentNames(out var filesArray))
-                // Throw error
-                throw new ApplicationException(Localization.GetString("SolidWorksModelPackAndGoGetDocumentNamesError"));
+                // NOTE: We could include more files...
+                // packAndGo.IncludeSimulationResults = true;
+                // packAndGo.IncludeToolboxComponents = true;
 
-            // Cast filenames
-            var filenames = (string[])filesArray;
+                // Add prefix to all files
+                packAndGo.AddPrefix = filenamePrefix;
 
-            //// Get current save-to paths and filenames of the assembly's documents
-            //// We have to call this then we can change the paths after
-            //if (!packAndGo.GetDocumentSaveToNames(out filesArray, out var status))
-            //    // Throw error
-            //    throw new ApplicationException(Localization.GetString("SolidWorksModelPackAndGoGetDocumentSaveNamesError"));
+                // Get current paths and filenames of the assembly's documents
+                if (!packAndGo.GetDocumentNames(out var filesArray))
+                    // Throw error
+                    throw new ArgumentException("Failed to get document names");
 
-            //// Cast filenames
-            //filenames = (string[])filesArray;
+                // Cast filenames
+                var filenames = (string[])filesArray;
 
-            // If fails to set folder where to save the files
-            if (!packAndGo.SetSaveToName(true, outputFolder))
-                // Throw error
-                throw new ApplicationException(Localization.GetString("SolidWorksModelPackAndGoSetSaveToPathError"));
+                // If fails to set folder where to save the files
+                if (!packAndGo.SetSaveToName(true, outputFolder))
+                    // Throw error
+                    throw new ArgumentException("Failed to set save to folder");
 
-            // Flatten the Pack and Go folder so all files are in single folder
-            packAndGo.FlattenToSingleFolder = true;
+                // Flatten the Pack and Go folder so all files are in single folder
+                packAndGo.FlattenToSingleFolder = true;
 
-            // Save all files
-            var results = (PackAndGoSaveStatus[])BaseObject.Extension.SavePackAndGo(packAndGo);
+                // Save all files
+                var results = (PackAndGoSaveStatus[])BaseObject.Extension.SavePackAndGo(packAndGo);
 
-            // There is a result per file, so all must be successful
-            if (!results.All(f => f == PackAndGoSaveStatus.Success))
-                // Throw error
-                throw new ApplicationException(Localization.GetString("SolidWorksModelPackAndGoSaveError"));
+                // There is a result per file, so all must be successful
+                if (!results.All(f => f == PackAndGoSaveStatus.Success))
+                    // Throw error
+                    throw new ArgumentException("Failed to save pack and go");
 
-            // Return the output folder
-            return outputFolder;
+                // Return the output folder
+                return outputFolder;
+            },
+                SolidDnaErrorTypeCode.SolidWorksModel,
+                SolidDnaErrorCode.SolidWorksModelPackAndGoError,
+                Localization.GetString("SolidWorksModelPackAndGoError"));
+
         }
 
-        /// <summary>
-        /// Unhooks model-specific events when model becomes inactive.
-        /// Model becomes inactive when it is closed or when another model becomes the active model.
-        /// </summary>
-        protected void ClearModelEventHandlers()
+    /// <summary>
+    /// Unhooks model-specific events when model becomes inactive.
+    /// Model becomes inactive when it is closed or when another model becomes the active model.
+    /// </summary>
+    protected void ClearModelEventHandlers()
         {
             switch (ModelType)
             {
@@ -924,10 +939,28 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Recurses the model for all of it's components and sub-components
         /// </summary>
-        /// <param name="componentAction">The callback action that is called for each component in the model</param>
-        public void Components(Action<Component, int> componentAction)
+        public IEnumerable<(Component, int)> Components()
         {
-            RecurseComponents(componentAction, new Component(ActiveConfiguration.UnsafeObject?.GetRootComponent3(true)));
+            // Component to be set
+            Component component;
+
+            try
+            {
+                // Try and create component object from active configuration
+                component = new Component(ActiveConfiguration.UnsafeObject?.GetRootComponent3(true));
+            }
+            // If COM failure...
+            catch (InvalidComObjectException)
+            {
+                // Re-get configuration
+                ActiveConfiguration = new ModelConfiguration(BaseObject.IGetActiveConfiguration());
+
+                // Try once more
+                component = new Component(ActiveConfiguration.UnsafeObject?.GetRootComponent3(true));
+            }
+
+            // Return components
+            return RecurseComponents(component);
         }
 
         #region Private Component Helpers
@@ -938,25 +971,28 @@ namespace AngelSix.SolidDna
         /// <param name="componentAction">The callback action that is called for each components in the component</param>
         /// <param name="startComponent">The components to start at</param>
         /// <param name="componentDepth">The current depth of the sub-components based on the original calling components</param>
-        private void RecurseComponents(Action<Component, int> componentAction, Component startComponent = null, int componentDepth = 0)
+        private IEnumerable<(Component, int)> RecurseComponents(Component startComponent = null, int componentDepth = 0)
         {
             // While that component is not null...
             if (startComponent != null)
                 // Inform callback of the feature
-                componentAction(startComponent, componentDepth);
+                yield return (startComponent, componentDepth);
 
             // Loop each child
-            foreach (Component2 childComponent in startComponent.Children)
-            {
-                // Get the current component
-                using (var currentComponent = new Component(childComponent))
+            if (startComponent.Children != null)
+                foreach (Component2 childComponent in startComponent.Children)
                 {
-                    // If we have a component
-                    if (currentComponent != null)
-                        // Recurse into it
-                        RecurseComponents(componentAction, currentComponent, componentDepth + 1);
+                    // Get the current component
+                    using (var currentComponent = new Component(childComponent))
+                    {
+                        // If we have a component
+                        if (currentComponent != null)
+                            // Recurse into it
+                            foreach (var component in RecurseComponents(currentComponent, componentDepth + 1))
+                                // Return component
+                                yield return component;
+                    }
                 }
-            }
         }
 
         #endregion

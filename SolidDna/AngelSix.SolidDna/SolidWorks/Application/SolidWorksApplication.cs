@@ -6,6 +6,7 @@ using System.Linq;
 using System.IO;
 using System.Xml.Linq;
 using SolidWorks.Interop.swconst;
+using System.Windows;
 
 namespace AngelSix.SolidDna
 {
@@ -445,7 +446,7 @@ namespace AngelSix.SolidDna
 
         #endregion
 
-        #region Open Models
+        #region Open/Close Models
 
         /// <summary>
         /// Loops all open documents returning a safe <see cref="Model"/> for each document,
@@ -462,6 +463,58 @@ namespace AngelSix.SolidDna
                     // Return it
                     yield return model;
             }
+        }
+
+        /// <summary>
+        /// Opens a file
+        /// </summary>
+        /// <param name="filePath">The path to the file</param>
+        /// <param name="options">The options to use when opening the file (flags, so | multiple options together)</param>
+        public Model OpenFile(string filePath, OpenDocumentOptions options = OpenDocumentOptions.None, string configuration = null)
+        {
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() =>
+            {
+                // Get file type
+                var fileType = 
+                    filePath.ToLower().EndsWith(".sldprt") ? DocumentType.Part :
+                    filePath.ToLower().EndsWith(".sldasm") ? DocumentType.Assembly :
+                    filePath.ToLower().EndsWith(".slddrw") ? DocumentType.Drawing : throw new ArgumentException("Unknown file type");
+
+                // Set errors and warnings
+                var errors = 0;
+                var warnings = 0;
+
+                // Attempt to open the document
+                var modelCom = BaseObject.OpenDoc6(filePath, (int)fileType, (int)options, configuration, ref errors, ref warnings);
+
+                // TODO: Read errors into enums for better reporting
+                // For now just check if model is not null
+                if (modelCom == null)
+                    throw new ArgumentException($"Failed to open file. Errors {errors}, Warnings {warnings}");
+
+                // Return new model
+                return new Model(modelCom);
+            },
+                SolidDnaErrorTypeCode.SolidWorksApplication,
+                SolidDnaErrorCode.SolidWorksModelOpenError,
+                Localization.GetString("SolidWorksModelOpenFileError"));
+        }
+
+        /// <summary>
+        /// Closes a file
+        /// </summary>
+        /// <param name="filePath">The path to the file</param>
+        public void CloseFile(string filePath)
+        {
+            // Wrap any error
+            SolidDnaErrors.Wrap(() =>
+            {
+                BaseObject.CloseDoc(filePath);   
+            },
+                SolidDnaErrorTypeCode.SolidWorksApplication,
+                SolidDnaErrorCode.SolidWorksModelCloseError,
+                Localization.GetString("SolidWorksModelCloseFileError"));
         }
 
         #endregion

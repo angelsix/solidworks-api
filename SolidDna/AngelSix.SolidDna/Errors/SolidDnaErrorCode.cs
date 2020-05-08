@@ -125,9 +125,25 @@
         SolidWorksModelPartGetFeatureByNameError = 11007,
 
         /// <summary>
-        /// There was an error saving a model using the Save3 call
+        /// There was an error saving a model
         /// </summary>
         SolidWorksModelSaveError = 11008,
+
+        /// <summary>
+        /// There was an error opening model
+        /// </summary>
+        SolidWorksModelOpenError = 11009,
+
+        /// <summary>
+        /// There was an error pack and go-ing
+        /// </summary>
+        SolidWorksModelPackAndGoError = 11010,
+
+        /// <summary>
+        /// There was an error closing a model
+        /// </summary>
+        SolidWorksModelCloseError = 11011,
+
 
         #endregion
 
