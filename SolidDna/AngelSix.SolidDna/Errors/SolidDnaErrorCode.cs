@@ -124,6 +124,11 @@
         /// </summary>
         SolidWorksModelPartGetFeatureByNameError = 11007,
 
+        /// <summary>
+        /// There was an error saving a model using the Save3 call
+        /// </summary>
+        SolidWorksModelSaveError = 11008,
+
         #endregion
 
         #region SolidWorks Command Manager (12,000)

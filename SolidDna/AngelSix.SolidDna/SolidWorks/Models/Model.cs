@@ -27,6 +27,11 @@ namespace AngelSix.SolidDna
         public bool HasBeenSaved => !string.IsNullOrEmpty(FilePath);
 
         /// <summary>
+        /// Indicates if this file needs saving (has file changes).
+        /// </summary>
+        public bool NeedsSaving => BaseObject.GetSaveFlag();
+
+        /// <summary>
         /// The type of document such as a part, assembly or drawing
         /// </summary>
         public ModelType ModelType { get; protected set; }
@@ -255,6 +260,68 @@ namespace AngelSix.SolidDna
                     AsDrawing().ClearSelectionsNotify += UserSelectionPostNotify;
                     break;
             }
+        }
+
+        public string PackAndGo(string outputFolder = null)
+        {
+            // If no output path specified...
+            if (string.IsNullOrEmpty(outputFolder))
+                // Set it to app data folder
+                outputFolder = Path.Combine(
+                    System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), 
+                    "Config",
+                    "PackAndGo", 
+                    // Unique folder name of current time
+                    DateTime.UtcNow.ToString("MM-dd-yyyy-HH-mm-ss"));
+
+            // Create output folder
+            Directory.CreateDirectory(outputFolder);
+
+            // Get pack and go object
+            var packAndGo = BaseObject.Extension.GetPackAndGo();
+
+            // Include any drawings, SOLIDWORKS Simulation results, and SOLIDWORKS Toolbox components
+            packAndGo.IncludeDrawings = true;
+
+            // NOTE: We could include more files...
+            // swPackAndGo.IncludeSimulationResults = true;
+            // swPackAndGo.IncludeToolboxComponents = true;
+
+            // Get current paths and filenames of the assembly's documents
+            if (!packAndGo.GetDocumentNames(out var filesArray))
+                // Throw error
+                throw new ApplicationException(Localization.GetString("SolidWorksModelPackAndGoGetDocumentNamesError"));
+
+            // Cast filenames
+            var filenames = (string[])filesArray;
+
+            //// Get current save-to paths and filenames of the assembly's documents
+            //// We have to call this then we can change the paths after
+            //if (!packAndGo.GetDocumentSaveToNames(out filesArray, out var status))
+            //    // Throw error
+            //    throw new ApplicationException(Localization.GetString("SolidWorksModelPackAndGoGetDocumentSaveNamesError"));
+
+            //// Cast filenames
+            //filenames = (string[])filesArray;
+
+            // If fails to set folder where to save the files
+            if (!packAndGo.SetSaveToName(true, outputFolder))
+                // Throw error
+                throw new ApplicationException(Localization.GetString("SolidWorksModelPackAndGoSetSaveToPathError"));
+
+            // Flatten the Pack and Go folder so all files are in single folder
+            packAndGo.FlattenToSingleFolder = true;
+
+            // Save all files
+            var results = (PackAndGoSaveStatus[])BaseObject.Extension.SavePackAndGo(packAndGo);
+
+            // There is a result per file, so all must be successful
+            if (!results.All(f => f == PackAndGoSaveStatus.Success))
+                // Throw error
+                throw new ApplicationException(Localization.GetString("SolidWorksModelPackAndGoSaveError"));
+
+            // Return the output folder
+            return outputFolder;
         }
 
         /// <summary>
@@ -896,7 +963,95 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region Dependencies
+
+        /// <summary>
+        /// Returns a list of full file paths for all dependencies of this model
+        /// </summary>
+        /// <param name="includeSelf">True to include this file as part of the dependency list</param>
+        /// <param name="includeDrawings">True to look for drawings with the same name as their models</param>
+        /// <returns>Returns a list of full filepaths of all dependencies of this model</returns>
+        public List<string> Dependencies(bool includeSelf = true, bool includeDrawings = true)
+        {
+            // New list
+            var dependencies = new List<string>();
+
+            // If we should add ourselves...
+            if (includeSelf)
+                // Add main model
+                dependencies.Add(FilePath);
+
+            // Get array of dependencies of currently active swModel
+            var modelDependencies = (string[])BaseObject.GetDependencies2(true, true, false);
+
+            // Add all dependencies (Format {"Name1", "Path1+Name1", "Name2", "Path2+Name2", ...})
+            // Take every other element, starting at second one
+            foreach (var dependant in modelDependencies.Where((f, i) => (i + 1) % 2 == 0))
+                dependencies.Add(dependant);
+
+            // Find any drawings that exist...
+            foreach (var drawing in dependencies.Where(f => !f.ToLower().EndsWith(".slddrw") && File.Exists(Path.ChangeExtension(f, ".slddrw")))
+                // Clone list so we can add new items to same list
+                .ToList())
+            {
+                // Add them to list
+                dependencies.Add(drawing);
+            }
+
+            // Return the list (filtering our duplicates)
+            return dependencies.Distinct().ToList();
+        }
+
+        #endregion
+
         #region Saving
+        
+        /// <summary>
+        /// Saves the current model, with the specified options
+        /// </summary>
+        /// <param name="options">Any save as options</param>
+        /// <returns></returns>
+        public ModelSaveResult Save(SaveAsOptions options = SaveAsOptions.None)
+        {
+            // Start with a successful result
+            var results = new ModelSaveResult();
+
+            // Set errors and warnings to none to start with
+            var errors = 0;
+            var warnings = 0;
+
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() =>
+            {
+                // Try and save the model using the Save3 method
+                BaseObject.Save3((int)options, ref errors, ref warnings);
+
+                // Add any warnings
+                results.Warnings = (SaveAsWarnings)warnings;
+
+                // Add any errors
+                results.Errors = (SaveAsErrors)errors;
+
+                // If successful, and this is not a new file 
+                // (otherwise the RCW changes and SolidWorksApplication has to reload ActiveModel)...
+                if (results.Successful && HasBeenSaved)
+                    // Reload model data
+                    ReloadModelData();
+
+                // If we have not been saved, SolidWorks never fires any FileSave events at all
+                // so request a refresh of the ActiveModel. That is the best we can do
+                // as this RCW is now invalid. If this model is not active when saved then 
+                // it will simply reload the active models information
+                if (!HasBeenSaved)
+                    SolidWorksEnvironment.Application.RequestActiveModelChanged();
+
+                // Return result
+                return results;
+            },
+                SolidDnaErrorTypeCode.SolidWorksModel,
+                SolidDnaErrorCode.SolidWorksModelSaveError,
+                Localization.GetString("SolidWorksModelSaveError"));
+        }
 
         /// <summary>
         /// Saves a file to the specified path, with the specified options
@@ -949,7 +1104,7 @@ namespace AngelSix.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelSaveAsError,
-                Localization.GetString("SolidWorksModelGetMaterialError"));
+                Localization.GetString("SolidWorksModelSaveAsError"));
         }
 
         #endregion

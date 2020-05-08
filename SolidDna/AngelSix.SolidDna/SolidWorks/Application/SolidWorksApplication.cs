@@ -355,10 +355,7 @@ namespace AngelSix.SolidDna
             CleanActiveModelData();
 
             // Now get the new data
-            if (BaseObject.IActiveDoc2 == null)
-                mActiveModel = null;
-            else
-                mActiveModel = new Model(BaseObject.IActiveDoc2);
+            mActiveModel = BaseObject.IActiveDoc2 == null ? null : new Model(BaseObject.IActiveDoc2);
 
             // Listen out for events
             if (mActiveModel != null)
@@ -424,7 +421,7 @@ namespace AngelSix.SolidDna
                     if (Disposing)
                         // If we are disposing SolidWorks, there is no need to reload active model info.
                         return;
-                    
+
                     // Now if we have none open, reload information
                     // ActiveDoc is quickly set to null after the last document is closed
                     // GetDocumentCount takes longer to go to zero for big assemblies, but it might be a more reliable indicator.
@@ -445,6 +442,27 @@ namespace AngelSix.SolidDna
         }
 
         #endregion
+
+        #endregion
+
+        #region Open Models
+
+        /// <summary>
+        /// Loops all open documents returning a safe <see cref="Model"/> for each document,
+        /// disposing of the COM reference after its use
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Model> OpenDocuments()
+        {
+            // Loop each child
+            foreach (ModelDoc2 modelDoc in (object[])BaseObject.GetDocuments())
+            {
+                // Create safe model
+                using (var model = new Model(modelDoc))
+                    // Return it
+                    yield return model;
+            }
+        }
 
         #endregion
 
