@@ -10,6 +10,11 @@ namespace AngelSix.SolidDna
         #region Public Properties
 
         /// <summary>
+        /// True to add a separator bar to the left of this item.
+        /// </summary>
+        public bool AddSeparatorBeforeThisItem { get; set; }
+
+        /// <summary>
         /// The unique Id of this item (set by the parent)
         /// </summary>
         public int UniqueId { get; set; }
