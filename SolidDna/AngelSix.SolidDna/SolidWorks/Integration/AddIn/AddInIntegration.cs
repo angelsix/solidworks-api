@@ -28,6 +28,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         protected List<AssemblyName> mReferencedAssemblies = new List<AssemblyName>();
 
+        /// <summary>
+        /// Flag if we have loaded into memory (as ConnectedToSolidWorks can happen multiple times if unloaded/reloaded)
+        /// </summary>
+        protected static bool mLoadedIntoMemory = false;
+
         #endregion
 
         #region Public Properties
@@ -179,7 +184,7 @@ namespace AngelSix.SolidDna
 
             PlugInIntegration.OnCallback(arg);
         }
-        
+
         /// <summary>
         /// Called when SolidWorks has loaded our add-in and wants us to do our connection logic
         /// </summary>
@@ -225,14 +230,21 @@ namespace AngelSix.SolidDna
                 // Log it
                 Logger?.LogDebugSource($"Firing PreLoadPlugIns...");
 
-                // Any pre-load steps
-                PreLoadPlugIns();
+                // If we have never loaded yet...
+                if (!mLoadedIntoMemory)
+                {
+                    // Any pre-load steps
+                    PreLoadPlugIns();
 
-                // Log it
-                Logger?.LogDebugSource($"Configuring PlugIns...");
+                    // Log it
+                    Logger?.LogDebugSource($"Configuring PlugIns...");
 
-                // Perform any plug-in configuration
-                PlugInIntegration.ConfigurePlugIns(assemblyPath);
+                    // Perform any plug-in configuration
+                    PlugInIntegration.ConfigurePlugIns(assemblyPath);
+
+                    // Now loaded so don't do it again
+                    mLoadedIntoMemory = true;
+                }
 
                 // Log it
                 Logger?.LogDebugSource($"Firing ApplicationStartup...");
