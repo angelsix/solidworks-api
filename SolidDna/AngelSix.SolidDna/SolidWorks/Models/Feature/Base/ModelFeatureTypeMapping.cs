@@ -756,7 +756,6 @@ namespace AngelSix.SolidDna
                     return ModelFeatureType.WeldmentTrimExtendData;
 
                 case "WeldMemberFeat":
-                case "WeldmentFeature":
                     return ModelFeatureType.WeldmentMemberData;
 
                 case "WeldmentTableFeat":
