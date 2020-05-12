@@ -324,9 +324,16 @@ namespace AngelSix.SolidDna
                     // Check the active document
                     using (var activeDoc = new Model(BaseObject.IActiveDoc2))
                     {
-                        // If this is the same file that is currently being loaded, ignore this event
-                        if (string.Equals(mFileLoading, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
-                            return;
+                        // View Only mode (Large Assembly Review and Quick View) does not fire the FileOpenPostNotify event, so we catch these models here.
+                        var loadingInViewOnlyMode = activeDoc.UnsafeObject.IsOpenedViewOnly();
+                        if (loadingInViewOnlyMode)
+                            FileOpenPostNotify(activeDoc.FilePath);
+                        else
+                        {
+                            // If this is the same file that is currently being loaded, ignore this event
+                            if (string.Equals(mFileLoading, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
+                                return;
+                        }
                     }
                 }
 
