@@ -17,31 +17,92 @@ namespace AngelSix.SolidDna
                 return ModelFeatureType.None;
 
             // Map to feature types based on this list
-            // http://help.solidworks.com/2016/english/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IFeature~GetTypeName2.html
+            // http://help.solidworks.com/2020/english/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IFeature~GetTypeName2.html
 
             switch (type)
             {
                 #region Assembly
 
+                // NOTE: No interface
+                case "AsmExploder":
+                    return ModelFeatureType.AssemblyExplodedView;
+
+                // NOTE: No interface
+                case "CompExplodeStep":
+                    return ModelFeatureType.AssemblyExplodeStep;
+
                 case "ExplodeLineProfileFeature":
                     return ModelFeatureType.Sketch;
 
                 case "InContextFeatHolder":
+                case "MagneticGroundPlane":
                     return ModelFeatureType.Feature;
 
+                case "MateCamTangent":
+                    return ModelFeatureType.CamFollowerMateData;
+
                 case "MateCoincident":
+                    return VersionYear < 2019 ? ModelFeatureType.Mate : ModelFeatureType.CoincidentMateData;
+
                 case "MateConcentric":
+                    return VersionYear < 2019 ? ModelFeatureType.Mate : ModelFeatureType.ConcentricMateData;
+                
                 case "MateDistanceDim":
+                    return VersionYear < 2018 ? ModelFeatureType.Mate : ModelFeatureType.DistanceMateData;
+                
+                case "MateGearDim":
+                    return ModelFeatureType.GearMateData;
+
+                case "MateGroup":
+                    return ModelFeatureType.MateGroup;
+
+                case "MateHinge":
+                    return ModelFeatureType.HingeMateData;
+                
                 case "MateInPlace":
-                case "MateParallel":
-                case "MatePerpendicular":
-                case "MatePlanarAngleDim":
-                case "MateSymmetric":
-                case "MateTangent":
-                case "MateWidth":
                     return ModelFeatureType.Mate;
 
-                case "Reference":
+                case "MateLinearCoupler":
+                    return ModelFeatureType.LinearCouplerMateData;
+
+                case "MateLock":
+                    return ModelFeatureType.LockMateData;
+
+                case "MateParallel":
+                    return VersionYear < 2019 ? ModelFeatureType.Mate : ModelFeatureType.ParallelMateData;
+
+                case "MatePerpendicular":
+                    return VersionYear < 2019 ? ModelFeatureType.Mate : ModelFeatureType.PerpendicularMateData;
+
+                case "MatePlanarAngleDim":
+                    return VersionYear < 2018 ? ModelFeatureType.Mate : ModelFeatureType.AngleMateData;
+
+                case "MateProfileCenter":
+                    return ModelFeatureType.ProfileCenterMateData;
+
+                case "MateRackPinionDim":
+                    return ModelFeatureType.RackPinionMateData;
+
+                case "MateScrew":
+                    return ModelFeatureType.ScrewMateData;
+
+                case "MateSlot":
+                    return ModelFeatureType.SlotMateData;
+
+                case "MateSymmetric":
+                    return VersionYear < 2018 ? ModelFeatureType.Mate : ModelFeatureType.SymmetricMateData;
+
+                case "MateTangent":
+                    return VersionYear < 2019 ? ModelFeatureType.Mate : ModelFeatureType.TangentMateData;
+                
+                case "MateUniversalJoint":
+                    return ModelFeatureType.UniversalJointMateData;
+
+                case "MateWidth":
+                    return VersionYear < 2018 ? ModelFeatureType.Mate : ModelFeatureType.WidthMateData;
+
+                case "Reference": // removed from the 2018 and later help page
+                case "PosGroupFolder":
                     return ModelFeatureType.MateReference;
 
                 case "SmartComponentFeature":
@@ -50,6 +111,9 @@ namespace AngelSix.SolidDna
                 #endregion
 
                 #region Body
+
+                case "AdvHoleWzd":
+                    return ModelFeatureType.AdvancedHoleWizardData;
 
                 case "APattern":
                     return ModelFeatureType.FillPatternData;
@@ -64,6 +128,10 @@ namespace AngelSix.SolidDna
                 case "Blend":
                 case "BlendCut":
                     return ModelFeatureType.LoftData;
+
+                // NOTE: No interface
+                case "BodyExplodeStep":
+                    return ModelFeatureType.MultiBodyPartExplodeStep;
 
                 case "Boss":
                 case "BossThin":
@@ -151,11 +219,17 @@ namespace AngelSix.SolidDna
                 case "LocalLPattern":
                     return ModelFeatureType.LocalLinearPatternData;
 
+                case "LocalSketchPattern":
+                    return ModelFeatureType.LocalSketchPatternData;
+
                 case "LPattern":
                     return ModelFeatureType.LinearPatternData;
 
                 case "MacroFeature":
                     return ModelFeatureType.MacroData;
+
+                case "MirrorCompFeat":
+                    return ModelFeatureType.MirrorComponentData;
 
                 case "MirrorPattern":
                     return ModelFeatureType.MirrorPatternData;
@@ -171,6 +245,10 @@ namespace AngelSix.SolidDna
 
                 case "NetBlend":
                     return ModelFeatureType.BoundaryBossData;
+
+                // NOTE: No interface
+                case "PrtExploder":
+                    return ModelFeatureType.MultiBodyPartExplodedView;
 
                 case "Punch":
                     return ModelFeatureType.IndentData;
@@ -217,6 +295,9 @@ namespace AngelSix.SolidDna
                 case "Sweep":
                 case "SweepCut":
                     return ModelFeatureType.SweepData;
+
+                case "SweepThread":
+                    return ModelFeatureType.ThreadData;
 
                 case "TablePattern":
                     return ModelFeatureType.TablePatternData;
@@ -291,14 +372,10 @@ namespace AngelSix.SolidDna
                 case "FtrFolder":
                 case "InsertedFeatureFolder":
                 case "MateReferenceGroupFolder":
-                    return ModelFeatureType.FeatureFolder;
-
-                case "PosGroupFolder":
-                    return ModelFeatureType.MateReference;
-
                 case "ProfileFtrFolder":
                 case "RefAxisFtrFolder":
                 case "RefPlaneFtrFolder":
+                case "SketchSliceFolder":
                     return ModelFeatureType.FeatureFolder;
 
                 case "SolidBodyFolder":
@@ -312,6 +389,16 @@ namespace AngelSix.SolidDna
                     else
                         return ModelFeatureType.None;
 
+                case "TemplateFlatPattern":
+                    return ModelFeatureType.FlatPatternFolder;
+
+                #endregion
+
+                #region Imported file
+
+                case "MBimport":
+                    return ModelFeatureType.Import3DInterconnectData;
+                
                 #endregion
 
                 #region Miscellaneous
@@ -414,8 +501,14 @@ namespace AngelSix.SolidDna
 
                 #region Reference Geometry
 
+                case "BoundingBox":
+                    return ModelFeatureType.BoundingBoxData;
+
                 case "CoordSys":
                     return ModelFeatureType.CoordinateSystemData;
+
+                case "GroundPlane":
+                    return ModelFeatureType.GroundPlaneData;
 
                 case "RefAxis":
 
@@ -483,6 +576,9 @@ namespace AngelSix.SolidDna
                 case "LoftedBend":
                     return ModelFeatureType.LoftedBendsData;
 
+                case "NormalCut":
+                    return ModelFeatureType.NormalCutData;
+
                 case "OneBend":
                     return ModelFeatureType.OneBendData;
 
@@ -504,8 +600,9 @@ namespace AngelSix.SolidDna
                 case "SMMiteredFlange":
                     return ModelFeatureType.MiterFlangeData;
 
+                // According to the help, SolidWorks 2017 and newer return a SheetMetalFolder, even though that interface exists since 2014
                 case "TemplateSheetMetal":
-                    return ModelFeatureType.SheetMetalData;
+                    return VersionYear < 2017 ? ModelFeatureType.SheetMetalData : ModelFeatureType.SheetMetalFolder;
 
                 case "ToroidalBend":
                     return ModelFeatureType.OneBendData;
@@ -625,9 +722,9 @@ namespace AngelSix.SolidDna
                 case "SurfCut":
                     return ModelFeatureType.SurfaceCutData;
 
-                // NOTE: No interface
+                // NOTE: No interface until 2018
                 case "SweepRefSurface":
-                    return ModelFeatureType.SurfaceSweep;
+                    return ModelFeatureType.SurfaceSweepData;
 
                 case "TrimRefSurface":
                     return ModelFeatureType.SurfaceTrimData;
@@ -649,6 +746,9 @@ namespace AngelSix.SolidDna
                 case "Gusset":
                     return ModelFeatureType.GussetData;
 
+                case "Weldment":
+                    return ModelFeatureType.Weldment;
+
                 case "WeldBeadFeat":
                     return ModelFeatureType.WeldmentBeadData;
 
@@ -667,5 +767,11 @@ namespace AngelSix.SolidDna
                     return ModelFeatureType.None;
             }
         }
+
+        /// <summary>
+        /// Helper property to get the SOLIDWORKS version year.
+        /// If unknown will return -1.
+        /// </summary>
+        private static int VersionYear => SolidWorksEnvironment.Application.SolidWorksVersion.Version;
     }
 }

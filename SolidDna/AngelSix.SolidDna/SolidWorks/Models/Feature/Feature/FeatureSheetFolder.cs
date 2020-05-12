@@ -3,16 +3,16 @@
 namespace AngelSix.SolidDna
 {
     /// <summary>
-    /// Represents a SolidWorks Weldment Member feature data
+    /// Represents a SolidWorks Sheet Metal folder
     /// </summary>
-    public class FeatureWeldmentMemberData : SolidDnaObject<IStructuralMemberFeatureData>
+    public class FeatureSheetMetalFolder: SolidDnaObject<ISheetMetalFolder>
     {
         #region Constructor
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public FeatureWeldmentMemberData(IStructuralMemberFeatureData model) : base(model)
+        public FeatureSheetMetalFolder(ISheetMetalFolder model) : base(model)
         {
 
         }

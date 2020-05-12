@@ -3,16 +3,16 @@
 namespace AngelSix.SolidDna
 {
     /// <summary>
-    /// Represents a SolidWorks Weldment Member feature data
+    /// Represents a SolidWorks Profile Center Mate feature data
     /// </summary>
-    public class FeatureWeldmentMemberData : SolidDnaObject<IStructuralMemberFeatureData>
+    public class FeatureProfileCenterMateData : SolidDnaObject<IProfileCenterMateFeatureData>
     {
         #region Constructor
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public FeatureWeldmentMemberData(IStructuralMemberFeatureData model) : base(model)
+        public FeatureProfileCenterMateData(IProfileCenterMateFeatureData model) : base(model)
         {
 
         }

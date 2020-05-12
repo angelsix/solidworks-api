@@ -3,16 +3,16 @@
 namespace AngelSix.SolidDna
 {
     /// <summary>
-    /// Represents a SolidWorks Weldment Member feature data
+    /// Represents a SolidWorks Sheet Metal Normal Cut feature data
     /// </summary>
-    public class FeatureWeldmentMemberData : SolidDnaObject<IStructuralMemberFeatureData>
+    public class FeatureNormalCutData : SolidDnaObject<ISMNormalCutFeatureData2>
     {
         #region Constructor
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public FeatureWeldmentMemberData(IStructuralMemberFeatureData model) : base(model)
+        public FeatureNormalCutData(ISMNormalCutFeatureData2 model) : base(model)
         {
 
         }
