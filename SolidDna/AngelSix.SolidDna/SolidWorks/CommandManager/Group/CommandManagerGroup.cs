@@ -482,6 +482,19 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region ToString
+
+        /// <summary>
+        /// Returns a user-friendly string with group properties.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"{Title}: {Items?.Count ?? 0} items, {Flyouts?.Count ?? 0} flyouts. Has menu: {HasMenu}. Has toolbar: {HasToolbar}";
+        }
+
+        #endregion
+
         #region Dispose
 
         /// <summary>

@@ -825,6 +825,19 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region ToString
+
+        /// <summary>
+        /// Returns a user-friendly string with feature properties.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"Name: {FeatureName}. Type: {FeatureTypeName}";
+        }
+
+        #endregion
+
         #region Dispose
 
         /// <summary>

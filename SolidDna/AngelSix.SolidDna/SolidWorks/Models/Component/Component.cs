@@ -43,6 +43,19 @@ namespace AngelSix.SolidDna
 
         #endregion
 
+        #region ToString
+
+        /// <summary>
+        /// Returns a user-friendly string with component properties.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"Name: {Name}. Is root: {IsRoot}";
+        }
+
+        #endregion
+
         #region Dispose
 
         public override void Dispose()
