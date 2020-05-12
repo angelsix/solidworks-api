@@ -3,6 +3,9 @@ using System.Drawing;
 
 namespace AngelSix.SolidDna
 {
+    /// <summary>
+    /// A view of a drawing
+    /// </summary>
     public class DrawingView : SolidDnaObject<View>
     {
         #region Public Properties

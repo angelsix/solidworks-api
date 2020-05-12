@@ -27,7 +27,6 @@ namespace AngelSix.SolidDna
 
         #endregion
 
-
         #region Constructor
 
         /// <summary>

@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents the suppression state action of a <see cref="ModelFeature"/>
     /// 
-    /// NOTE: Known types are here http://help.solidworks.com/2019/english/api/swconst/SOLIDWORKS.Interop.swconst~SOLIDWORKS.Interop.swconst.swFeatureSuppressionAction_e.html
+    /// NOTE: Known types are here http://help.solidworks.com/2020/english/api/swconst/SOLIDWORKS.Interop.swconst~SOLIDWORKS.Interop.swconst.swFeatureSuppressionAction_e.html
     /// 
     /// </summary>
     public enum ModelFeatureSuppressionState

@@ -6,6 +6,7 @@ using System.Linq;
 using System.IO;
 using System.Xml.Linq;
 using SolidWorks.Interop.swconst;
+using System.Windows;
 
 namespace AngelSix.SolidDna
 {
@@ -99,6 +100,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         public event Action<string, Model> ActiveFileSaved = (path, model) => { };
 
+        /// <summary>
+        /// Called when SolidWorks is idle
+        /// </summary>
+        public event Action Idle = () => { };
+
         #endregion
 
         #region Constructor
@@ -126,6 +132,7 @@ namespace AngelSix.SolidDna
             BaseObject.FileOpenPreNotify += FileOpenPreNotify;
             BaseObject.FileOpenPostNotify += FileOpenPostNotify;
             BaseObject.FileNewNotify2 += FileNewPostNotify;
+            BaseObject.OnIdleNotify += OnIdleNotify;
 
             // If we have a cookie...
             if (cookie > 0)
@@ -180,6 +187,26 @@ namespace AngelSix.SolidDna
 
         #region SolidWorks Event Methods
 
+        /// <summary>
+        ///  Called when SolidWorks is idle
+        /// </summary>
+        /// <returns></returns>
+        private int OnIdleNotify()
+        {
+            // Wrap any error
+            SolidDnaErrors.Wrap(() =>
+            {
+                // Inform listeners
+                Idle();
+            },
+                SolidDnaErrorTypeCode.SolidWorksApplication,
+                SolidDnaErrorCode.SolidWorksApplicationError,
+                Localization.GetString("SolidWorksApplicationOnIdleNotificationError"));
+
+            // NOTE: 0 is OK, anything else is an error
+            return 0;
+        }
+
         #region File New
 
         /// <summary>
@@ -194,6 +221,21 @@ namespace AngelSix.SolidDna
         {
             // Inform listeners
             FileCreated(mActiveModel);
+
+            // IMPORTANT: This is needed after a new file is created as the model COM reference
+            //            is created on ActiveModelChanged, and then the file is created after
+            // 
+            //            This gives a COM reference that fires the FileSaveAsPreNotify event
+            //            but then gets disposed and we no longer have any hooks to the active
+            //            file so no further events of file save or anything to do with the 
+            //            active model fire.
+            //
+            //            Reloading them at this moment fixes that issue. Then the next issue
+            //            is that after the model FileSavePostNotify is fired, it will dispose
+            //            of its COM reference again if this is the first time the file is 
+            //            saved. To fix that we wait for idle and reload the model information
+            //            again. This fix is inside Model.cs FileSavePostNotify
+            ReloadActiveModelInformation();
 
             // NOTE: 0 is OK, anything else is an error
             return 0;
@@ -282,9 +324,16 @@ namespace AngelSix.SolidDna
                     // Check the active document
                     using (var activeDoc = new Model(BaseObject.IActiveDoc2))
                     {
-                        // If this is the same file that is currently being loaded, ignore this event
-                        if (string.Equals(mFileLoading, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
-                            return;
+                        // View Only mode (Large Assembly Review and Quick View) does not fire the FileOpenPostNotify event, so we catch these models here.
+                        var loadingInViewOnlyMode = activeDoc.UnsafeObject.IsOpenedViewOnly();
+                        if (loadingInViewOnlyMode)
+                            FileOpenPostNotify(activeDoc.FilePath);
+                        else
+                        {
+                            // If this is the same file that is currently being loaded, ignore this event
+                            if (string.Equals(mFileLoading, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
+                                return;
+                        }
                     }
                 }
 
@@ -383,7 +432,7 @@ namespace AngelSix.SolidDna
                     if (Disposing)
                         // If we are disposing SolidWorks, there is no need to reload active model info.
                         return;
-                    
+
                     // Now if we have none open, reload information
                     // ActiveDoc is quickly set to null after the last document is closed
                     // GetDocumentCount takes longer to go to zero for big assemblies, but it might be a more reliable indicator.
@@ -404,6 +453,79 @@ namespace AngelSix.SolidDna
         }
 
         #endregion
+
+        #endregion
+
+        #region Open/Close Models
+
+        /// <summary>
+        /// Loops all open documents returning a safe <see cref="Model"/> for each document,
+        /// disposing of the COM reference after its use
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Model> OpenDocuments()
+        {
+            // Loop each child
+            foreach (ModelDoc2 modelDoc in (object[])BaseObject.GetDocuments())
+            {
+                // Create safe model
+                using (var model = new Model(modelDoc))
+                    // Return it
+                    yield return model;
+            }
+        }
+
+        /// <summary>
+        /// Opens a file
+        /// </summary>
+        /// <param name="filePath">The path to the file</param>
+        /// <param name="options">The options to use when opening the file (flags, so | multiple options together)</param>
+        public Model OpenFile(string filePath, OpenDocumentOptions options = OpenDocumentOptions.None, string configuration = null)
+        {
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() =>
+            {
+                // Get file type
+                var fileType = 
+                    filePath.ToLower().EndsWith(".sldprt") ? DocumentType.Part :
+                    filePath.ToLower().EndsWith(".sldasm") ? DocumentType.Assembly :
+                    filePath.ToLower().EndsWith(".slddrw") ? DocumentType.Drawing : throw new ArgumentException("Unknown file type");
+
+                // Set errors and warnings
+                var errors = 0;
+                var warnings = 0;
+
+                // Attempt to open the document
+                var modelCom = BaseObject.OpenDoc6(filePath, (int)fileType, (int)options, configuration, ref errors, ref warnings);
+
+                // TODO: Read errors into enums for better reporting
+                // For now just check if model is not null
+                if (modelCom == null)
+                    throw new ArgumentException($"Failed to open file. Errors {errors}, Warnings {warnings}");
+
+                // Return new model
+                return new Model(modelCom);
+            },
+                SolidDnaErrorTypeCode.SolidWorksApplication,
+                SolidDnaErrorCode.SolidWorksModelOpenError,
+                Localization.GetString("SolidWorksModelOpenFileError"));
+        }
+
+        /// <summary>
+        /// Closes a file
+        /// </summary>
+        /// <param name="filePath">The path to the file</param>
+        public void CloseFile(string filePath)
+        {
+            // Wrap any error
+            SolidDnaErrors.Wrap(() =>
+            {
+                BaseObject.CloseDoc(filePath);   
+            },
+                SolidDnaErrorTypeCode.SolidWorksApplication,
+                SolidDnaErrorCode.SolidWorksModelCloseError,
+                Localization.GetString("SolidWorksModelCloseFileError"));
+        }
 
         #endregion
 
@@ -561,10 +683,42 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="preference">The preference to get</param>
         /// <returns></returns>
-        public double GetUserPreferencesDouble(swUserPreferenceDoubleValue_e preference)
-        {
-            return BaseObject.GetUserPreferenceDoubleValue((int)preference);
-        }
+        public double GetUserPreferencesDouble(swUserPreferenceDoubleValue_e preference) => BaseObject.GetUserPreferenceDoubleValue((int)preference);
+
+        /// <summary>
+        /// Sets the specified user preference value
+        /// </summary>
+        /// <param name="preference">The preference to set</param>
+        /// <returns></returns>
+        public bool SetUserPreferencesDouble(swUserPreferenceDoubleValue_e preference, double value) => BaseObject.SetUserPreferenceDoubleValue((int)preference, value);
+
+        /// <summary>
+        /// Gets the specified user preference value
+        /// </summary>
+        /// <param name="preference">The preference to get</param>
+        /// <returns></returns>
+        public int GetUserPreferencesInteger(swUserPreferenceIntegerValue_e preference) => BaseObject.GetUserPreferenceIntegerValue((int)preference);
+
+        /// <summary>
+        /// Sets the specified user preference value
+        /// </summary>
+        /// <param name="preference">The preference to set</param>
+        /// <returns></returns>
+        public bool SetUserPreferencesInteger(swUserPreferenceIntegerValue_e preference, int value) => BaseObject.SetUserPreferenceIntegerValue((int)preference, value);
+
+        /// <summary>
+        /// Gets the specified user preference value
+        /// </summary>
+        /// <param name="preference">The preference to get</param>
+        /// <returns></returns>
+        public bool GetUserPreferencesToggle(swUserPreferenceToggle_e preference) => BaseObject.GetUserPreferenceToggle((int)preference);
+
+        /// <summary>
+        /// Sets the specified user preference value
+        /// </summary>
+        /// <param name="preference">The preference to set</param>
+        /// <returns></returns>
+        public void SetUserPreferencesToggle(swUserPreferenceToggle_e preference, bool value) => BaseObject.SetUserPreferenceToggle((int)preference, value);
 
         #endregion
 

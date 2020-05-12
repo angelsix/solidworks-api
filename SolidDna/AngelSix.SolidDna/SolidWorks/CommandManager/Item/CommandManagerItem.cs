@@ -10,6 +10,11 @@ namespace AngelSix.SolidDna
         #region Public Properties
 
         /// <summary>
+        /// True to add a separator bar to the left of this item.
+        /// </summary>
+        public bool AddSeparatorBeforeThisItem { get; set; }
+
+        /// <summary>
         /// The unique Id of this item (set by the parent)
         /// </summary>
         public int UniqueId { get; set; }
@@ -86,5 +91,19 @@ namespace AngelSix.SolidDna
         public bool AddToTab { get; set; } = true;
 
         #endregion
+
+        #region ToString
+
+        /// <summary>
+        /// Returns a user-friendly string with group properties.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"Name: {Name}. Position: {Position}. Image index: {ImageIndex}. Hint: {Hint}. Tooltip: {Tooltip} ";
+        }
+
+        #endregion
+
     }
 }

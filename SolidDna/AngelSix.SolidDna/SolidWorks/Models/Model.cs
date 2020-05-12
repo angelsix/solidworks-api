@@ -4,6 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace AngelSix.SolidDna
 {
@@ -24,6 +28,11 @@ namespace AngelSix.SolidDna
         /// If not, it's a new model currently only in-memory and will not have a file path
         /// </summary>
         public bool HasBeenSaved => !string.IsNullOrEmpty(FilePath);
+
+        /// <summary>
+        /// Indicates if this file needs saving (has file changes).
+        /// </summary>
+        public bool NeedsSaving => BaseObject.GetSaveFlag();
 
         /// <summary>
         /// The type of document such as a part, assembly or drawing
@@ -256,6 +265,143 @@ namespace AngelSix.SolidDna
             }
         }
 
+        /// <summary>
+        /// Packs up the current model into a flattened structure to a new location
+        /// </summary>
+        /// <param name="outputFolder">The output folder. If left blank will go to Local App Data folder under a unique name</param>
+        /// <param name="filenamePrefix">A prefix to add to all files once packed</param>
+        /// <returns></returns>
+        public string PackAndGo(string outputFolder = null, string filenamePrefix = "")
+        {
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() =>
+            {
+                // If no output path specified...
+                if (string.IsNullOrEmpty(outputFolder))
+                    // Set it to app data folder
+                    outputFolder = Path.Combine(
+                        System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData),
+                        "SolidDna",
+                        "PackAndGo",
+                        // Unique folder name of current time
+                        DateTime.UtcNow.ToString("MM-dd-yyyy-HH-mm-ss"));
+
+                // Create output folder
+                Directory.CreateDirectory(outputFolder);
+
+                // If folder is not empty
+                if (Directory.GetFiles(outputFolder)?.Length > 0)
+                    throw new ArgumentException("Output folder is not empty");
+
+                // Get pack and go object
+                var packAndGo = BaseObject.Extension.GetPackAndGo();
+
+                // Include any drawings, SOLIDWORKS Simulation results, and SOLIDWORKS Toolbox components
+                packAndGo.IncludeDrawings = true;
+
+                // NOTE: We could include more files...
+                // packAndGo.IncludeSimulationResults = true;
+                // packAndGo.IncludeToolboxComponents = true;
+
+                // Add prefix to all files
+                packAndGo.AddPrefix = filenamePrefix;
+
+                // Get current paths and filenames of the assembly's documents
+                if (!packAndGo.GetDocumentNames(out var filesArray))
+                    // Throw error
+                    throw new ArgumentException("Failed to get document names");
+
+                // Cast filenames
+                var filenames = (string[])filesArray;
+
+                // If fails to set folder where to save the files
+                if (!packAndGo.SetSaveToName(true, outputFolder))
+                    // Throw error
+                    throw new ArgumentException("Failed to set save to folder");
+
+                // Flatten the Pack and Go folder so all files are in single folder
+                packAndGo.FlattenToSingleFolder = true;
+
+                // Save all files
+                var results = (PackAndGoSaveStatus[])BaseObject.Extension.SavePackAndGo(packAndGo);
+
+                // There is a result per file, so all must be successful
+                if (!results.All(f => f == PackAndGoSaveStatus.Success))
+                    // Throw error
+                    throw new ArgumentException("Failed to save pack and go");
+
+                // Return the output folder
+                return outputFolder;
+            },
+                SolidDnaErrorTypeCode.SolidWorksModel,
+                SolidDnaErrorCode.SolidWorksModelPackAndGoError,
+                Localization.GetString("SolidWorksModelPackAndGoError"));
+
+        }
+
+    /// <summary>
+    /// Unhooks model-specific events when model becomes inactive.
+    /// Model becomes inactive when it is closed or when another model becomes the active model.
+    /// </summary>
+    protected void ClearModelEventHandlers()
+        {
+            switch (ModelType)
+            {
+                case ModelType.Part when AsPart() == null:
+                case ModelType.Assembly when AsAssembly() == null:
+                case ModelType.Drawing when AsDrawing() == null:
+                {
+                    // Happens in multiple cases:
+                    // 1: When SolidWorks is being closed
+                    // 1: When the non-last model is being closed
+                    // 2: When the first model is opened after all models were closed.
+                    return;
+                }
+            }
+
+            // Based on the type of model this is...
+            switch (ModelType)
+            {
+                // Hook into the save and destroy events to keep data fresh
+                case ModelType.Assembly:
+                    AsAssembly().ActiveConfigChangePostNotify -= ActiveConfigChangePostNotify;
+                    AsAssembly().DestroyNotify -= FileDestroyedNotify;
+                    AsAssembly().FileSaveAsNotify2 -= FileSaveAsPreNotify;
+                    AsAssembly().FileSavePostCancelNotify -= FileSaveCanceled;
+                    AsAssembly().FileSavePostNotify -= FileSavePostNotify;
+                    AsAssembly().ModifyNotify -= FileModified;
+                    AsAssembly().RegenPostNotify2 -= AssemblyOrPartRebuilt;
+                    AsAssembly().UserSelectionPostNotify -= UserSelectionPostNotify;
+                    AsAssembly().ClearSelectionsNotify -= UserSelectionPostNotify;
+                    break;
+                case ModelType.Part:
+                    AsPart().ActiveConfigChangePostNotify -= ActiveConfigChangePostNotify;
+                    AsPart().DestroyNotify -= FileDestroyedNotify;
+                    AsPart().FileSaveAsNotify2 -= FileSaveAsPreNotify;
+                    AsPart().FileSavePostCancelNotify -= FileSaveCanceled;
+                    AsPart().FileSavePostNotify -= FileSavePostNotify;
+                    AsPart().ModifyNotify -= FileModified;
+                    AsPart().RegenPostNotify2 -= AssemblyOrPartRebuilt;
+                    AsPart().UserSelectionPostNotify -= UserSelectionPostNotify;
+                    AsPart().ClearSelectionsNotify -= UserSelectionPostNotify;
+                    break;
+                case ModelType.Drawing:
+                    AsDrawing().ActivateSheetPostNotify -= SheetActivatePostNotify;
+                    AsDrawing().ActivateSheetPreNotify -= SheetActivatePreNotify;
+                    AsDrawing().AddItemNotify -= DrawingItemAddNotify;
+                    AsDrawing().DeleteItemNotify -= DrawingDeleteItemNotify;
+                    AsDrawing().DestroyNotify -= FileDestroyedNotify;
+                    AsDrawing().FileSaveAsNotify2 -= FileSaveAsPreNotify;
+                    AsDrawing().FileSavePostCancelNotify -= FileSaveCanceled;
+                    AsDrawing().FileSavePostNotify -= FileSavePostNotify;
+                    AsDrawing().ModifyNotify -= FileModified;
+                    AsDrawing().RegenPostNotify -= DrawingRebuilt;
+                    AsDrawing().UserSelectionPostNotify -= UserSelectionPostNotify;
+                    AsDrawing().ClearSelectionsNotify -= UserSelectionPostNotify;
+                    break;
+            }
+        }
+
         #endregion
 
         #region Model Event Methods
@@ -375,11 +521,35 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         protected int FileSavePostNotify(int saveType, string fileName)
         {
+            // Were we saved or is this a new file?
+            var wasNewFile = !HasBeenSaved;
+
             // Update filepath
             FilePath = BaseObject.GetPathName();
         
             // Inform listeners
             ModelSaved();
+
+            // NOTE: Due to bug in SolidWorks, saving new files refreshes the COM reference
+            //       without it ever being so kind as to inform us via ANY callback in 
+            //       the SolidWorksApplication or this model
+            //      
+            //       So to fix, wait for an idle moment and refresh our info.
+            //       Best fix I can think of for now.
+            //
+            //       We could keep checking the COM instance BaseObject doesn't throw
+            //       an error to detect when it got disposed but I think the idle
+            //       is less intensive and works fine so far
+            if (wasNewFile)
+            {
+                void refreshEvent()
+                {
+                    SolidWorksEnvironment.Application.RequestActiveModelChanged();
+                    SolidWorksEnvironment.Application.Idle -= refreshEvent;
+                }
+
+                SolidWorksEnvironment.Application.Idle += refreshEvent;
+            }
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -481,21 +651,21 @@ namespace AngelSix.SolidDna
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public AssemblyDoc AsAssembly() { return (AssemblyDoc) BaseObject; }
+        public AssemblyDoc AsAssembly() => (AssemblyDoc)BaseObject;
 
         /// <summary>
         /// Casts the current model to a part
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public PartDoc AsPart() { return (PartDoc) BaseObject; }
+        public PartDoc AsPart() => (PartDoc)BaseObject;
 
         /// <summary>
         /// Casts the current model to a drawing
         /// NOTE: Check the <see cref="ModelType"/> to confirm this model is of the correct type before casting
         /// </summary>
         /// <returns></returns>
-        public DrawingDoc AsDrawing() { return (DrawingDoc) BaseObject; }
+        public DrawingDoc AsDrawing() => (DrawingDoc)BaseObject;
 
         /// <summary>
         /// Accesses the current model as a drawing to expose all Drawing API calls.
@@ -769,10 +939,28 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Recurses the model for all of it's components and sub-components
         /// </summary>
-        /// <param name="componentAction">The callback action that is called for each component in the model</param>
-        public void Components(Action<Component, int> componentAction)
+        public IEnumerable<(Component, int)> Components()
         {
-            RecurseComponents(componentAction, new Component(ActiveConfiguration.UnsafeObject?.GetRootComponent3(true)));
+            // Component to be set
+            Component component;
+
+            try
+            {
+                // Try and create component object from active configuration
+                component = new Component(ActiveConfiguration.UnsafeObject?.GetRootComponent3(true));
+            }
+            // If COM failure...
+            catch (InvalidComObjectException)
+            {
+                // Re-get configuration
+                ActiveConfiguration = new ModelConfiguration(BaseObject.IGetActiveConfiguration());
+
+                // Try once more
+                component = new Component(ActiveConfiguration.UnsafeObject?.GetRootComponent3(true));
+            }
+
+            // Return components
+            return RecurseComponents(component);
         }
 
         #region Private Component Helpers
@@ -783,32 +971,123 @@ namespace AngelSix.SolidDna
         /// <param name="componentAction">The callback action that is called for each components in the component</param>
         /// <param name="startComponent">The components to start at</param>
         /// <param name="componentDepth">The current depth of the sub-components based on the original calling components</param>
-        private void RecurseComponents(Action<Component, int> componentAction, Component startComponent = null, int componentDepth = 0)
+        private IEnumerable<(Component, int)> RecurseComponents(Component startComponent = null, int componentDepth = 0)
         {
             // While that component is not null...
             if (startComponent != null)
                 // Inform callback of the feature
-                componentAction(startComponent, componentDepth);
+                yield return (startComponent, componentDepth);
 
             // Loop each child
-            foreach (Component2 childComponent in startComponent.Children)
-            {
-                // Get the current component
-                using (var currentComponent = new Component(childComponent))
+            if (startComponent.Children != null)
+                foreach (Component2 childComponent in startComponent.Children)
                 {
-                    // If we have a component
-                    if (currentComponent != null)
-                        // Recurse into it
-                        RecurseComponents(componentAction, currentComponent, componentDepth + 1);
+                    // Get the current component
+                    using (var currentComponent = new Component(childComponent))
+                    {
+                        // If we have a component
+                        if (currentComponent != null)
+                            // Recurse into it
+                            foreach (var component in RecurseComponents(currentComponent, componentDepth + 1))
+                                // Return component
+                                yield return component;
+                    }
                 }
-            }
         }
 
         #endregion
 
         #endregion
 
+        #region Dependencies
+
+        /// <summary>
+        /// Returns a list of full file paths for all dependencies of this model
+        /// </summary>
+        /// <param name="includeSelf">True to include this file as part of the dependency list</param>
+        /// <param name="includeDrawings">True to look for drawings with the same name as their models</param>
+        /// <returns>Returns a list of full filepaths of all dependencies of this model</returns>
+        public List<string> Dependencies(bool includeSelf = true, bool includeDrawings = true)
+        {
+            // New list
+            var dependencies = new List<string>();
+
+            // If we should add ourselves...
+            if (includeSelf)
+                // Add main model
+                dependencies.Add(FilePath);
+
+            // Get array of dependencies of currently active swModel
+            var modelDependencies = (string[])BaseObject.GetDependencies2(true, true, false);
+
+            // Add all dependencies (Format {"Name1", "Path1+Name1", "Name2", "Path2+Name2", ...})
+            // Take every other element, starting at second one
+            foreach (var dependant in modelDependencies.Where((f, i) => (i + 1) % 2 == 0))
+                dependencies.Add(dependant);
+
+            // Find any drawings that exist...
+            foreach (var drawing in dependencies.Where(f => !f.ToLower().EndsWith(".slddrw") && File.Exists(Path.ChangeExtension(f, ".slddrw")))
+                // Clone list so we can add new items to same list
+                .ToList())
+            {
+                // Add them to list
+                dependencies.Add(drawing);
+            }
+
+            // Return the list (filtering our duplicates)
+            return dependencies.Distinct().ToList();
+        }
+
+        #endregion
+
         #region Saving
+        
+        /// <summary>
+        /// Saves the current model, with the specified options
+        /// </summary>
+        /// <param name="options">Any save as options</param>
+        /// <returns></returns>
+        public ModelSaveResult Save(SaveAsOptions options = SaveAsOptions.None)
+        {
+            // Start with a successful result
+            var results = new ModelSaveResult();
+
+            // Set errors and warnings to none to start with
+            var errors = 0;
+            var warnings = 0;
+
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() =>
+            {
+                // Try and save the model using the Save3 method
+                BaseObject.Save3((int)options, ref errors, ref warnings);
+
+                // Add any warnings
+                results.Warnings = (SaveAsWarnings)warnings;
+
+                // Add any errors
+                results.Errors = (SaveAsErrors)errors;
+
+                // If successful, and this is not a new file 
+                // (otherwise the RCW changes and SolidWorksApplication has to reload ActiveModel)...
+                if (results.Successful && HasBeenSaved)
+                    // Reload model data
+                    ReloadModelData();
+
+                // If we have not been saved, SolidWorks never fires any FileSave events at all
+                // so request a refresh of the ActiveModel. That is the best we can do
+                // as this RCW is now invalid. If this model is not active when saved then 
+                // it will simply reload the active models information
+                if (!HasBeenSaved)
+                    SolidWorksEnvironment.Application.RequestActiveModelChanged();
+
+                // Return result
+                return results;
+            },
+                SolidDnaErrorTypeCode.SolidWorksModel,
+                SolidDnaErrorCode.SolidWorksModelSaveError,
+                Localization.GetString("SolidWorksModelSaveError"));
+        }
 
         /// <summary>
         /// Saves a file to the specified path, with the specified options
@@ -861,7 +1140,20 @@ namespace AngelSix.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelSaveAsError,
-                Localization.GetString("SolidWorksModelGetMaterialError"));
+                Localization.GetString("SolidWorksModelSaveAsError"));
+        }
+
+        #endregion
+
+        #region ToString
+
+        /// <summary>
+        /// Returns a user-friendly string with model properties.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"Model type: {ModelType}. File path: {FilePath}";
         }
 
         #endregion
@@ -884,6 +1176,9 @@ namespace AngelSix.SolidDna
             // Selection manager
             SelectionManager?.Dispose();
             SelectionManager = null;
+
+            // Unhook all events
+            ClearModelEventHandlers();
         }
 
         public override void Dispose()

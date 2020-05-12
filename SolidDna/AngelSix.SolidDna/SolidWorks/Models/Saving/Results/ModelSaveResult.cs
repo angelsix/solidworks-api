@@ -19,5 +19,14 @@
         /// Any errors for the file save operation
         /// </summary>
         public SaveAsErrors Errors { get; set; }
+
+        /// <summary>
+        /// Nice output to string
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return Successful ? "Success" : $"Failed. Errors ({Errors}). Warnings ({Warnings})";
+        }
     }
 }

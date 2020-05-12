@@ -117,5 +117,19 @@ namespace AngelSix.SolidDna
             // Otherwise show kg
             return $"{Math.Round(Mass, decimalPlaces)} kg";
         }
+
+        #region ToString
+
+        /// <summary>
+        /// Returns a user-friendly string with group properties.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"Mass: {Mass} kg";
+        }
+
+        #endregion
+
     }
 }

@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents the specific feature type of a <see cref="ModelFeature"/>
     /// 
-    /// NOTE: Known types are here http://help.solidworks.com/2016/english/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IFeature~GetTypeName2.html
+    /// NOTE: Known types are here http://help.solidworks.com/2020/english/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IFeature~GetTypeName2.html
     /// 
     /// </summary>
     public enum ModelFeatureType
@@ -724,9 +724,10 @@
         SurfaceImported,
 
         /// <summary>
-        /// This feature does not have an interface
+        /// This feature is <see cref="FeatureSweepData"/>.
+        /// This feature had no interface before SOLIDWORKS 2018.
         /// </summary>
-        SurfaceSweep,
+        SurfaceSweepData,
 
         /// <summary>
         /// This feature does not have an interface
@@ -757,5 +758,180 @@
         /// This feature is obsolete and has no interface
         /// </summary>
         ViewBodyFeature,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureAngleMateData"/>
+        /// </summary>
+        AngleMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureCamFollowerMateData"/>
+        /// </summary>
+        CamFollowerMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureCoincidentMateData"/>
+        /// </summary>
+        CoincidentMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureConcentricMateData"/>
+        /// </summary>
+        ConcentricMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureDistanceMateData"/>
+        /// </summary>
+        DistanceMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureGearMateData"/>
+        /// </summary>
+        GearMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureHingeMateData"/>
+        /// </summary>
+        HingeMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureLinearCouplerMateData"/>
+        /// </summary>
+        LinearCouplerMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureLockMateData"/>
+        /// </summary>
+        LockMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureParallelMateData"/>
+        /// </summary>
+        ParallelMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeaturePerpendicularMateData"/>
+        /// </summary>
+        PerpendicularMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureProfileCenterMateData"/>
+        /// </summary>
+        ProfileCenterMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureRackPinionMateData"/>
+        /// </summary>
+        RackPinionMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureScrewMateData"/>
+        /// </summary>
+        ScrewMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureSymmetricMateData"/>
+        /// </summary>
+        SymmetricMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureSlotMateData"/>
+        /// </summary>
+        SlotMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureTangentMateData"/>
+        /// </summary>
+        TangentMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureUniversalJointMateData"/>
+        /// </summary>
+        UniversalJointMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureWidthMateData"/>
+        /// </summary>
+        WidthMateData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureAdvancedHoleWizardData"/>
+        /// </summary>
+        AdvancedHoleWizardData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureLocalSketchPatternData"/>
+        /// </summary>
+        LocalSketchPatternData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureMirrorComponentData"/>
+        /// </summary>
+        MirrorComponentData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureThreadData"/>
+        /// </summary>
+        ThreadData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureFlatPatternFolder"/>
+        /// </summary>
+        FlatPatternFolder,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureImport3DInterconnectData"/>
+        /// </summary>
+        Import3DInterconnectData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureBoundingBoxData"/>
+        /// </summary>
+        BoundingBoxData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureGroundPlaneData"/>
+        /// </summary>
+        GroundPlaneData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureNormalCutData"/>
+        /// </summary>
+        NormalCutData,
+
+        /// <summary>
+        /// This feature is <see cref="FeatureSheetMetalFolder"/>
+        /// </summary>
+        SheetMetalFolder,
+
+        /// <summary>
+        /// This feature does not have an interface
+        /// </summary>
+        AssemblyExplodedView,
+
+        /// <summary>
+        /// This feature does not have an interface
+        /// </summary>
+        AssemblyExplodeStep,
+
+        /// <summary>
+        /// This feature does not have an interface
+        /// </summary>
+        MultiBodyPartExplodeStep,
+
+        /// <summary>
+        /// This feature does not have an interface
+        /// </summary>
+        MultiBodyPartExplodedView,
+
+        /// <summary>
+        /// This feature does not have an interface
+        /// </summary>
+        MateGroup,
+
+        /// <summary>
+        /// This feature does not have an interface
+        /// </summary>
+        Weldment
     }
 }

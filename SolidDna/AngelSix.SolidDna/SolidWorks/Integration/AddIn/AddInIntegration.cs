@@ -4,6 +4,7 @@ using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swpublished;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -113,9 +114,9 @@ namespace AngelSix.SolidDna
                 });
 
                 // Log details
-                Logger.LogDebugSource($"DI Setup complete");
-                Logger.LogDebugSource($"Assembly File Path {assemblyFilePath}");
-                Logger.LogDebugSource($"Assembly Path {assemblyPath}");
+                Logger?.LogDebugSource($"DI Setup complete");
+                Logger?.LogDebugSource($"Assembly File Path {assemblyFilePath}");
+                Logger?.LogDebugSource($"Assembly Path {assemblyPath}");
 
                 // If we are in stand-alone mode...
                 if (standAlone)
@@ -124,6 +125,8 @@ namespace AngelSix.SolidDna
             }
             catch (Exception ex)
             {
+                Debugger.Break();
+
                 // Fall-back just write a static log directly
                 File.AppendAllText(Path.ChangeExtension(this.AssemblyFilePath(), "fatal.log.txt"), $"\r\nUnexpected error: {ex}");
             }
@@ -172,7 +175,7 @@ namespace AngelSix.SolidDna
         public void Callback(string arg)
         {
             // Log it
-            Logger.LogDebugSource($"SolidWorks Callback fired {arg}");
+            Logger?.LogDebugSource($"SolidWorks Callback fired {arg}");
 
             PlugInIntegration.OnCallback(arg);
         }
@@ -191,10 +194,10 @@ namespace AngelSix.SolidDna
                 var assemblyPath = this.AssemblyPath();
 
                 // Log it
-                Logger.LogDebugSource($"{SolidWorksAddInTitle} Connected to SolidWorks...");
+                Logger?.LogDebugSource($"{SolidWorksAddInTitle} Connected to SolidWorks...");
 
                 // Log it
-                Logger.LogDebugSource($"Firing PreConnectToSolidWorks...");
+                Logger?.LogDebugSource($"Firing PreConnectToSolidWorks...");
 
                 // Fire event
                 PreConnectToSolidWorks();
@@ -208,43 +211,43 @@ namespace AngelSix.SolidDna
                 //SolidWorks = new SolidWorksApplication((SldWorks)ThisSW, Cookie);
 
                 // Log it
-                Logger.LogDebugSource($"Setting AddinCallbackInfo...");
+                Logger?.LogDebugSource($"Setting AddinCallbackInfo...");
 
                 // Setup callback info
                 var ok = ((SldWorks)thisSw).SetAddinCallbackInfo2(0, this, cookie);
 
                 // Log it
-                Logger.LogDebugSource($"PlugInIntegration Setup...");
+                Logger?.LogDebugSource($"PlugInIntegration Setup...");
 
                 // Setup plug-in application domain
                 PlugInIntegration.Setup(assemblyPath, ((SldWorks)thisSw).RevisionNumber(), cookie);
 
                 // Log it
-                Logger.LogDebugSource($"Firing PreLoadPlugIns...");
+                Logger?.LogDebugSource($"Firing PreLoadPlugIns...");
 
                 // Any pre-load steps
                 PreLoadPlugIns();
 
                 // Log it
-                Logger.LogDebugSource($"Configuring PlugIns...");
+                Logger?.LogDebugSource($"Configuring PlugIns...");
 
                 // Perform any plug-in configuration
                 PlugInIntegration.ConfigurePlugIns(assemblyPath);
 
                 // Log it
-                Logger.LogDebugSource($"Firing ApplicationStartup...");
+                Logger?.LogDebugSource($"Firing ApplicationStartup...");
 
                 // Call the application startup function for an entry point to the application
                 ApplicationStartup();
 
                 // Log it
-                Logger.LogDebugSource($"Firing ConnectedToSolidWorks...");
+                Logger?.LogDebugSource($"Firing ConnectedToSolidWorks...");
 
                 // Inform listeners
                 ConnectedToSolidWorks();
 
                 // Log it
-                Logger.LogDebugSource($"PlugInIntegration ConnectedToSolidWorks...");
+                Logger?.LogDebugSource($"PlugInIntegration ConnectedToSolidWorks...");
 
                 // And plug-in domain listeners
                 PlugInIntegration.ConnectedToSolidWorks();
@@ -255,7 +258,7 @@ namespace AngelSix.SolidDna
             catch (Exception ex)
             {
                 // Log it
-                Logger.LogCriticalSource($"Unexpected error: {ex}");
+                Logger?.LogCriticalSource($"Unexpected error: {ex}");
 
                 return false;
             }
@@ -268,10 +271,10 @@ namespace AngelSix.SolidDna
         public bool DisconnectFromSW()
         {
             // Log it
-            Logger.LogDebugSource($"{SolidWorksAddInTitle} Disconnected from SolidWorks...");
+            Logger?.LogDebugSource($"{SolidWorksAddInTitle} Disconnected from SolidWorks...");
 
             // Log it
-            Logger.LogDebugSource($"Firing DisconnectedFromSolidWorks...");
+            Logger?.LogDebugSource($"Firing DisconnectedFromSolidWorks...");
 
             // Inform listeners
             DisconnectedFromSolidWorks();
@@ -280,7 +283,7 @@ namespace AngelSix.SolidDna
             PlugInIntegration.DisconnectedFromSolidWorks();
 
             // Log it
-            Logger.LogDebugSource($"Tearing down...");
+            Logger?.LogDebugSource($"Tearing down...");
 
             // Clean up plug-in app domain
             PlugInIntegration.Teardown();
@@ -299,7 +302,7 @@ namespace AngelSix.SolidDna
         public static void OnConnectedToSolidWorks()
         {
             // Log it
-            Logger.LogDebugSource($"Firing ConnectedToSolidWorks event...");
+            Logger?.LogDebugSource($"Firing ConnectedToSolidWorks event...");
 
             ConnectedToSolidWorks();
         }
@@ -310,7 +313,7 @@ namespace AngelSix.SolidDna
         public static void OnDisconnectedFromSolidWorks()
         {
             // Log it
-            Logger.LogDebugSource($"Firing DisconnectedFromSolidWorks event...");
+            Logger?.LogDebugSource($"Firing DisconnectedFromSolidWorks event...");
 
             DisconnectedFromSolidWorks();
         }
@@ -335,7 +338,7 @@ namespace AngelSix.SolidDna
                 var assemblyName = t.Assembly.Location;
 
                 // Log it
-                Logger.LogInformationSource($"Registering {assemblyName}");
+                Logger?.LogInformationSource($"Registering {assemblyName}");
 
                 // Get registry key path
                 var keyPath = string.Format(@"SOFTWARE\SolidWorks\AddIns\{0:b}", t.GUID);
@@ -360,7 +363,7 @@ namespace AngelSix.SolidDna
                     // Force auto-discovering plug-in during COM registration
                     PlugInIntegration.AutoDiscoverPlugins = true;
 
-                    Logger.LogInformationSource("Configuring plugins...");
+                    Logger?.LogInformationSource("Configuring plugins...");
 
                     // Let plug-ins configure title and descriptions
                     PlugInIntegration.ConfigurePlugIns(pluginPath);
@@ -369,12 +372,12 @@ namespace AngelSix.SolidDna
                     rk.SetValue("Title", SolidWorksAddInTitle);
                     rk.SetValue("Description", SolidWorksAddInDescription);
 
-                    Logger.LogInformationSource($"COM Registration successful. '{SolidWorksAddInTitle}' : '{SolidWorksAddInDescription}'");
+                    Logger?.LogInformationSource($"COM Registration successful. '{SolidWorksAddInTitle}' : '{SolidWorksAddInDescription}'");
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogCriticalSource($"COM Registration error. {ex}");
+                Logger?.LogCriticalSource($"COM Registration error. {ex}");
                 throw;
             }
         }
@@ -413,7 +416,7 @@ namespace AngelSix.SolidDna
                 SolidWorks = new SolidWorksApplication((SldWorks)Marshal.GetActiveObject("SldWorks.Application"), 0);
 
                 // Log it
-                Logger.LogDebugSource($"Aquired active instance SolidWorks in Stand-Alone mode");
+                Logger?.LogDebugSource($"Aquired active instance SolidWorks in Stand-Alone mode");
 
                 // Return if successful
                 return SolidWorks != null;
@@ -422,7 +425,7 @@ namespace AngelSix.SolidDna
             catch (COMException)
             {
                 // Log it
-                Logger.LogDebugSource($"Failed to get active instance of SolidWorks in Stand-Alone mode");
+                Logger?.LogDebugSource($"Failed to get active instance of SolidWorks in Stand-Alone mode");
 
                 // Return failure
                 return false;
@@ -526,7 +529,7 @@ namespace AngelSix.SolidDna
             if (SolidWorks != null)
             {
                 // Log it
-                Logger.LogDebugSource($"Disposing SolidWorks COM reference...");
+                Logger?.LogDebugSource($"Disposing SolidWorks COM reference...");
 
                 // Dispose SolidWorks COM
                 SolidWorks?.Dispose();

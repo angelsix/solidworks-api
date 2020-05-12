@@ -9,7 +9,7 @@ namespace AngelSix.SolidDna
     /// The type can be one of many different things
     /// 
     /// NOTE: All mappings from selected entities to specific objects are here
-    /// http://help.solidworks.com/2016/English/api/swconst/SolidWorks.Interop.swconst~SolidWorks.Interop.swconst.swSelectType_e.html
+    /// http://help.solidworks.com/2020/English/api/swconst/SolidWorks.Interop.swconst~SolidWorks.Interop.swconst.swSelectType_e.html
     /// </summary>
     public class SelectedObject : SolidDnaObject<object>
     {
