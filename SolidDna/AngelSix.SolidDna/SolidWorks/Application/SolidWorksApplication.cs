@@ -1,12 +1,11 @@
-﻿using System;
-using SolidWorks.Interop.sldworks;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using System.Xml.Linq;
+﻿using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
-using System.Windows;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace AngelSix.SolidDna
 {
@@ -438,7 +437,7 @@ namespace AngelSix.SolidDna
                     // GetDocumentCount takes longer to go to zero for big assemblies, but it might be a more reliable indicator.
                     if (BaseObject?.ActiveDoc == null || BaseObject?.GetDocumentCount() == 0)
                         ReloadActiveModelInformation();
-                    
+
                 }
             });
         }
@@ -486,7 +485,7 @@ namespace AngelSix.SolidDna
             return SolidDnaErrors.Wrap(() =>
             {
                 // Get file type
-                var fileType = 
+                var fileType =
                     filePath.ToLower().EndsWith(".sldprt") ? DocumentType.Part :
                     filePath.ToLower().EndsWith(".sldasm") ? DocumentType.Assembly :
                     filePath.ToLower().EndsWith(".slddrw") ? DocumentType.Drawing : throw new ArgumentException("Unknown file type");
@@ -520,7 +519,7 @@ namespace AngelSix.SolidDna
             // Wrap any error
             SolidDnaErrors.Wrap(() =>
             {
-                BaseObject.CloseDoc(filePath);   
+                BaseObject.CloseDoc(filePath);
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksModelCloseError,
@@ -582,7 +581,7 @@ namespace AngelSix.SolidDna
                 SolidDnaErrorCode.SolidWorksApplicationGetMaterialsError,
                 Localization.GetString("SolidWorksApplicationGetMaterialsError"));
         }
-        
+
         /// <summary>
         /// Attempts to find the material from a SolidWorks material database file (SLDMAT)
         /// If found, returns the full information about the material
@@ -634,7 +633,7 @@ namespace AngelSix.SolidDna
                     var materials = new List<Material>();
 
                     // Iterate all classification nodes and inside are the materials
-                    xmlDoc.Root.Elements("classification")?.ToList()?.ForEach(f => 
+                    xmlDoc.Root.Elements("classification")?.ToList()?.ForEach(f =>
                     {
                         // Get classification name
                         var classification = f.Attribute("name")?.Value;
@@ -727,7 +726,11 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Attempts to create 
         /// </summary>
-        /// <param name="iconPath">An absolute path to an icon to use for the taskpane (ideally 37x37px)</param>
+        /// <param name="iconPath">
+        ///     An absolute path to an icon to use for the taskpane.
+        ///     The bitmap should be 16 colors and 16 x 18 (width x height) pixels. 
+        ///     Any portions of the bitmap that are white (RGB 255,255,255) will be transparent.
+        /// </param>
         /// <param name="toolTip">The title text to show at the top of the taskpane</param>
         public async Task<Taskpane> CreateTaskpaneAsync(string iconPath, string toolTip)
         {
@@ -743,9 +746,9 @@ namespace AngelSix.SolidDna
 
                 // If we succeed, create SolidDna object
                 return new Taskpane(comTaskpane);
-            }, 
+            },
                 SolidDnaErrorTypeCode.SolidWorksTaskpane,
-                SolidDnaErrorCode.SolidWorksTaskpaneCreateError, 
+                SolidDnaErrorCode.SolidWorksTaskpaneCreateError,
                 await Localization.GetStringAsync("ErrorSolidWorksTaskpaneCreateError"));
         }
 
@@ -762,7 +765,7 @@ namespace AngelSix.SolidDna
         public SolidWorksMessageBoxResult ShowMessageBox(string message, SolidWorksMessageBoxIcon icon = SolidWorksMessageBoxIcon.Information, SolidWorksMessageBoxButtons buttons = SolidWorksMessageBoxButtons.Ok)
         {
             // Send message to user
-            return (SolidWorksMessageBoxResult) BaseObject.SendMsgToUser2(message, (int)icon, (int) buttons);
+            return (SolidWorksMessageBoxResult)BaseObject.SendMsgToUser2(message, (int)icon, (int)buttons);
         }
 
         #endregion

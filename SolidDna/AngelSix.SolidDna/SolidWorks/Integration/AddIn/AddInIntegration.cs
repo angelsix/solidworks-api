@@ -3,11 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swpublished;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using static Dna.FrameworkDI;
 
@@ -24,14 +19,9 @@ namespace AngelSix.SolidDna
         #region Protected Members
 
         /// <summary>
-        /// A list of assemblies to use when resolving any missing references
-        /// </summary>
-        protected List<AssemblyName> mReferencedAssemblies = new List<AssemblyName>();
-
-        /// <summary>
         /// Flag if we have loaded into memory (as ConnectedToSolidWorks can happen multiple times if unloaded/reloaded)
         /// </summary>
-        protected static bool mLoadedIntoMemory = false;
+        protected static bool mLoaded = false;
 
         #endregion
 
@@ -53,9 +43,10 @@ namespace AngelSix.SolidDna
         public static SolidWorksApplication SolidWorks { get; set; }
 
         /// <summary>
-        /// Gets the list of all known reference assemblies in this solution
+        /// If true, loads the plug-ins in their own app-domain
+        /// NOTE: Must be set before connecting to SolidWorks
         /// </summary>
-        public AssemblyName[] ReferencedAssemblies => mReferencedAssemblies.ToArray();
+        public bool DetachedAppDomain { get; set; }
 
         #endregion
 
@@ -84,62 +75,14 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Default constructor
         /// </summary>
-        /// <param name="standAlone">
-        ///     If true, sets the SolidWorks Application to the active instance
-        ///     (if available) so the environment can be used from a stand alone application.
-        /// </param>
-        public AddInIntegration(bool standAlone = false)
+        public AddInIntegration()
         {
-            try
-            {
-                // Help resolve any assembly references
-                AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
-                // Get the path to this actual add-in dll
-                var assemblyFilePath = this.AssemblyFilePath();
-                var assemblyPath = this.AssemblyPath();
-
-                // Setup IoC
-                IoC.Setup(assemblyFilePath, construction =>
-                {
-                    //  Add SolidDna-specific services
-                    // --------------------------------
-
-                    // Add reference to the add-in integration
-                    // Which can then be fetched anywhere with
-                    // IoC.AddIn
-                    construction.Services.AddSingleton(this);
-
-                    // Add localization manager
-                    construction.AddLocalizationManager();
-
-                    //  Configure any services this class wants to add
-                    // ------------------------------------------------
-                    ConfigureServices(construction);
-                });
-
-                // Log details
-                Logger?.LogDebugSource($"DI Setup complete");
-                Logger?.LogDebugSource($"Assembly File Path {assemblyFilePath}");
-                Logger?.LogDebugSource($"Assembly Path {assemblyPath}");
-
-                // If we are in stand-alone mode...
-                if (standAlone)
-                    // Connect to active SolidWorks
-                    ConnectToActiveSolidWork();
-            }
-            catch (Exception ex)
-            {
-                Debugger.Break();
-
-                // Fall-back just write a static log directly
-                File.AppendAllText(Path.ChangeExtension(this.AssemblyFilePath(), "fatal.log.txt"), $"\r\nUnexpected error: {ex}");
-            }
         }
 
         #endregion
 
-        #region Public Abstract Methods
+        #region Public Abstract / Virtual Methods
 
         /// <summary>
         /// Specific application startup code when SolidWorks is connected 
@@ -164,10 +107,21 @@ namespace AngelSix.SolidDna
         public abstract void PreLoadPlugIns();
 
         /// <summary>
-        /// Add any dependency injection items into the DI provider that you would like to use in your application
+        /// The method to implement and flag with <see cref="ConfigureServiceAttribute"/>
+        /// and a custom name if you want this method to be called during IoC build
         /// </summary>
-        /// <param name="construction"></param>
-        public abstract void ConfigureServices(FrameworkConstruction construction);
+        /// <param name="construction">The IoC framework construction</param>
+        [ConfigureService]
+        public virtual void ConfigureServices(FrameworkConstruction construction)
+        {
+            // Add reference to the add-in integration
+            // Which can then be fetched anywhere with
+            // IoC.AddIn
+            construction.Services.AddSingleton(this);
+
+            // Add localization manager
+            Framework.Construction.AddLocalizationManager();
+        }
 
         #endregion
 
@@ -195,17 +149,22 @@ namespace AngelSix.SolidDna
         {
             try
             {
+                // Fire event
+                PreConnectToSolidWorks();
+
+                // Setup application (allowing for AppDomain boundary setup)
+                AppDomainBoundary.Setup(this.AssemblyPath(), this.AssemblyFilePath(),
+                    // The type of this abstract class will be the class implementing it
+                    GetType().Assembly.Location, "");
+
+                // Log it
+                Logger?.LogTraceSource($"Fired PreConnectToSolidWorks...");
+
                 // Get the directory path to this actual add-in dll
                 var assemblyPath = this.AssemblyPath();
 
                 // Log it
                 Logger?.LogDebugSource($"{SolidWorksAddInTitle} Connected to SolidWorks...");
-
-                // Log it
-                Logger?.LogDebugSource($"Firing PreConnectToSolidWorks...");
-
-                // Fire event
-                PreConnectToSolidWorks();
 
                 //
                 //   NOTE: Do not need to create it here, as we now create it inside PlugInIntegration.Setup in it's own AppDomain
@@ -230,8 +189,10 @@ namespace AngelSix.SolidDna
                 // Log it
                 Logger?.LogDebugSource($"Firing PreLoadPlugIns...");
 
-                // If we have never loaded yet...
-                if (!mLoadedIntoMemory)
+                // If this is the first load, or we are not loading add-ins 
+                // into this domain they need loading every time as they were
+                // fully unloaded on disconnect
+                if (!mLoaded || AppDomainBoundary.UseDetachedAppDomain)
                 {
                     // Any pre-load steps
                     PreLoadPlugIns();
@@ -243,7 +204,7 @@ namespace AngelSix.SolidDna
                     PlugInIntegration.ConfigurePlugIns(assemblyPath);
 
                     // Now loaded so don't do it again
-                    mLoadedIntoMemory = true;
+                    mLoaded = true;
                 }
 
                 // Log it
@@ -299,6 +260,12 @@ namespace AngelSix.SolidDna
 
             // Clean up plug-in app domain
             PlugInIntegration.Teardown();
+
+            // Cleanup ourselves
+            TearDown();
+
+            // Unload our domain
+            AppDomainBoundary.Unload();
 
             // Return ok
             return true;
@@ -428,7 +395,7 @@ namespace AngelSix.SolidDna
                 SolidWorks = new SolidWorksApplication((SldWorks)Marshal.GetActiveObject("SldWorks.Application"), 0);
 
                 // Log it
-                Logger?.LogDebugSource($"Aquired active instance SolidWorks in Stand-Alone mode");
+                Logger?.LogDebugSource($"Acquired active instance SolidWorks in Stand-Alone mode");
 
                 // Return if successful
                 return SolidWorks != null;
@@ -456,76 +423,6 @@ namespace AngelSix.SolidDna
 
             // Return if we successfully got an instance
             return addin.ConnectToActiveSolidWork();
-        }
-
-        #endregion
-
-        #region Assembly Resolve Methods
-
-        /// <summary>
-        /// Adds any reference assemblies to the assemblies that get resolved when loading assemblies
-        /// based on the reference type. To add all references from a project, pass in any type that is
-        /// contained in the project as the reference type
-        /// </summary>
-        /// <typeparam name="ReferenceType">The type contained in the assembly where the references are</typeparam>
-        public void AddReferenceAssemblies<ReferenceType>()
-        {
-            // Find all reference assemblies from the type
-            var referencedAssemblies = typeof(ReferenceType).Assembly.GetReferencedAssemblies();
-
-            // If there are any references
-            if (referencedAssemblies?.Length > 0)
-                // Add them
-                mReferencedAssemblies.AddRange(referencedAssemblies);
-        }
-
-        /// <summary>
-        /// Attempts to resolve missing assemblies based on a list of known references
-        /// primarily from SolidDna and the Add-in project itself
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            // Try and find a reference assembly that matches...
-            var resolvedAssembly = mReferencedAssemblies.FirstOrDefault(f => string.Equals(f.FullName, args.Name, StringComparison.InvariantCultureIgnoreCase));
-
-            // If we didn't find any assembly
-            if (resolvedAssembly == null)
-                // Return null
-                return null;
-
-            // If we found a match...
-            try
-            {
-                // Try and load the assembly
-                var assembly = Assembly.Load(resolvedAssembly.Name);
-
-                // If it loaded...
-                if (assembly != null)
-                    // Return it
-                    return assembly;
-
-                // Otherwise, throw file not found
-                throw new FileNotFoundException();
-            }
-            catch
-            {
-                //
-                // Try to load by filename - split out the filename of the full assembly name
-                // and append the base path of the original assembly (i.e. look in the same directory)
-                //
-                // NOTE: this doesn't account for special search paths but then that never
-                //       worked before either
-                //
-                var parts = resolvedAssembly.Name.Split(',');
-                var filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + parts[0].Trim() + ".dll";
-
-                // Try and load assembly and let it throw FileNotFound if not there 
-                // as it's an expected failure if not found
-                return Assembly.LoadFrom(filePath);
-            }
         }
 
         #endregion

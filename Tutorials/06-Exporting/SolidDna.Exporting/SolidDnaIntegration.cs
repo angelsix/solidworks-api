@@ -1,5 +1,4 @@
-﻿using Dna;
-using AngelSix.SolidDna;
+﻿using AngelSix.SolidDna;
 using System.Collections.Generic;
 using static AngelSix.SolidDna.SolidWorksEnvironment;
 
@@ -30,12 +29,7 @@ namespace SolidDna.Exporting
             //       Be aware doing so sometimes causes API's to fail
             //       when they try to load dll's
             //
-            // PlugInIntegration.UseDetachedAppDomain = true;
-        }
-
-        public override void ConfigureServices(FrameworkConstruction construction)
-        {
-
+            // AppDomainBoundary.UseDetachedAppDomain = true;
         }
     }
 

@@ -1,7 +1,5 @@
 ﻿using AngelSix.SolidDna;
-using Dna;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace SolidDna.CustomProperties
 {
@@ -33,12 +31,7 @@ namespace SolidDna.CustomProperties
             //       Be aware doing so sometimes causes API's to fail
             //       when they try to load dll's
             //
-            // PlugInIntegration.UseDetachedAppDomain = true;
-        }
-
-        public override void ConfigureServices(FrameworkConstruction construction)
-        {
-
+            // AppDomainBoundary.UseDetachedAppDomain = true;
         }
     }
 
@@ -77,7 +70,7 @@ namespace SolidDna.CustomProperties
             // Create our taskpane
             mTaskpane = new TaskpaneIntegration<TaskpaneUserControlHost>()
             {
-                Icon = Path.Combine(this.AssemblyPath(), "logo-small.png"),
+                Icon = Path.Combine(this.AssemblyPath(), "logo-small.bmp"),
                 WpfControl = new CustomPropertiesUI()
             };
 

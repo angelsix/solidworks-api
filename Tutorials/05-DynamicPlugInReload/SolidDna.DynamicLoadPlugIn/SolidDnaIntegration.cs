@@ -22,7 +22,7 @@ namespace SolidDna.DynamicLoadPlugIn
         /// <returns></returns>
         public override void PreLoadPlugIns()
         {
-
+            PlugInIntegration.AddPlugIn(@"D:\git\solidworks-api\Tutorials\05-DynamicPlugInReload\SolidDna.DynamicLoadPlugIn\bin\Debug\SolidDna.DynamicLoadPlugIn.Main.dll");
         }
 
         public override void PreConnectToSolidWorks()
@@ -31,12 +31,12 @@ namespace SolidDna.DynamicLoadPlugIn
             //       Be aware doing so sometimes causes API's to fail
             //       when they try to load dll's
             //
-            PlugInIntegration.UseDetachedAppDomain = true;
+            AppDomainBoundary.UseDetachedAppDomain = true;
         }
 
         public override void ConfigureServices(FrameworkConstruction construction)
         {
-
+            base.ConfigureServices(construction);
         }
     }
 }

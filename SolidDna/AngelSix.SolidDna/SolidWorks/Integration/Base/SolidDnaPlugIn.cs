@@ -25,19 +25,6 @@ namespace AngelSix.SolidDna
 
         #endregion
 
-        #region Constructor
-
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public SolidPlugIn()
-        {
-            // Add any references that are part of SolidDNA
-            IoC.AddIn.AddReferenceAssemblies<AddInIntegration>();
-        }
-
-        #endregion
-
         #region Public Methods
 
         /// <summary>
@@ -70,7 +57,7 @@ namespace AngelSix.SolidDna
         public SolidPlugIn() : base()
         {
             // Add any references from the parent plug-in project
-            IoC.AddIn.AddReferenceAssemblies<T>();
+            AppDomainBoundary.AddReferenceAssemblies<T>();
 
             // Disable discovering plug-in and make it quicker by auto-adding it
             PlugInIntegration.AutoDiscoverPlugins = false;

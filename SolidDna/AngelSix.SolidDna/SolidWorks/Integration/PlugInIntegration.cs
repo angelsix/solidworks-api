@@ -15,15 +15,6 @@ namespace AngelSix.SolidDna
     /// </summary>
     public static class PlugInIntegration
     {
-        #region Private Members
-
-        /// <summary>
-        /// The AppDomain used to load and unload plug-ins
-        /// </summary>
-        private static AppDomain PlugInAppDomain;
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
@@ -32,29 +23,10 @@ namespace AngelSix.SolidDna
         public static List<SolidPlugIn> PlugIns = new List<SolidPlugIn>();
 
         /// <summary>
-        /// If true, will load your Add-in dll in its own application domain so you can 
-        /// unload and rebuild your add-in without having to close SolidWorks
-        /// NOTE: This does seem to expose some bugs and issues in SolidWorks API
-        ///       in terms of resolving references to specific dll's, so if you experience
-        ///       issues try turning this off
-        /// </summary>
-        public static bool UseDetachedAppDomain { get; set; } = false;
-
-        /// <summary>
-        /// A list of assembly full names to resolve across domains, excluding anything else that may be found in <see cref="PlugInDetails"/>
-        /// </summary>
-        public static List<string> AssembliesToResolve { get; set; } = new List<string>();
-
-        /// <summary>
         /// A list of all plug-ins that have been added to be loaded. 
         /// The key is the absolute file path, and the Type is the <see cref="SolidPlugIn"/> implementation type
         /// </summary>
         public static Dictionary<string, List<PlugInDetails>> PlugInDetails { get; private set; } = new Dictionary<string, List<PlugInDetails>>();
-
-        /// <summary>
-        /// The cross-domain marshal to use for the plug-in Application domain calls
-        /// </summary>
-        public static PlugInIntegrationMarshal PluginCrossDomain { get; private set; }
 
         /// <summary>
         /// If true, searches in the directory of the application (where AngelSix.SolidDna.dll is) for any dll that
@@ -86,30 +58,14 @@ namespace AngelSix.SolidDna
         /// <param name="version">The version of the currently connected SolidWorks instance</param>
         public static void Setup(string addinPath, string version, int cookie)
         {
-            if (UseDetachedAppDomain)
-            {
-                // Log it
-                Logger.LogDebugSource($"Detached AppDomain PlugIn Setup...");
-
-                PlugInAppDomain = AppDomain.CreateDomain("SolidDnaPlugInDomain", null, new AppDomainSetup
-                {
-                    // Use plug-in folder for resolving plug-ins
-                    ApplicationBase = addinPath,
-                });
-
-                // Make sure we load our own marshal
-                AssembliesToResolve.Add(typeof(PlugInIntegrationMarshal).Assembly.FullName);
-
-                // Run code on new app-domain to configure
-                PluginCrossDomain = (PlugInIntegrationMarshal)PlugInAppDomain.CreateInstanceAndUnwrap(typeof(PlugInIntegrationMarshal).Assembly.FullName, typeof(PlugInIntegrationMarshal).FullName);
-
-                // Setup
-                PluginCrossDomain.SetupAppDomain(addinPath, version, cookie);
-            }
+            // If use detached app domain...
+            if (AppDomainBoundary.UseDetachedAppDomain)
+                // Get boundary to re-call us from other app domain
+                AppDomainBoundary.PluginIntegrationSetup(addinPath, version, cookie);
             else
             {
                 // Log it
-                Logger.LogDebugSource($"PlugIn Setup...");
+                Logger?.LogDebugSource($"PlugIn Setup...");
 
                 // Get the version number (such as 25 for 2016)
                 var postFix = "";
@@ -121,7 +77,7 @@ namespace AngelSix.SolidDna
                 AddInIntegration.SolidWorks = new SolidWorksApplication((SldWorks)Activator.CreateInstance(Type.GetTypeFromProgID("SldWorks.Application" + postFix)), cookie);
 
                 // Log it
-                Logger.LogDebugSource($"SolidWorks Instance Created? {AddInIntegration.SolidWorks != null}");
+                Logger?.LogDebugSource($"SolidWorks Instance Created? {AddInIntegration.SolidWorks != null}");
             }
         }
 
@@ -130,22 +86,13 @@ namespace AngelSix.SolidDna
         /// </summary>
         public static void Teardown()
         {
-            // Run code on new app-domain to tear down
-            if (UseDetachedAppDomain)
-            {
-                // Tear down
-                PluginCrossDomain.Teardown();
-
-                // Log it
-                Logger.LogDebugSource($"Unloading cross-domain...");
-
-                // Unload our domain
-                AppDomain.Unload(PlugInAppDomain);
-            }
+            // If use detached app domain...
+            if (AppDomainBoundary.UseDetachedAppDomain)
+                // Get boundary to re-call us from other app domain
+                AppDomainBoundary.PluginIntegrationTeardown();
             else
             {
-                // Tear down SolidWorks references
-                AddInIntegration.TearDown();
+                // Nothing to do right now
             }
         }
 
@@ -158,8 +105,10 @@ namespace AngelSix.SolidDna
         /// </summary>
         public static void ConnectedToSolidWorks()
         {
-            if (UseDetachedAppDomain)
-                PluginCrossDomain.ConnectedToSolidWorks();
+            // If use detached app domain...
+            if (AppDomainBoundary.UseDetachedAppDomain)
+                // Get boundary to re-call us from other app domain
+                AppDomainBoundary.ConnectedToSolidWorks();
             else
             {
                 AddInIntegration.OnConnectedToSolidWorks();
@@ -168,7 +117,7 @@ namespace AngelSix.SolidDna
                 PlugIns.ForEach(plugin =>
                 {
                     // Log it
-                    Logger.LogDebugSource($"Firing ConnectedToSolidWorks event for plugin `{plugin.AddInTitle}`...");
+                    Logger?.LogDebugSource($"Firing ConnectedToSolidWorks event for plugin `{plugin.AddInTitle}`...");
 
                     plugin.ConnectedToSolidWorks();
                 });
@@ -180,8 +129,10 @@ namespace AngelSix.SolidDna
         /// </summary>
         public static void DisconnectedFromSolidWorks()
         {
-            if (UseDetachedAppDomain)
-                PluginCrossDomain.DisconnectedFromSolidWorks();
+            // If use detached app domain...
+            if (AppDomainBoundary.UseDetachedAppDomain)
+                // Get boundary to re-call us from other app domain
+                AppDomainBoundary.DisconnectedFromSolidWorks();
             else
             {
                 AddInIntegration.OnDisconnectedFromSolidWorks();
@@ -190,7 +141,7 @@ namespace AngelSix.SolidDna
                 PlugIns.ForEach(plugin =>
                 {
                     // Log it
-                    Logger.LogDebugSource($"Firing DisconnectedFromSolidWorks event for plugin `{plugin.AddInTitle}`...");
+                    Logger?.LogDebugSource($"Firing DisconnectedFromSolidWorks event for plugin `{plugin.AddInTitle}`...");
 
                     plugin.DisconnectedFromSolidWorks();
                 });
@@ -207,8 +158,10 @@ namespace AngelSix.SolidDna
         /// <typeparam name="T">The class that implements the <see cref="SolidPlugIn"/></typeparam>
         public static void AddPlugIn<T>()
         {
-            if (UseDetachedAppDomain)
-                PluginCrossDomain.AddPlugIn<T>();
+            // If use detached app domain...
+            if (AppDomainBoundary.UseDetachedAppDomain)
+                // Get boundary to re-call us from other app domain
+                AppDomainBoundary.AddPlugIn<T>();
             else
             {
                 // Get the full path to the assembly
@@ -234,11 +187,15 @@ namespace AngelSix.SolidDna
         /// <param name="fullPath">The absolute path to the plug-in dll</param>
         public static void AddPlugIn(string fullPath)
         {
-            if (UseDetachedAppDomain)
-                // Add it to the plug-in integration domain also
-                PluginCrossDomain.AddPlugIn(fullPath);
+            // If use detached app domain...
+            if (AppDomainBoundary.UseDetachedAppDomain)
+                // Get boundary to re-call us from other app domain
+                AppDomainBoundary.AddPlugIn(fullPath);
             else
             {
+                // Don't auto discover plug-ins if we added manually
+                AutoDiscoverPlugins = false;
+
                 // Create list if one doesn't exist
                 if (!PlugInDetails.ContainsKey(fullPath))
                     PlugInDetails[fullPath] = new List<PlugInDetails>();
@@ -257,15 +214,30 @@ namespace AngelSix.SolidDna
 
         #region SolidWorks Callbacks
 
+        /// <summary>
+        /// Called by the SolidWorks domain (AddInIntegration) when a callback is fired
+        /// </summary>
+        /// <param name="name">The parameter passed into the generic callback</param>
         public static void OnCallback(string name)
         {
-            // Inform plug-in domain of event
-            if (UseDetachedAppDomain)
-                PluginCrossDomain.OnCallback(name);
+            // If use detached app domain...
+            if (AppDomainBoundary.UseDetachedAppDomain)
+                // Get boundary to re-call us from other app domain
+                AppDomainBoundary.OnCallback(name);
             else
             {
-                // Inform listeners
-                CallbackFired(name);
+                try
+                {
+                    // Inform listeners
+                    CallbackFired(name);
+                }
+                catch (Exception ex)
+                {
+                    Debugger.Break();
+
+                    // Log it
+                    Logger?.LogCriticalSource($"OnCallback failed. {ex.GetErrorMessage()}");
+                }
             }
         }
 
@@ -287,9 +259,9 @@ namespace AngelSix.SolidDna
             if (AutoDiscoverPlugins)
             {
                 // Log it
-                Logger.LogDebugSource($"Loading all PlugIns...");
+                Logger?.LogDebugSource($"Loading all PlugIns...");
 
-                if (UseDetachedAppDomain)
+                if (AppDomainBoundary.UseDetachedAppDomain)
                 {
                     // Invalid combination... cannot load all from cross domain
                     // (we don't create the PlugInDetails class for each item
@@ -304,7 +276,7 @@ namespace AngelSix.SolidDna
                     GetPlugIns(path, (plugin) =>
                     {
                         // Log it
-                        Logger.LogDebugSource($"Found plugin {plugin.AddInTitle} in {path}");
+                        Logger?.LogDebugSource($"Found plugin {plugin.AddInTitle} in {path}");
 
                         assemblies.Add(plugin);
                     });
@@ -313,7 +285,7 @@ namespace AngelSix.SolidDna
             else
             {
                 // Log it
-                Logger.LogDebugSource($"Explicitly loading {PlugInDetails?.Count} PlugIns...");
+                Logger?.LogDebugSource($"Explicitly loading {PlugInDetails?.Count} PlugIns...");
 
                 // For each assembly
                 foreach (var p in PlugInDetails)
@@ -324,13 +296,13 @@ namespace AngelSix.SolidDna
                         try
                         {
                             // If we are called in the main domain, cross-load
-                            if (UseDetachedAppDomain)
+                            if (AppDomainBoundary.UseDetachedAppDomain)
                             {
                                 // Log it
-                                Logger.LogDebugSource($"Cross-domain loading PlugIn {path.AssemblyFullName}...");
+                                Logger?.LogDebugSource($"Cross-domain loading PlugIn {path.AssemblyFullName}...");
 
                                 // Create instance of the plug-in via cross-domain and cast back
-                                var plugin = (dynamic)PlugInAppDomain.CreateInstanceAndUnwrap(
+                                var plugin = (dynamic)AppDomainBoundary.AppDomain.CreateInstanceAndUnwrap(
                                                         path.AssemblyFullName,
                                                         path.TypeFullName);
 
@@ -341,7 +313,7 @@ namespace AngelSix.SolidDna
                                 // Otherwise...
                                 else
                                     // Log error
-                                   Logger.LogErrorSource($"Failed to create instance of PlugIn {path.AssemblyFullName}");
+                                    Logger?.LogErrorSource($"Failed to create instance of PlugIn {path.AssemblyFullName}");
                             }
                             else
                             {
@@ -349,7 +321,7 @@ namespace AngelSix.SolidDna
                                 GetPlugIns(path.FullPath, (plugin) =>
                                 {
                                     // Log it
-                                    Logger.LogDebugSource($"Found plugin {plugin.AddInTitle} in {path}");
+                                    Logger?.LogDebugSource($"Found plugin {plugin.AddInTitle} in {path}");
 
                                     // Add it to the list
                                     assemblies.Add(plugin);
@@ -359,14 +331,14 @@ namespace AngelSix.SolidDna
                         catch (Exception ex)
                         {
                             // Log error
-                            Logger.LogCriticalSource($"Unexpected error: {ex}");
+                            Logger?.LogCriticalSource($"Unexpected error: {ex}");
                         }
                     }
                 }
             }
 
             // Log it
-            Logger.LogDebugSource($"Loaded {assemblies?.Count} plug-ins from {addinPath}");
+            Logger?.LogDebugSource($"Loaded {assemblies?.Count} plug-ins from {addinPath}");
 
             return assemblies;
         }
@@ -437,12 +409,11 @@ namespace AngelSix.SolidDna
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
         public static void ConfigurePlugIns(string addinPath)
         {
-            if (UseDetachedAppDomain)
+            // If use detached app domain...
+            if (AppDomainBoundary.UseDetachedAppDomain)
             {
-                // Log it
-                Logger.LogDebugSource($"Cross-domain ConfigurePlugIns...");
-
-                PluginCrossDomain.ConfigurePlugIns(addinPath);
+                // Get boundary to re-call us from other app domain
+                AppDomainBoundary.ConfigurePlugIns(addinPath);
             }
             else
             {
@@ -478,7 +449,7 @@ namespace AngelSix.SolidDna
                 PlugIns = SolidDnaPlugIns(addinPath);
 
                 // Log it
-                Logger.LogDebugSource($"{PlugIns.Count} plug-ins found");
+                Logger?.LogDebugSource($"{PlugIns.Count} plug-ins found");
 
                 // Find first plug-in in the list and use that as the title and description (for COM register)
                 var firstPlugInWithTitle = PlugIns.FirstOrDefault(f => !string.IsNullOrEmpty(f.AddInTitle));
@@ -487,8 +458,8 @@ namespace AngelSix.SolidDna
                 if (firstPlugInWithTitle != null)
                 {
                     // Log it
-                    Logger.LogDebugSource($"Setting Add-In Title:       {firstPlugInWithTitle.AddInTitle}");
-                    Logger.LogDebugSource($"Setting Add-In Description: {firstPlugInWithTitle.AddInDescription}");
+                    Logger?.LogDebugSource($"Setting Add-In Title:       {firstPlugInWithTitle.AddInTitle}");
+                    Logger?.LogDebugSource($"Setting Add-In Description: {firstPlugInWithTitle.AddInDescription}");
 
                     // Set title and description details
                     AddInIntegration.SolidWorksAddInTitle = firstPlugInWithTitle.AddInTitle;
@@ -497,7 +468,7 @@ namespace AngelSix.SolidDna
                 // Otherwise
                 else
                     // Log it
-                    Logger.LogDebugSource($"No PlugIn's found with a title.");
+                    Logger?.LogDebugSource($"No PlugIn's found with a title.");
             }
         }
 

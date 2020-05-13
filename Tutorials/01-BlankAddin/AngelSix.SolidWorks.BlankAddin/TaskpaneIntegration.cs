@@ -1,6 +1,6 @@
-﻿using System;
-using SolidWorks.Interop.sldworks;
+﻿using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swpublished;
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -93,7 +93,7 @@ namespace AngelSix.SolidWorks.BlankAddin
         private void LoadUI()
         {
             // Find location to our taskpane icon
-            var imagePath = Path.Combine(Path.GetDirectoryName(typeof(TaskpaneIntegration).Assembly.CodeBase).Replace(@"file:\", string.Empty), "logo-small.png");
+            var imagePath = Path.Combine(Path.GetDirectoryName(typeof(TaskpaneIntegration).Assembly.CodeBase).Replace(@"file:\", string.Empty), "logo-small.bmp");
 
             // Create our Taskpane
             mTaskpaneView = mSolidWorksApplication.CreateTaskpaneView2(imagePath, "Woo! My first SwAddin");

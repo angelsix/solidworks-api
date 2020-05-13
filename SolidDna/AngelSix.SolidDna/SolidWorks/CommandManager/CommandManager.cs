@@ -15,7 +15,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// A list of all created command groups
         /// </summary>
-        private List<CommandManagerGroup> mCommandGroups = new List<CommandManagerGroup>();
+        private readonly List<CommandManagerGroup> mCommandGroups = new List<CommandManagerGroup>();
 
         /// <summary>
         /// A list of all created command flyouts
@@ -70,15 +70,15 @@ namespace AngelSix.SolidDna
         /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <returns></returns>
         public CommandManagerGroup CreateCommandGroupAndTabs(
-            string title, 
-            List<CommandManagerItem> items, 
+            string title,
+            List<CommandManagerItem> items,
             List<CommandManagerFlyout> flyoutItems,
-            string iconListsPath = "", 
+            string iconListsPath = "",
             string tooltip = "",
-            string hint = "", 
-            int position = -1, 
+            string hint = "",
+            int position = -1,
             bool ignorePreviousVersion = true,
-            bool hasMenu = true, 
+            bool hasMenu = true,
             bool hasToolbar = true,
             bool addDropdownBoxForParts = false,
             bool addDropdownBoxForAssemblies = false,
@@ -93,12 +93,12 @@ namespace AngelSix.SolidDna
                     // Create the command group
                     var group = CreateCommandGroup(
                         title,
-                        items, 
+                        items,
                         flyoutItems,
                         tooltip,
-                        hint, 
+                        hint,
                         position,
-                        ignorePreviousVersion, 
+                        ignorePreviousVersion,
                         hasMenu,
                         hasToolbar,
                         addDropdownBoxForParts,
@@ -183,7 +183,7 @@ namespace AngelSix.SolidDna
                 unsafeCommandFlyout,
                 mFlyoutIdCount++,
                 callbackId,
-                items, 
+                items,
                 title,
                 hint, tooltip);
 
@@ -212,13 +212,13 @@ namespace AngelSix.SolidDna
         /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <returns></returns>
         private CommandManagerGroup CreateCommandGroup(
-            string title, 
+            string title,
             List<CommandManagerItem> items,
-            List<CommandManagerFlyout> flyoutItems, 
-            string tooltip = "", 
-            string hint = "", 
-            int position = -1, 
-            bool ignorePreviousVersion = true, 
+            List<CommandManagerFlyout> flyoutItems,
+            string tooltip = "",
+            string hint = "",
+            int position = -1,
+            bool ignorePreviousVersion = true,
             bool hasMenu = true,
             bool hasToolbar = true,
             bool addDropdownBoxForParts = false,
@@ -256,14 +256,14 @@ namespace AngelSix.SolidDna
 
             // Otherwise we got the command group
             var group = new CommandManagerGroup(
-                unsafeCommandGroup, 
-                items, 
-                flyoutItems, 
-                id, 
-                title, 
-                tooltip, 
-                hint, 
-                hasMenu, 
+                unsafeCommandGroup,
+                items,
+                flyoutItems,
+                id,
+                title,
+                tooltip,
+                hint,
+                hasMenu,
                 hasToolbar,
                 addDropdownBoxForParts,
                 addDropdownBoxForAssemblies,
