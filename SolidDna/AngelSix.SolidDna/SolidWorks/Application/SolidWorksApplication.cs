@@ -1,11 +1,11 @@
-﻿using System;
-using SolidWorks.Interop.sldworks;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using System.Xml.Linq;
+﻿using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace AngelSix.SolidDna
 {
@@ -323,9 +323,16 @@ namespace AngelSix.SolidDna
                     // Check the active document
                     using (var activeDoc = new Model(BaseObject.IActiveDoc2))
                     {
-                        // If this is the same file that is currently being loaded, ignore this event
-                        if (string.Equals(mFileLoading, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
-                            return;
+                        // View Only mode (Large Assembly Review and Quick View) does not fire the FileOpenPostNotify event, so we catch these models here.
+                        var loadingInViewOnlyMode = activeDoc.UnsafeObject.IsOpenedViewOnly();
+                        if (loadingInViewOnlyMode)
+                            FileOpenPostNotify(activeDoc.FilePath);
+                        else
+                        {
+                            // If this is the same file that is currently being loaded, ignore this event
+                            if (string.Equals(mFileLoading, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
+                                return;
+                        }
                     }
                 }
 
@@ -355,7 +362,7 @@ namespace AngelSix.SolidDna
             CleanActiveModelData();
 
             // Now get the new data
-            if (BaseObject.IActiveDoc2 == null)
+            if (BaseObject.IActiveDoc2 == null || BaseObject.GetDocumentCount() == 0)
                 mActiveModel = null;
             else
                 mActiveModel = new Model(BaseObject.IActiveDoc2);
@@ -424,13 +431,13 @@ namespace AngelSix.SolidDna
                     if (Disposing)
                         // If we are disposing SolidWorks, there is no need to reload active model info.
                         return;
-                    
+
                     // Now if we have none open, reload information
                     // ActiveDoc is quickly set to null after the last document is closed
                     // GetDocumentCount takes longer to go to zero for big assemblies, but it might be a more reliable indicator.
                     if (BaseObject?.ActiveDoc == null || BaseObject?.GetDocumentCount() == 0)
                         ReloadActiveModelInformation();
-                    
+
                 }
             });
         }
@@ -445,6 +452,79 @@ namespace AngelSix.SolidDna
         }
 
         #endregion
+
+        #endregion
+
+        #region Open/Close Models
+
+        /// <summary>
+        /// Loops all open documents returning a safe <see cref="Model"/> for each document,
+        /// disposing of the COM reference after its use
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Model> OpenDocuments()
+        {
+            // Loop each child
+            foreach (ModelDoc2 modelDoc in (object[])BaseObject.GetDocuments())
+            {
+                // Create safe model
+                using (var model = new Model(modelDoc))
+                    // Return it
+                    yield return model;
+            }
+        }
+
+        /// <summary>
+        /// Opens a file
+        /// </summary>
+        /// <param name="filePath">The path to the file</param>
+        /// <param name="options">The options to use when opening the file (flags, so | multiple options together)</param>
+        public Model OpenFile(string filePath, OpenDocumentOptions options = OpenDocumentOptions.None, string configuration = null)
+        {
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() =>
+            {
+                // Get file type
+                var fileType =
+                    filePath.ToLower().EndsWith(".sldprt") ? DocumentType.Part :
+                    filePath.ToLower().EndsWith(".sldasm") ? DocumentType.Assembly :
+                    filePath.ToLower().EndsWith(".slddrw") ? DocumentType.Drawing : throw new ArgumentException("Unknown file type");
+
+                // Set errors and warnings
+                var errors = 0;
+                var warnings = 0;
+
+                // Attempt to open the document
+                var modelCom = BaseObject.OpenDoc6(filePath, (int)fileType, (int)options, configuration, ref errors, ref warnings);
+
+                // TODO: Read errors into enums for better reporting
+                // For now just check if model is not null
+                if (modelCom == null)
+                    throw new ArgumentException($"Failed to open file. Errors {errors}, Warnings {warnings}");
+
+                // Return new model
+                return new Model(modelCom);
+            },
+                SolidDnaErrorTypeCode.SolidWorksApplication,
+                SolidDnaErrorCode.SolidWorksModelOpenError,
+                Localization.GetString("SolidWorksModelOpenFileError"));
+        }
+
+        /// <summary>
+        /// Closes a file
+        /// </summary>
+        /// <param name="filePath">The path to the file</param>
+        public void CloseFile(string filePath)
+        {
+            // Wrap any error
+            SolidDnaErrors.Wrap(() =>
+            {
+                BaseObject.CloseDoc(filePath);
+            },
+                SolidDnaErrorTypeCode.SolidWorksApplication,
+                SolidDnaErrorCode.SolidWorksModelCloseError,
+                Localization.GetString("SolidWorksModelCloseFileError"));
+        }
 
         #endregion
 
@@ -501,7 +581,7 @@ namespace AngelSix.SolidDna
                 SolidDnaErrorCode.SolidWorksApplicationGetMaterialsError,
                 Localization.GetString("SolidWorksApplicationGetMaterialsError"));
         }
-        
+
         /// <summary>
         /// Attempts to find the material from a SolidWorks material database file (SLDMAT)
         /// If found, returns the full information about the material
@@ -553,7 +633,7 @@ namespace AngelSix.SolidDna
                     var materials = new List<Material>();
 
                     // Iterate all classification nodes and inside are the materials
-                    xmlDoc.Root.Elements("classification")?.ToList()?.ForEach(f => 
+                    xmlDoc.Root.Elements("classification")?.ToList()?.ForEach(f =>
                     {
                         // Get classification name
                         var classification = f.Attribute("name")?.Value;
@@ -646,7 +726,11 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Attempts to create 
         /// </summary>
-        /// <param name="iconPath">An absolute path to an icon to use for the taskpane (ideally 37x37px)</param>
+        /// <param name="iconPath">
+        ///     An absolute path to an icon to use for the taskpane.
+        ///     The bitmap should be 16 colors and 16 x 18 (width x height) pixels. 
+        ///     Any portions of the bitmap that are white (RGB 255,255,255) will be transparent.
+        /// </param>
         /// <param name="toolTip">The title text to show at the top of the taskpane</param>
         public async Task<Taskpane> CreateTaskpaneAsync(string iconPath, string toolTip)
         {
@@ -662,9 +746,9 @@ namespace AngelSix.SolidDna
 
                 // If we succeed, create SolidDna object
                 return new Taskpane(comTaskpane);
-            }, 
+            },
                 SolidDnaErrorTypeCode.SolidWorksTaskpane,
-                SolidDnaErrorCode.SolidWorksTaskpaneCreateError, 
+                SolidDnaErrorCode.SolidWorksTaskpaneCreateError,
                 await Localization.GetStringAsync("ErrorSolidWorksTaskpaneCreateError"));
         }
 
@@ -681,7 +765,7 @@ namespace AngelSix.SolidDna
         public SolidWorksMessageBoxResult ShowMessageBox(string message, SolidWorksMessageBoxIcon icon = SolidWorksMessageBoxIcon.Information, SolidWorksMessageBoxButtons buttons = SolidWorksMessageBoxButtons.Ok)
         {
             // Send message to user
-            return (SolidWorksMessageBoxResult) BaseObject.SendMsgToUser2(message, (int)icon, (int) buttons);
+            return (SolidWorksMessageBoxResult)BaseObject.SendMsgToUser2(message, (int)icon, (int)buttons);
         }
 
         #endregion

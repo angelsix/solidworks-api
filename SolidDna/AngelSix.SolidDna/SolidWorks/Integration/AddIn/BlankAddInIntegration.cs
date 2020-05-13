@@ -1,6 +1,4 @@
-﻿using Dna;
-
-namespace AngelSix.SolidDna
+﻿namespace AngelSix.SolidDna
 {
     /// <summary>
     /// Creates a blank AddIn integration class
@@ -22,11 +20,6 @@ namespace AngelSix.SolidDna
         #region AddIn Methods
 
         public override void ApplicationStartup()
-        {
-
-        }
-
-        public override void ConfigureServices(FrameworkConstruction construction)
         {
 
         }

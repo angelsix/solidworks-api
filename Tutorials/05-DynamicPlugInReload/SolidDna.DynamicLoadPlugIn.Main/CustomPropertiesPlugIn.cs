@@ -38,7 +38,13 @@ namespace SolidDna.DynamicLoadPlugIn
             // Create our taskpane
             mTaskpane = new TaskpaneIntegration<TaskpaneUserControlHost>()
             {
-                Icon = Path.Combine(this.AssemblyPath(), "logo-small.png"),
+                Icon = Path.Combine(this.AssemblyPath(), "logo-small.bmp"),
+                // IMPORTANT: You must also run regasm (or the SolidWorks Add-in Installer tool)
+                //            on the plug-in dll that is created for this project to expose
+                //            this WPF UI over COM, otherwise your taskpane will not load the UI
+                //
+                //            In this example that is running regasm on SolidDna.DynamicLoadPlugIn.Main.dll
+                //            as well as on SolidDna.DynamicLoadPlugIn.dll
                 WpfControl = new CustomPropertiesUI()
             };
 

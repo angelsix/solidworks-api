@@ -1,5 +1,4 @@
-﻿using Dna;
-using AngelSix.SolidDna;
+﻿using AngelSix.SolidDna;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;

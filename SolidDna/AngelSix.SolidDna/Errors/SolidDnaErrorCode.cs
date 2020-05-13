@@ -124,10 +124,29 @@
         /// </summary>
         SolidWorksModelPartGetFeatureByNameError = 11007,
 
+        /// There was an error saving a model
+        /// </summary>
+        SolidWorksModelSaveError = 11008,
+
+        /// <summary>
+        /// There was an error opening model
+        /// </summary>
+        SolidWorksModelOpenError = 11009,
+
+        /// <summary>
+        /// There was an error pack and go-ing
+        /// </summary>
+        SolidWorksModelPackAndGoError = 11010,
+
+        /// <summary>
+        /// There was an error closing a model
+        /// </summary>
+        SolidWorksModelCloseError = 11011,
+        
         /// <summary>
         /// There was an error getting the custom property editor for a feature.
         /// </summary>
-        SolidWorksModelFeatureGetCustomPropertyEditor = 11008,
+        SolidWorksModelFeatureGetCustomPropertyEditor = 11012,
 
         #endregion
 

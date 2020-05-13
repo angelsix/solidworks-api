@@ -35,39 +35,39 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SolidWorks.Interop.sldworks">
+      <HintPath>..\..\..\References\2020\SolidWorks.Interop.sldworks.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>References\SolidWorks.Interop.sldworks.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.sw3dprinter">
-      <HintPath>References\SolidWorks.Interop.sw3dprinter.dll</HintPath>
+      <HintPath>..\..\..\References\2020\SolidWorks.Interop.sw3dprinter.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swcommands">
-      <HintPath>References\SolidWorks.Interop.swcommands.dll</HintPath>
+      <HintPath>..\..\..\References\2020\SolidWorks.Interop.swcommands.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swconst">
+      <HintPath>..\..\..\References\2020\SolidWorks.Interop.swconst.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>References\SolidWorks.Interop.swconst.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.swdimxpert">
-      <HintPath>References\SolidWorks.Interop.swdimxpert.dll</HintPath>
+      <HintPath>..\..\..\References\2020\SolidWorks.Interop.swdimxpert.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swdocumentmgr">
-      <HintPath>References\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
+      <HintPath>..\..\..\References\2020\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swmotionstudy">
-      <HintPath>References\SolidWorks.Interop.swmotionstudy.dll</HintPath>
+      <HintPath>..\..\..\References\2020\SolidWorks.Interop.swmotionstudy.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swpublished">
+      <HintPath>..\..\..\References\2020\SolidWorks.Interop.swpublished.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>References\SolidWorks.Interop.swpublished.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.SWRoutingLib">
-      <HintPath>References\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
+      <HintPath>..\..\..\References\2020\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="System" />
@@ -88,7 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AngelSix.SolidDna">
-      <Version>1.0.1.9</Version>
+      <Version>1.0.1.12</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

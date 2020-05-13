@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 
 namespace AngelSix.SolidDna
@@ -25,6 +26,11 @@ namespace AngelSix.SolidDna
         protected ITaskpaneControl mHostControl;
 
         /// <summary>
+        /// The host control that hosts the WPF control
+        /// </summary>
+        protected ElementHost mElementHost;
+
+        /// <summary>
         /// The ProgId of the host control to be created
         /// </summary>
         protected string mHostProgId;
@@ -34,7 +40,9 @@ namespace AngelSix.SolidDna
         #region Public Properties
 
         /// <summary>
-        /// An absolute path to an image icon (ideally 37x37px) to use for the taskpane icon
+        ///     An absolute path to an icon to use for the taskpane.
+        ///     The bitmap should be 16 colors and 16 x 18 (width x height) pixels. 
+        ///     Any portions of the bitmap that are white (RGB 255,255,255) will be transparent.
         /// </summary>
         public string Icon { get; set; }
 
@@ -88,13 +96,28 @@ namespace AngelSix.SolidDna
             {
                 // NOTE: ElementHost must be created on UI thread
                 // Create a new ElementHost to host the WPF control
-                var elementHost = new ElementHost
+                mElementHost = new ElementHost
                 {
                     // Add given WPF control
                     Child = WpfControl,
                     // Dock fill it
                     Dock = DockStyle.Fill
                 };
+
+                // IMPORTANT: 
+                //
+                //   This litle f*cking beauty right here took me 18 hours to figure out
+                //   Whenever you add a WPF control to SolidWorks, Win 10 is nice enough
+                //   if your machine has a pen or stylus to start up a
+                //   System.Windows.Input.PenThreadWorker.ThreadProc
+                //   thread that NEVER ends, even after closing SolidWorks or unloading 
+                //   the domain. This causes the AppDomain.Unload to fail, or SolidWorks
+                //   to never close.
+                //   
+                //   I found a way to disable the thread using this AppContext switch
+                //   Now life is good again.
+                //
+                AppContext.SetSwitch("Switch.System.Windows.Input.Stylus.DisableStylusAndTouchSupport", true);
 
                 // Add and dock it to the parent control
                 if (mHostControl is Control)
@@ -103,7 +126,7 @@ namespace AngelSix.SolidDna
                     (mHostControl as Control).Dock = DockStyle.Fill;
 
                     // Add WPF host
-                    (mHostControl as Control).Controls.Add(elementHost);
+                    (mHostControl as Control).Controls.Add(mElementHost);
                 }
 
             }
@@ -116,6 +139,10 @@ namespace AngelSix.SolidDna
         {
             if (mTaskpaneView == null)
                 return;
+
+            (mHostControl as Control)?.Controls.Clear();
+
+            mElementHost?.Dispose();
 
             // Remove taskpane view
             mTaskpaneView.Dispose();

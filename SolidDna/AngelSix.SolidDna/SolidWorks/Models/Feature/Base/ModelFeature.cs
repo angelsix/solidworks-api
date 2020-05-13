@@ -10,9 +10,9 @@ namespace AngelSix.SolidDna
 
         From the feature, I then need to get the specific feature. This is where the fun begins.
  
-        I call feature. GetTypeName2 to get the type. Then from this list http://help.solidworks.com/2016/english/api/sldworksapi/SOLIDWORKS.Interop.sldworks~SOLIDWORKS.Interop.sldworks.IFeature~GetTypeName2.html I figure out what type of feature I should expect from GetSpecificFeature2.
+        I call feature. GetTypeName2 to get the type. Then from this list http://help.solidworks.com/2020/english/api/sldworksapi/SOLIDWORKS.Interop.sldworks~SOLIDWORKS.Interop.sldworks.IFeature~GetTypeName2.html I figure out what type of feature I should expect from GetSpecificFeature2.
  
-        I’ve mapped everything then I come to check out the document for GetSpecificFeature2 http://help.solidworks.com/2016/english/api/sldworksapi/SOLIDWORKS.Interop.sldworks~SOLIDWORKS.Interop.sldworks.IFeature~GetSpecificFeature2.html
+        I’ve mapped everything then I come to check out the document for GetSpecificFeature2 http://help.solidworks.com/2020/english/api/sldworksapi/SOLIDWORKS.Interop.sldworks~SOLIDWORKS.Interop.sldworks.IFeature~GetSpecificFeature2.html
  
         It states it returns IAttribute, IBodyFolder etc... Now this list doesn’t match up. 
  
@@ -38,10 +38,11 @@ namespace AngelSix.SolidDna
     /// 
     /// TODO: See if we can add support for non-interface types
     ///        
-    ///       Bending (Flex), Deform, Imported, GridFeature (Grid), 
-    ///       AEMTorsionalSpring (TorsionalSpring), FormToolInstance (FormTool), 
-    ///       BlendRefSurface (Surface-Loft), RefSurface (Surface-Imported),
-    ///       SweepRefSurface (Surface-Sweep), UnTrimRefSurf (Surface-Untrim)
+    ///       AsmExploder (AssemblyExplodedView), CompExplodeStep (AssemblyExplodeStep), Bending (Flex),
+    ///       BodyExplodeStep (MultiBodyPartExplodeStep), Deform, Imported, GridFeature (Grid),
+    ///       AEMTorsionalSpring (TorsionalSpring), FormToolInstance (FormTool), BlendRefSurface (Surface-Loft),
+    ///       PrtExploder (MultiBodyPartExplodedView), RefSurface (Surface-Imported),
+    ///       SweepRefSurface (Surface-Sweep), UnTrimRefSurf (Surface-Untrim), MateGroup (MateGroup), Weldment (Weldment)
     /// </summary>
     public class ModelFeature : SharedSolidDnaObject<Feature>
     {
@@ -140,6 +141,11 @@ namespace AngelSix.SolidDna
         public bool IsFeatureFolder => FeatureType == ModelFeatureType.FeatureFolder;
 
         /// <summary>
+        /// Checks if this feature's specific type is a Flat Pattern Folder
+        /// </summary>
+        public bool IsFlatPatternFolder => FeatureType == ModelFeatureType.FlatPatternFolder;
+
+        /// <summary>
         /// Checks if this feature's specific type is a Light
         /// </summary>
         public bool IsLight => FeatureType == ModelFeatureType.Light;
@@ -148,6 +154,11 @@ namespace AngelSix.SolidDna
         /// Checks if this feature's specific type is a Mate 
         /// </summary>
         public bool IsMate => FeatureType == ModelFeatureType.Mate;
+
+        /// <summary>
+        /// Checks if this feature's specific type is a Mate Group
+        /// </summary>
+        public bool IsMateGroup => FeatureType == ModelFeatureType.MateGroup;
 
         /// <summary>
         /// Checks if this feature's specific type is a Mate Reference 
@@ -185,6 +196,11 @@ namespace AngelSix.SolidDna
         public bool IsSensor => FeatureType == ModelFeatureType.Sensor;
 
         /// <summary>
+        /// Checks if this feature's specific type is a Sheet Metal Folder
+        /// </summary>
+        public bool IsSheetMetalFolder => FeatureType == ModelFeatureType.SheetMetalFolder;
+
+        /// <summary>
         /// Checks if this feature's specific type is a Sketch
         /// </summary>
         public bool IsSketch => FeatureType == ModelFeatureType.Sketch;
@@ -214,9 +230,24 @@ namespace AngelSix.SolidDna
         /// </summary>
         public bool IsTableAnchor => FeatureType == ModelFeatureType.TableAnchor;
 
+        /// <summary>
+        /// Checks if this feature's specific type is a Weldment
+        /// </summary>
+        public bool IsWeldment => FeatureType == ModelFeatureType.Weldment;
+
         #endregion
 
         #region Feature Data
+
+        /// <summary>
+        /// Checks if this feature's specific type is Advanced Hole Wizard data
+        /// </summary>
+        public bool IsAdvancedHoleWizardData => FeatureType == ModelFeatureType.AdvancedHoleWizardData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is  data
+        /// </summary>
+        public bool IsAngleMateData => FeatureType == ModelFeatureType.AngleMateData;
 
         /// <summary>
         /// Checks if this feature's specific type is Base Flange data
@@ -234,6 +265,11 @@ namespace AngelSix.SolidDna
         public bool IsBoundaryBossData => FeatureType == ModelFeatureType.BoundaryBossData;
 
         /// <summary>
+        /// Checks if this feature's specific type is Bounding Box data
+        /// </summary>
+        public bool IsBoundingBoxData => FeatureType == ModelFeatureType.BoundingBoxData;
+
+        /// <summary>
         /// Checks if this feature's specific type is Break Corner data
         /// </summary>
         public bool IsBreakCornerData => FeatureType == ModelFeatureType.BreakCornerData;
@@ -243,6 +279,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         public bool IsBrokenOutSectionData => FeatureType == ModelFeatureType.BrokenOutSectionData;
 
+        /// <summary>
+        /// Checks if this feature's specific type is Cam Follower Mate data
+        /// </summary>
+        public bool IsCamFollowerMateData => FeatureType == ModelFeatureType.CamFollowerMateData;
+        
         /// <summary>
         /// Checks if this feature's specific type is Cavity data
         /// </summary>
@@ -264,6 +305,11 @@ namespace AngelSix.SolidDna
         public bool IsCircularPatternData => FeatureType == ModelFeatureType.CircularPatternData;
 
         /// <summary>
+        /// Checks if this feature's specific type is Coincident Mate data
+        /// </summary>
+        public bool IsCoincidentMateData => FeatureType == ModelFeatureType.CoincidentMateData;
+
+        /// <summary>
         /// Checks if this feature's specific type is Combine Bodies data
         /// </summary>
         public bool IsCombineBodiesData => FeatureType == ModelFeatureType.CombineBodiesData;
@@ -272,6 +318,11 @@ namespace AngelSix.SolidDna
         /// Checks if this feature's specific type is Composite Curve data
         /// </summary>
         public bool IsCompositeCurveData => FeatureType == ModelFeatureType.CompositeCurveData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is Concentric Mate data
+        /// </summary>
+        public bool IsConcentricMateData => FeatureType == ModelFeatureType.ConcentricMateData;
 
         /// <summary>
         /// Checks if this feature's specific type is Coordinate System data
@@ -329,6 +380,11 @@ namespace AngelSix.SolidDna
         public bool IsDimPatternData => FeatureType == ModelFeatureType.DimPatternData;
 
         /// <summary>
+        /// Checks if this feature's specific type is Distance Mate data
+        /// </summary>
+        public bool IsDistanceMateData => FeatureType == ModelFeatureType.DistanceMateData;
+
+        /// <summary>
         /// Checks if this feature's specific type is Dome data
         /// </summary>
         public bool IsDomeData => FeatureType == ModelFeatureType.DomeData;
@@ -374,6 +430,16 @@ namespace AngelSix.SolidDna
         public bool IsFreePointCurveData => FeatureType == ModelFeatureType.FreePointCurveData;
 
         /// <summary>
+        /// Checks if this feature's specific type is Gear Mate data
+        /// </summary>
+        public bool IsGearMateData => FeatureType == ModelFeatureType.GearMateData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is Ground Plane data
+        /// </summary>
+        public bool IsGroundPlaneData => FeatureType == ModelFeatureType.GroundPlaneData;
+
+        /// <summary>
         /// Checks if this feature's specific type is Gusset data
         /// </summary>
         public bool IsGussetData => FeatureType == ModelFeatureType.GussetData;
@@ -394,6 +460,11 @@ namespace AngelSix.SolidDna
         public bool IsHemData => FeatureType == ModelFeatureType.HemData;
 
         /// <summary>
+        /// Checks if this feature's specific type is Hinge Mate data
+        /// </summary>
+        public bool IsHingeMateData => FeatureType == ModelFeatureType.HingeMateData;
+
+        /// <summary>
         /// Checks if this feature's specific type is Hole Series data
         /// </summary>
         public bool IsHoleSeriesData => FeatureType == ModelFeatureType.HoleSeriesData;
@@ -402,6 +473,11 @@ namespace AngelSix.SolidDna
         /// Checks if this feature's specific type is Hole Wizard data
         /// </summary>
         public bool IsHoleWizardData => FeatureType == ModelFeatureType.HoleWizardData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is Import 3D Interconnect data
+        /// </summary>
+        public bool IsImport3DInterconnectData => FeatureType == ModelFeatureType.Import3DInterconnectData;
 
         /// <summary>
         /// Checks if this feature's specific type is Imported Curve data
@@ -429,6 +505,11 @@ namespace AngelSix.SolidDna
         public bool IsLibraryFeatureData => FeatureType == ModelFeatureType.LibraryFeatureData;
 
         /// <summary>
+        /// Checks if this feature's specific type is Linear Coupler Mate data
+        /// </summary>
+        public bool IsLinearCouplerMateData => FeatureType == ModelFeatureType.LinearCouplerMateData;
+
+        /// <summary>
         /// Checks if this feature's specific type is Linear Pattern data
         /// </summary>
         public bool IsLinearPatternData => FeatureType == ModelFeatureType.LinearPatternData;
@@ -449,6 +530,16 @@ namespace AngelSix.SolidDna
         public bool IsLocalLinearPatternData => FeatureType == ModelFeatureType.LocalLinearPatternData;
 
         /// <summary>
+        /// Checks if this feature's specific type is Local Sketch Pattern data
+        /// </summary>
+        public bool IsLocalSketchPatternData => FeatureType == ModelFeatureType.LocalSketchPatternData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is Lock Mate data
+        /// </summary>
+        public bool IsLockMateData => FeatureType == ModelFeatureType.LockMateData;
+
+        /// <summary>
         /// Checks if this feature's specific type is Loft data
         /// </summary>
         public bool IsLoftData => FeatureType == ModelFeatureType.LoftData;
@@ -462,6 +553,11 @@ namespace AngelSix.SolidDna
         /// Checks if this feature's specific type is Macro data
         /// </summary>
         public bool IsMacroData => FeatureType == ModelFeatureType.MacroData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is Mirror Component data
+        /// </summary>
+        public bool IsMirrorComponentData => FeatureType == ModelFeatureType.MirrorComponentData;
 
         /// <summary>
         /// Checks if this feature's specific type is Mirror Part data
@@ -499,9 +595,19 @@ namespace AngelSix.SolidDna
         public bool IsMoveCopyBodyData => FeatureType == ModelFeatureType.MoveCopyBodyData;
 
         /// <summary>
+        /// Checks if this feature's specific type is Normal Cut data
+        /// </summary>
+        public bool IsNormalCutData => FeatureType == ModelFeatureType.NormalCutData;
+
+        /// <summary>
         /// Checks if this feature's specific type is One Bend data
         /// </summary>
         public bool IsOneBendData => FeatureType == ModelFeatureType.OneBendData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is Parallel Mate data
+        /// </summary>
+        public bool IsParallelMateData => FeatureType == ModelFeatureType.ParallelMateData;
 
         /// <summary>
         /// Checks if this feature's specific type is Parting Line data
@@ -514,9 +620,24 @@ namespace AngelSix.SolidDna
         public bool IsPartingSurfaceData => FeatureType == ModelFeatureType.PartingSurfaceData;
 
         /// <summary>
+        /// Checks if this feature's specific type is Perpendicular Mate data
+        /// </summary>
+        public bool IsPerpendicularMateData => FeatureType == ModelFeatureType.PerpendicularMateData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is Profile Center Mate data
+        /// </summary>
+        public bool IsProfileCenterData => FeatureType == ModelFeatureType.ProfileCenterMateData;
+
+        /// <summary>
         /// Checks if this feature's specific type is Projection Curve data
         /// </summary>
         public bool IsProjectionCurveData => FeatureType == ModelFeatureType.ProjectionCurveData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is Rack Pinion Mate data
+        /// </summary>
+        public bool IsRackPinionMateData => FeatureType == ModelFeatureType.RackPinionMateData;
 
         /// <summary>
         /// Checks if this feature's specific type is Reference Axis data
@@ -567,6 +688,11 @@ namespace AngelSix.SolidDna
         /// Checks if this feature's specific type is Scale data
         /// </summary>
         public bool IsScaleData => FeatureType == ModelFeatureType.ScaleData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is Screw Mate data
+        /// </summary>
+        public bool IsScrewMateData => FeatureType == ModelFeatureType.ScrewMateData;
 
         /// <summary>
         /// Checks if this feature's specific type is Sheet Metal data
@@ -639,6 +765,11 @@ namespace AngelSix.SolidDna
         public bool IsSketchPatternData => FeatureType == ModelFeatureType.SketchPatternData;
 
         /// <summary>
+        /// Checks if this feature's specific type is Slot Mate data
+        /// </summary>
+        public bool IsSlotMateData => FeatureType == ModelFeatureType.SlotMateData;
+
+        /// <summary>
         /// Checks if this feature's specific type is Smart Component data
         /// </summary>
         public bool IsSmartComponentData => FeatureType == ModelFeatureType.SmartComponentFeatureData;
@@ -709,6 +840,11 @@ namespace AngelSix.SolidDna
         public bool IsSurfaceRuledData => FeatureType == ModelFeatureType.SurfaceRuledData;
 
         /// <summary>
+        /// Checks if this feature's specific type is Surface Sweep data
+        /// </summary>
+        public bool IsSurfaceSweepData => FeatureType == ModelFeatureType.SurfaceSweepData;
+
+        /// <summary>
         /// Checks if this feature's specific type is Surface Trim data
         /// </summary>
         public bool IsSurfaceTrimData => FeatureType == ModelFeatureType.SurfaceTrimData;
@@ -719,9 +855,19 @@ namespace AngelSix.SolidDna
         public bool IsSweepData => FeatureType == ModelFeatureType.SweepData;
 
         /// <summary>
+        /// Checks if this feature's specific type is Symmetric Mate data
+        /// </summary>
+        public bool IsSymmetricMateData => FeatureType == ModelFeatureType.SymmetricMateData;
+
+        /// <summary>
         /// Checks if this feature's specific type is Table Pattern data
         /// </summary>
         public bool IsTablePatternData => FeatureType == ModelFeatureType.TablePatternData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is Tangent Mate data
+        /// </summary>
+        public bool IsTangentMateData => FeatureType == ModelFeatureType.TangentMateData;
 
         /// <summary>
         /// Checks if this feature's specific type is Thicken data
@@ -729,9 +875,19 @@ namespace AngelSix.SolidDna
         public bool IsThickenData => FeatureType == ModelFeatureType.ThickenData;
 
         /// <summary>
+        /// Checks if this feature's specific type is Thread data
+        /// </summary>
+        public bool IsThreadData => FeatureType == ModelFeatureType.ThreadData;
+
+        /// <summary>
         /// Checks if this feature's specific type is Tooling Split data
         /// </summary>
         public bool IsToolingSplitData => FeatureType == ModelFeatureType.ToolingSplitData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is Universal Joint Mate data
+        /// </summary>
+        public bool IsUniversalJointMateData => FeatureType == ModelFeatureType.UniversalJointMateData;
 
         /// <summary>
         /// Checks if this feature's specific type is Variable Fillet data
@@ -757,6 +913,11 @@ namespace AngelSix.SolidDna
         /// Checks if this feature's specific type is Weldment Trim Extend data
         /// </summary>
         public bool IsWeldmentTrimExtendData => FeatureType == ModelFeatureType.WeldmentTrimExtendData;
+
+        /// <summary>
+        /// Checks if this feature's specific type is Width Mate data
+        /// </summary>
+        public bool IsWidthMateData => FeatureType == ModelFeatureType.WidthMateData;
 
         /// <summary>
         /// Checks if this feature's specific type is Wrap Sketch data
@@ -897,6 +1058,19 @@ namespace AngelSix.SolidDna
         {
             // TODO: Handle Intant3D feature, then call GetTypeName instead of 2
             return BaseObject.GetTypeName2();
+        }
+
+        #endregion
+
+        #region ToString
+
+        /// <summary>
+        /// Returns a user-friendly string with feature properties.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"Name: {FeatureName}. Type: {FeatureTypeName}";
         }
 
         #endregion

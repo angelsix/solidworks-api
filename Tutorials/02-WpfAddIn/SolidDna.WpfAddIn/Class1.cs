@@ -1,6 +1,4 @@
 ﻿using AngelSix.SolidDna;
-using Dna;
-using SolidWorks.Interop.sldworks;
 using System.IO;
 
 namespace SolidDna.WpfAddIn
@@ -32,12 +30,7 @@ namespace SolidDna.WpfAddIn
             //       Be aware doing so sometimes causes API's to fail
             //       when they try to load dll's
             //
-            // PlugInIntegration.UseDetachedAppDomain = true;
-        }
-
-        public override void ConfigureServices(FrameworkConstruction construction)
-        {
-
+            // AppDomainBoundary.UseDetachedAppDomain = true;
         }
     }
 
@@ -76,7 +69,7 @@ namespace SolidDna.WpfAddIn
             // Create our taskpane
             mTaskpane = new TaskpaneIntegration<MyTaskpaneUI>()
             {
-                Icon = Path.Combine(this.AssemblyPath(), "logo-small.png"),
+                Icon = Path.Combine(this.AssemblyPath(), "logo-small.bmp"),
                 WpfControl = new MyAddinControl()
             };
 

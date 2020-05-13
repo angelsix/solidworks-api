@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a configuration option used in multiple calls
     /// 
-    /// NOTE: Known types are here http://help.solidworks.com/2019/english/api/swconst/SOLIDWORKS.Interop.swconst~SOLIDWORKS.Interop.swconst.swInConfigurationOpts_e.html
+    /// NOTE: Known types are here http://help.solidworks.com/2020/english/api/swconst/SOLIDWORKS.Interop.swconst~SOLIDWORKS.Interop.swconst.swInConfigurationOpts_e.html
     /// 
     /// </summary>
     public enum ModelConfigurationOptions
