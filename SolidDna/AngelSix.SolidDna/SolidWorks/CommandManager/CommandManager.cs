@@ -68,6 +68,7 @@ namespace AngelSix.SolidDna
         /// <param name="addDropdownBoxForParts">If true, adds a command box to the toolbar for parts that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="addDropdownBoxForAssemblies">If true, adds a command box to the toolbar for assemblies that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
+        /// <param name="documentTypes">The document types where this menu/toolbar is visible.</param>
         /// <returns></returns>
         public CommandManagerGroup CreateCommandGroupAndTabs(
             string title,
@@ -82,7 +83,8 @@ namespace AngelSix.SolidDna
             bool hasToolbar = true,
             bool addDropdownBoxForParts = false,
             bool addDropdownBoxForAssemblies = false,
-            bool addDropdownBoxForDrawings = false)
+            bool addDropdownBoxForDrawings = false,
+            ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing)
         {
             // Wrap any error creating the taskpane in a SolidDna exception
             return SolidDnaErrors.Wrap(() =>
@@ -103,7 +105,8 @@ namespace AngelSix.SolidDna
                         hasToolbar,
                         addDropdownBoxForParts,
                         addDropdownBoxForAssemblies,
-                        addDropdownBoxForDrawings);
+                        addDropdownBoxForDrawings,
+                        documentTypes);
 
                     // Track all flyouts
                     mCommandFlyouts = flyoutItems;
@@ -210,6 +213,7 @@ namespace AngelSix.SolidDna
         /// <param name="addDropdownBoxForParts">If true, adds a command box to the toolbar for parts that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="addDropdownBoxForAssemblies">If true, adds a command box to the toolbar for assemblies that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
+        /// <param name="documentTypes">The document types where this menu/toolbar is visible.</param>
         /// <returns></returns>
         private CommandManagerGroup CreateCommandGroup(
             string title,
@@ -223,7 +227,8 @@ namespace AngelSix.SolidDna
             bool hasToolbar = true,
             bool addDropdownBoxForParts = false,
             bool addDropdownBoxForAssemblies = false,
-            bool addDropdownBoxForDrawings = false)
+            bool addDropdownBoxForDrawings = false, 
+            ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing)
         {
             // NOTE: We may need to look carefully at this Id if things get removed and re-added based on this SolidWorks note:
             //     
@@ -267,7 +272,8 @@ namespace AngelSix.SolidDna
                 hasToolbar,
                 addDropdownBoxForParts,
                 addDropdownBoxForAssemblies,
-                addDropdownBoxForDrawings);
+                addDropdownBoxForDrawings,
+                documentTypes);
 
             // Return it
             return group;
