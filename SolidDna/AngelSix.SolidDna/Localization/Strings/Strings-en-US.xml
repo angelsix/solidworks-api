@@ -33,6 +33,7 @@
   <String Name="SolidWorksModelSelectedObjectCastError">An error occurred trying to cast a selected object to a specific type</String>
   <String Name="SolidWorksModelAssemblyGetFeatureByNameError">An error occurred trying to get the feature by name from an assembly document</String>
   <String Name="SolidWorksModelPartGetFeatureByNameError">An error occurred trying to get the feature by name from a part document</String>
+  <String Name="SolidWorksModelFeatureGetCustomPropertyEditor">An error occurred trying to get the custom property editor because the feature is not a cut list folder or the weldment feature</String>
   <String Name="SolidWorksModelSaveError">An error occurred trying to save a model</String>
   <String Name="SolidWorksModelSaveAsError">An error occurred trying to save a model as</String>
   <String Name="SolidWorksModelOpenFileError">An error occurred trying to open a model</String>
