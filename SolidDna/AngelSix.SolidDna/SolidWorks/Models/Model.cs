@@ -4,10 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace AngelSix.SolidDna
 {
@@ -87,7 +84,7 @@ namespace AngelSix.SolidDna
         #endregion
 
         #region Public Events
-        
+
         /// <summary>
         /// Called after the a drawing sheet was added
         /// </summary>
@@ -102,7 +99,7 @@ namespace AngelSix.SolidDna
         /// Called before the active drawing sheet changes
         /// </summary>
         public event Action<string> DrawingActiveSheetChanging = (sheetName) => { };
-        
+
         /// <summary>
         /// Called after the a drawing sheet was deleted
         /// </summary>
@@ -214,7 +211,7 @@ namespace AngelSix.SolidDna
             Assembly = IsAssembly ? new AssemblyDocument((AssemblyDoc)BaseObject) : null;
 
             // Inform listeners
-            ModelInformationChanged();            
+            ModelInformationChanged();
         }
 
         /// <summary>
@@ -339,11 +336,11 @@ namespace AngelSix.SolidDna
 
         }
 
-    /// <summary>
-    /// Unhooks model-specific events when model becomes inactive.
-    /// Model becomes inactive when it is closed or when another model becomes the active model.
-    /// </summary>
-    protected void ClearModelEventHandlers()
+        /// <summary>
+        /// Unhooks model-specific events when model becomes inactive.
+        /// Model becomes inactive when it is closed or when another model becomes the active model.
+        /// </summary>
+        protected void ClearModelEventHandlers()
         {
             switch (ModelType)
             {
@@ -526,7 +523,7 @@ namespace AngelSix.SolidDna
 
             // Update filepath
             FilePath = BaseObject.GetPathName();
-        
+
             // Inform listeners
             ModelSaved();
 
@@ -743,6 +740,42 @@ namespace AngelSix.SolidDna
             }
         }
 
+        /// <summary>
+        /// Gets all of the custom properties in this model including any configuration specific properties
+        /// </summary>
+        /// <param name="action">The custom properties list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>
+        /// <returns>Custom property and the configuration name it belongs to (or null if none)</returns>
+        public IEnumerable<(string configuration, CustomProperty property)> AllCustomProperties()
+        {
+            // Custom properties
+            using (var editor = Extension.CustomPropertyEditor(null))
+            {
+                // Get the properties
+                var properties = editor.GetCustomProperties();
+
+                // Loop each property
+                foreach (var property in properties)
+                    // Return result
+                    yield return (null, property);
+            }
+
+            // Configuration specific properties
+            foreach (var configuration in ConfigurationNames)
+            {
+                // Get the custom property editor
+                using (var editor = Extension.CustomPropertyEditor(configuration))
+                {
+                    // Get the properties
+                    var properties = editor.GetCustomProperties();
+
+                    // Loop each property
+                    foreach (var property in properties)
+                        // Return result
+                        yield return (configuration, property);
+                }
+            }
+        }
+
         #endregion
 
         #region Drawings
@@ -813,7 +846,7 @@ namespace AngelSix.SolidDna
                 SolidDnaErrorCode.SolidWorksModelGetMaterialError,
                 Localization.GetString("SolidWorksModelGetMaterialError"));
         }
-        
+
         /// <summary>
         /// Sets the material for the model
         /// </summary>
@@ -852,7 +885,7 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public void SelectedObjects(Action<List<SelectedObject>> action)
         {
-             SelectionManager?.SelectedObjects(action);
+            SelectionManager?.SelectedObjects(action);
         }
 
         #endregion
@@ -939,7 +972,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Recurses the model for all of it's components and sub-components
         /// </summary>
-        public IEnumerable<(Component, int)> Components()
+        public IEnumerable<(Component component, int depth)> Components()
         {
             // Component to be set
             Component component;
@@ -1041,7 +1074,7 @@ namespace AngelSix.SolidDna
         #endregion
 
         #region Saving
-        
+
         /// <summary>
         /// Saves the current model, with the specified options
         /// </summary>
