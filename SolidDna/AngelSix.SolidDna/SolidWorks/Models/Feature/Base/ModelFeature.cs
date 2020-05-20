@@ -1,4 +1,6 @@
-﻿using SolidWorks.Interop.sldworks;
+﻿using System;
+using System.Collections.Generic;
+using SolidWorks.Interop.sldworks;
 
 namespace AngelSix.SolidDna
 {
@@ -969,6 +971,80 @@ namespace AngelSix.SolidDna
         {
             return (bool[])BaseObject.IsSuppressed2((int)configurationOption, configurationNames);
         }
+
+        #region Custom Properties
+
+        /// <summary>
+        /// Gets a custom property editor for this feature.
+        /// Throws an error when the feature is not a cut list folder or the Weldment feature.
+        /// 
+        /// NOTE: Custom Property Editor must be disposed of once finished
+        /// </summary>
+        public CustomPropertyEditor GetCustomPropertyEditor()
+        {
+            if (FeatureTypeName == "CutListFolder" || FeatureTypeName == "Weldment")
+                return new CustomPropertyEditor(UnsafeObject.CustomPropertyManager);
+
+            throw new SolidDnaException(
+                SolidDnaErrors.CreateError(
+                    SolidDnaErrorTypeCode.SolidWorksModel,
+                    SolidDnaErrorCode.SolidWorksModelFeatureGetCustomPropertyEditor,
+                    Localization.GetString("SolidWorksModelFeatureGetCustomPropertyEditor")));
+        }
+
+        /// <summary>
+        /// Sets a custom property to the given value.
+        /// Only works for Cut List Folders and the Weldment feature.
+        /// </summary>
+        /// <param name="name">The name of the property</param>
+        /// <param name="value">The value of the property</param>
+        public void SetCustomProperty(string name, string value)
+        {
+            // Get the custom property editor
+            using (var editor = GetCustomPropertyEditor())
+            {
+                // Set the property
+                editor.SetCustomProperty(name, value);
+            }
+        }
+
+        /// <summary>
+        /// Gets a custom property by the given name. 
+        /// Only works for Cut List Folders and the Weldment feature.
+        /// </summary>
+        /// <param name="name">The name of the custom property</param>
+        ///<param name="resolved">True to get the resolved value of the property, false to get the actual text</param>
+        /// <returns></returns>
+        public string GetCustomProperty(string name, bool resolved = false)
+        {
+            // Get the custom property editor
+            using (var editor = GetCustomPropertyEditor())
+            {
+                // Get the property
+                return editor.GetCustomProperty(name, resolve: resolved);
+            }
+        }
+
+        /// <summary>
+        /// Gets all of the custom properties in this feature.
+        /// Only works for Cut List Folders and the Weldment feature.
+        /// </summary>
+        /// <param name="action">The custom properties list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>
+        /// <returns></returns>
+        public void CustomProperties(Action<List<CustomProperty>> action)
+        {
+            // Get the custom property editor
+            using (var editor = GetCustomPropertyEditor())
+            {
+                // Get the properties
+                var properties = editor.GetCustomProperties();
+
+                // Let the action use them
+                action(properties);
+            }
+        }
+
+        #endregion
 
         #endregion
 

@@ -362,10 +362,7 @@ namespace AngelSix.SolidDna
             CleanActiveModelData();
 
             // Now get the new data
-            if (BaseObject.IActiveDoc2 == null || BaseObject.GetDocumentCount() == 0)
-                mActiveModel = null;
-            else
-                mActiveModel = new Model(BaseObject.IActiveDoc2);
+            mActiveModel = BaseObject.IActiveDoc2 == null || BaseObject.GetDocumentCount() == 0 ? null : new Model(BaseObject.IActiveDoc2);
 
             // Listen out for events
             if (mActiveModel != null)

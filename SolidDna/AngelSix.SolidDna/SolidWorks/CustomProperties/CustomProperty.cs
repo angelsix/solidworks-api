@@ -1,7 +1,7 @@
 ﻿namespace AngelSix.SolidDna
 {
     /// <summary>
-    /// A custom property of a model that can be edit directly
+    /// A custom property of a model that can be edited directly
     /// </summary>
     public class CustomProperty
     {
@@ -10,7 +10,7 @@
         /// <summary>
         /// The editor used for this custom property
         /// </summary>
-        private CustomPropertyEditor mEditor;
+        private readonly CustomPropertyEditor mEditor;
 
         #endregion
 
@@ -19,10 +19,11 @@
         /// <summary>
         /// The name of the custom property
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         /// <summary>
-        /// The value of the custom property
+        /// The value of the custom property.
+        /// If this custom property contains the model mass, the value is "SW-Mass@filename.sldprt", including the quotes.
         /// </summary>
         public string Value
         {
@@ -32,6 +33,7 @@
 
         /// <summary>
         /// The resolved value of the custom property
+        /// If this custom property contains the model mass, the resolved value is the actual mass.
         /// </summary>
         public string ResolvedValue => mEditor.GetCustomProperty(Name, resolve: true);
 
@@ -61,6 +63,15 @@
         public void Delete()
         {
             mEditor.DeleteCustomProperty(Name);
+        }
+
+        /// <summary>
+        /// Returns a user-friendly string with the name, value and resolved value.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"Name: {Name}, value: {Value}, resolved value: {ResolvedValue}";
         }
 
         #endregion

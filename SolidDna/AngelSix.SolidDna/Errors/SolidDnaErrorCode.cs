@@ -124,7 +124,6 @@
         /// </summary>
         SolidWorksModelPartGetFeatureByNameError = 11007,
 
-        /// <summary>
         /// There was an error saving a model
         /// </summary>
         SolidWorksModelSaveError = 11008,
@@ -143,7 +142,11 @@
         /// There was an error closing a model
         /// </summary>
         SolidWorksModelCloseError = 11011,
-
+        
+        /// <summary>
+        /// There was an error getting the custom property editor for a feature.
+        /// </summary>
+        SolidWorksModelFeatureGetCustomPropertyEditor = 11012,
 
         #endregion
 
