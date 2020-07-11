@@ -12,9 +12,7 @@
         MinWidth="525"
         Icon="Resources/favicon.ico">
     <Border Padding="10">
-
         <Grid>
-
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -34,7 +32,6 @@
 
                     <TextBox Padding="5" Name="RegAsmPath" />
                     <Button Name="BrowseRegAsmButton" Click="BrowseRegAsmButton_Click" Grid.Column="1" Content="Browse" Padding="5" />
-
                 </Grid>
 
                 <Label Content="Add-in Dll" FontWeight="Bold" />
@@ -46,12 +43,10 @@
 
                     <TextBox Padding="5" Name="DllPath" />
                     <Button Name="BrowseDllButton" Click="BrowseDllButton_Click" Grid.Column="1" Content="Browse" Padding="5" />
-
                 </Grid>
             </StackPanel>
 
             <Grid Grid.Row="2" Margin="0 20 0 0">
-
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -59,9 +54,7 @@
                 
                 <Button Name="UninstallButton" Content="Uninstall" Click="UninstallButton_Click" />
                 <Button Grid.Column="1" Margin="5 0 0 0" Name="InstallButton" Content="Install" Click="InstallButton_Click" />
-
             </Grid>
-
         </Grid>
     </Border>
 </Window>
