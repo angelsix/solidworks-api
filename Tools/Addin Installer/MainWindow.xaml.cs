@@ -21,12 +21,12 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         /// <summary>
         /// The name of the RegAsm tool
         /// </summary>
-        private string mRegAsmFilename = "RegAsm.exe";
+        private const string MRegAsmFilename = "RegAsm.exe";
 
         /// <summary>
         /// The folder location where 64bit .Net Frameworks are installed, relative to the Windows folder
         /// </summary>
-        private string mRegAsmWindowsPath = "Microsoft.NET\\Framework64";
+        private const string MRegAsmWindowsPath = "Microsoft.NET\\Framework64";
 
         #endregion
 
@@ -77,7 +77,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         {
             // Locate SolidWorks exe in Program Files
             var results = new List<string>();
-            FindByFilename(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), mRegAsmWindowsPath), null, mRegAsmFilename, results);
+            FindByFilename(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), MRegAsmWindowsPath), null, MRegAsmFilename, results);
 
             // If we have at least one, use the last one (so newest version)
             if (results?.Count > 0)
@@ -93,7 +93,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         /// <param name="filename">The filename to find (case insensitive)</param>
         /// <param name="results">The results to store the results in</param>
         /// <returns></returns>
-        private void FindByFilename(string path, string pathContains, string filename, List<string> results = null)
+        private static void FindByFilename(string path, string pathContains, string filename, List<string> results = null)
         {
             // Create new list if none passed in
             if (results == null)
@@ -103,7 +103,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
             try
             {
                 var files = Directory.EnumerateFiles(path).Where(f => string.Equals(Path.GetFileName(f), filename, StringComparison.InvariantCultureIgnoreCase)).ToList();
-                if (files?.Count > 0)
+                if (files.Count > 0)
                     results.AddRange(files);
             }
             catch
@@ -113,8 +113,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
             try
             {
                 // Allow case-insensitive checking
-                if (pathContains != null)
-                    pathContains = pathContains.ToLower();
+                pathContains = pathContains?.ToLower();
 
                 // Search into directories that match
                 Directory.EnumerateDirectories(path).Where(f => string.IsNullOrEmpty(pathContains) || f.ToLower().Contains(pathContains)).ToList().ForEach(dir => FindByFilename(dir, null, filename, results));
@@ -135,7 +134,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         {
             var ofd = new OpenFileDialog
             {
-                Filter = $"RegAsm | {mRegAsmFilename}",
+                Filter = $"RegAsm | {MRegAsmFilename}",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Windows)
             };
 
