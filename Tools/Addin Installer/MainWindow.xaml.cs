@@ -97,16 +97,26 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         private static bool SanityCheck(string regasmPath, string dllPath)
         {
             // Check RegAsm
-            if (string.IsNullOrEmpty(regasmPath) || !File.Exists(regasmPath))
+            if (string.IsNullOrEmpty(regasmPath))
             {
                 MessageBox.Show("Please specify a path to a valid RegAsm application", "No RegAsm found");
+                return false;
+            } 
+            if (!File.Exists(regasmPath))
+            {
+                MessageBox.Show("The RegAsm file does not exist", "No RegAsm found");
                 return false;
             }
 
             // Check Dll
-            if (string.IsNullOrEmpty(dllPath) || !File.Exists(dllPath))
+            if (string.IsNullOrEmpty(dllPath))
             {
                 MessageBox.Show("Please specify a path to a valid SolidWorks Add-in dll", "No Add-in found");
+                return false;
+            }
+            if (!File.Exists(dllPath))
+            {
+                MessageBox.Show("The dll file does not exist", "File not found");
                 return false;
             }
 
