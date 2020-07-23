@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Windows;
 using System.Linq;
 using Microsoft.Win32;
 using System.Diagnostics;
+using System.Windows.Controls;
+using AngelSix.SolidWorksApi.AddinInstaller.Properties;
 
 namespace AngelSix.SolidWorksApi.AddinInstaller
 {
@@ -21,12 +25,12 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         /// <summary>
         /// The name of the RegAsm tool
         /// </summary>
-        private string mRegAsmFilename = "RegAsm.exe";
+        private const string MRegAsmFilename = "RegAsm.exe";
 
         /// <summary>
         /// The folder location where 64bit .Net Frameworks are installed, relative to the Windows folder
         /// </summary>
-        private string mRegAsmWindowsPath = "Microsoft.NET\\Framework64";
+        private const string MRegAsmWindowsPath = "Microsoft.NET\\Framework64";
 
         #endregion
 
@@ -41,29 +45,78 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
 
             // Try and local RegAsm
             LocateRegAsm();
+            
+            // Set up the data context so we can use binding
+            DataContext = this;
+
+            // Find previous dll paths
+            ReadPreviousPaths();
         }
+
+        #endregion
+
+        #region Public properties
+
+        public ObservableCollection<string> PreviousAddInPaths { get; private set; } = new ObservableCollection<string>();
 
         #endregion
 
         #region Private Helpers
 
         /// <summary>
+        /// Get the previously used DLL paths from the user settings.
+        /// </summary>
+        private void ReadPreviousPaths()
+        {
+            // Get the list of previously used paths from the user settings as a string collection
+            var settings = Settings.Default.PreviousPaths;
+            if (settings != null)
+                PreviousAddInPaths = new ObservableCollection<string>(settings.Cast<string>());
+
+            // Get notified whenever we add or remove a path so we can save them
+            PreviousAddInPaths.CollectionChanged += SavePaths;
+        }
+
+        /// <summary>
+        /// Save the list of previously used paths as user settings.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SavePaths(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            var stringCollection = new StringCollection();
+            stringCollection.AddRange(PreviousAddInPaths.ToArray());
+            Settings.Default.PreviousPaths = stringCollection;
+            Settings.Default.Save();
+        }
+
+        /// <summary>
         /// Checks we have a SolidWorks application, regasm and an add-in
         /// </summary>
         /// <returns></returns>
-        private bool SanityCheck()
+        private static bool SanityCheck(string regasmPath, string dllPath)
         {
             // Check RegAsm
-            if (string.IsNullOrEmpty(RegAsmPath.Text) || !File.Exists(RegAsmPath.Text))
+            if (string.IsNullOrEmpty(regasmPath))
             {
                 MessageBox.Show("Please specify a path to a valid RegAsm application", "No RegAsm found");
+                return false;
+            } 
+            if (!File.Exists(regasmPath))
+            {
+                MessageBox.Show("The RegAsm file does not exist", "No RegAsm found");
                 return false;
             }
 
             // Check Dll
-            if (string.IsNullOrEmpty(DllPath.Text) || !File.Exists(DllPath.Text))
+            if (string.IsNullOrEmpty(dllPath))
             {
                 MessageBox.Show("Please specify a path to a valid SolidWorks Add-in dll", "No Add-in found");
+                return false;
+            }
+            if (!File.Exists(dllPath))
+            {
+                MessageBox.Show("The dll file does not exist", "File not found");
                 return false;
             }
 
@@ -77,7 +130,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         {
             // Locate SolidWorks exe in Program Files
             var results = new List<string>();
-            FindByFilename(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), mRegAsmWindowsPath), null, mRegAsmFilename, results);
+            FindByFilename(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), MRegAsmWindowsPath), null, MRegAsmFilename, results);
 
             // If we have at least one, use the last one (so newest version)
             if (results?.Count > 0)
@@ -93,7 +146,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         /// <param name="filename">The filename to find (case insensitive)</param>
         /// <param name="results">The results to store the results in</param>
         /// <returns></returns>
-        private void FindByFilename(string path, string pathContains, string filename, List<string> results = null)
+        private static void FindByFilename(string path, string pathContains, string filename, List<string> results = null)
         {
             // Create new list if none passed in
             if (results == null)
@@ -103,7 +156,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
             try
             {
                 var files = Directory.EnumerateFiles(path).Where(f => string.Equals(Path.GetFileName(f), filename, StringComparison.InvariantCultureIgnoreCase)).ToList();
-                if (files?.Count > 0)
+                if (files.Count > 0)
                     results.AddRange(files);
             }
             catch
@@ -113,13 +166,113 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
             try
             {
                 // Allow case-insensitive checking
-                if (pathContains != null)
-                    pathContains = pathContains.ToLower();
+                pathContains = pathContains?.ToLower();
 
                 // Search into directories that match
                 Directory.EnumerateDirectories(path).Where(f => string.IsNullOrEmpty(pathContains) || f.ToLower().Contains(pathContains)).ToList().ForEach(dir => FindByFilename(dir, null, filename, results));
             }
             catch { }
+        }
+
+        /// <summary>
+        /// Try to register an addin by its path.
+        /// </summary>
+        /// <param name="addinPath"></param>
+        private void InstallAddin(string addinPath)
+        {
+            // Sanity check
+            if (!SanityCheck(RegAsmPath.Text, addinPath))
+                return;
+
+            // Run the RegAsm with the Dll path as an argument
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = RegAsmPath.Text,
+                    Arguments = $"/codebase \"{addinPath}\"",
+                    // Run as admin
+                    Verb = "runas",
+                    // Redirect input and output
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            process.Start();
+
+            // Read the output
+            var result = process.StandardError.ReadToEnd();
+            process.WaitForExit();
+
+            // If it exit successfully
+            if (process.ExitCode == 0)
+            {
+                AddPathToPreviousPaths(addinPath);
+                MessageBox.Show("Add-in was successfully registered", "Success");
+            }
+            // Otherwise just show the results
+            else
+                MessageBox.Show(result, "Unexpected Response", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+
+        /// <summary>
+        /// Try to unregister an addin by its path.
+        /// </summary>
+        /// <param name="addinPath"></param>
+        private void UninstallAddin(string addinPath)
+        {
+            // Sanity check
+            if (!SanityCheck(RegAsmPath.Text, addinPath))
+                return;
+
+            // Run the RegAsm with the Dll path as an argument
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = RegAsmPath.Text,
+                    Arguments = $"/u \"{addinPath}\"",
+                    // Run as admin
+                    Verb = "runas",
+                    // Redirect input and output
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            process.Start();
+
+            // Read the output
+            var result = process.StandardError.ReadToEnd();
+            process.WaitForExit();
+
+            // If it exit successfully
+            if (process.ExitCode == 0)
+            {
+                AddPathToPreviousPaths(addinPath);
+                MessageBox.Show("Add-in was successfully unregistered", "Success");
+            }
+            // Otherwise just show the results
+            else
+                MessageBox.Show(result, "Unexpected Response", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+
+        /// <summary>
+        /// Add the path to the list of previous paths, if it is not on the list already
+        /// </summary>
+        /// <param name="addinPath"></param>
+        private void AddPathToPreviousPaths(string addinPath)
+        {
+            var lower = addinPath.ToLower();
+            if (!PreviousAddInPaths.Contains(lower))
+                PreviousAddInPaths.Add(lower);
         }
 
         #endregion
@@ -135,7 +288,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         {
             var ofd = new OpenFileDialog
             {
-                Filter = $"RegAsm | {mRegAsmFilename}",
+                Filter = $"RegAsm | {MRegAsmFilename}",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Windows)
             };
 
@@ -179,85 +332,64 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void InstallButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Sanity check
-            if (!SanityCheck())
-                return;
-
-            // Run the RegAsm with the Dll path as an argument
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = RegAsmPath.Text,
-                    Arguments = $"/codebase \"{DllPath.Text}\"",
-                    // Run as admin
-                    Verb = "runas",
-                    // Redirect input and output
-                    RedirectStandardInput = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-
-            process.Start();
-            
-            // Read the output
-            var result = process.StandardError.ReadToEnd();
-            process.WaitForExit();
-
-            // If it exit successfully
-            if (process.ExitCode == 0)
-                MessageBox.Show("Add-in was successfully registered", "Success");
-            // Otherwise just show the results
-            else
-                MessageBox.Show(result, "Unexpected Response", MessageBoxButton.OK, MessageBoxImage.Warning);
-        }
+        private void InstallButton_Click(object sender, RoutedEventArgs e) => InstallAddin(DllPath.Text);
 
         /// <summary>
         /// Uninstalls the selected add-in
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void UninstallButton_Click(object sender, RoutedEventArgs e)
+        private void UninstallButton_Click(object sender, RoutedEventArgs e) => UninstallAddin(DllPath.Text);
+
+        /// <summary>
+        /// Installs an addin from the list of previous paths
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void InstallPreviousAddIn_OnClick(object sender, RoutedEventArgs e)
         {
-            // Sanity check
-            if (!SanityCheck())
-                return;
+            // Make sure this gets called from a button
+            if (!(sender is Button button)) return;
 
-            // Run the RegAsm with the Dll path as an argument
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = RegAsmPath.Text,
-                    Arguments = $"/u \"{DllPath.Text}\"",
-                    // Run as admin
-                    Verb = "runas",
-                    // Redirect input and output
-                    RedirectStandardInput = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-            
-            process.Start();
+            // Get the data context of the button, which should just a string path
+            var addInPath = (string) button.DataContext;
 
-            // Read the output
-            var result = process.StandardError.ReadToEnd();
-            process.WaitForExit();
+            // Try to install the addin
+            InstallAddin(addInPath);
+        }
 
-            // If it exit successfully
-            if (process.ExitCode == 0)
-                MessageBox.Show("Add-in was successfully unregistered", "Success");
-            // Otherwise just show the results
-            else
-                MessageBox.Show(result, "Unexpected Response", MessageBoxButton.OK, MessageBoxImage.Warning);
+        /// <summary>
+        /// Uninstalls an addin from the list of previous paths
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UninstallPreviousAddIn_OnClick(object sender, RoutedEventArgs e)
+        {
+            // Make sure this gets called from a button
+            if (!(sender is Button button)) return;
+
+            // Get the data context of the button, which should just a string path
+            var addInPath = (string) button.DataContext;
+
+            // Try to uninstall the addin
+            UninstallAddin(addInPath);
+        }
+
+        /// <summary>
+        /// Removes an addin path from the list of previous paths
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RemovePathFromPrevious_OnClick(object sender, RoutedEventArgs e)
+        {
+            // Make sure this gets called from a button
+            if (!(sender is Button button)) return;
+
+            // Get the data context of the button, which should just a string path
+            var addInPath = (string) button.DataContext;
+
+            // Remove the item from the list
+            PreviousAddInPaths.Remove(addInPath);
         }
 
         #endregion

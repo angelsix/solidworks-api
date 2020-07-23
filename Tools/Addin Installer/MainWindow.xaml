@@ -6,21 +6,23 @@
         xmlns:local="clr-namespace:AngelSix.SolidWorksApi.AddinInstaller"
         mc:Ignorable="d"
         Title="SolidWorks Addin Installer - angelsix.com" 
-        Height="350" 
+        Height="500" 
         MinHeight="350"
         Width="525" 
         MinWidth="525"
         Icon="Resources/favicon.ico">
+    <Window.Resources>
+        <local:PathToFileNameConverter x:Key="PathToFileNameConverter" />
+    </Window.Resources>
     <Border Padding="10">
-
         <Grid>
-
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            
+
             <StackPanel>
                 <Label Content="SolidWorks Add-in Installer" FontWeight="Bold" FontSize="20" />
                 <TextBlock Margin="0 10" TextWrapping="WrapWithOverflow" Text="This tool will register and install a SolidWorks Add-in dll file into the SolidWorks registry so the add-in will show up in SolidWorks" />
@@ -32,9 +34,8 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBox Padding="5" Name="RegAsmPath" />
+                    <TextBox Padding="5" Name="RegAsmPath" Margin="0 0 10 0" />
                     <Button Name="BrowseRegAsmButton" Click="BrowseRegAsmButton_Click" Grid.Column="1" Content="Browse" Padding="5" />
-
                 </Grid>
 
                 <Label Content="Add-in Dll" FontWeight="Bold" />
@@ -44,24 +45,46 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBox Padding="5" Name="DllPath" />
+                    <TextBox Padding="5" Name="DllPath" Margin="0 0 10 0" />
                     <Button Name="BrowseDllButton" Click="BrowseDllButton_Click" Grid.Column="1" Content="Browse" Padding="5" />
-
                 </Grid>
             </StackPanel>
 
-            <Grid Grid.Row="2" Margin="0 20 0 0">
-
+            <Grid Grid.Row="1" Margin="0 20 0 0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                
-                <Button Name="UninstallButton" Content="Uninstall" Click="UninstallButton_Click" />
-                <Button Grid.Column="1" Margin="5 0 0 0" Name="InstallButton" Content="Install" Click="InstallButton_Click" />
 
+                <Button Name="UninstallButton" Content="Uninstall" 
+                        Padding="5"
+                        Click="UninstallButton_Click" Margin="0 0 5 0" />
+                <Button Grid.Column="1" Margin="5 0 0 0" Padding="5"
+                        Name="InstallButton" Content="Install" 
+                        Click="InstallButton_Click" />
             </Grid>
 
+            <Label Grid.Row="2" Content="Previous add-in Dlls" FontWeight="Bold" Margin="0 10 0 0" />
+            <ItemsControl Grid.Row="3" ItemsSource="{Binding PreviousAddInPaths}"
+                          HorizontalContentAlignment="Stretch" 
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate><!--DataType="system:String">-->
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding Converter={StaticResource PathToFileNameConverter}}" ToolTip="{Binding}" VerticalAlignment="Center" />
+                            <Button Grid.Column="1" Content="Install" Margin="5 2" Padding="5 2" Click="InstallPreviousAddIn_OnClick" />
+                            <Button Grid.Column="2" Content="Uninstall" Margin="5 2" Padding="5 2" Click="UninstallPreviousAddIn_OnClick" />
+                            <Button Grid.Column="3" Content="Remove" Margin="5 2 0 2" Padding="5 2" Click="RemovePathFromPrevious_OnClick" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Grid>
     </Border>
 </Window>

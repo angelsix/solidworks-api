@@ -95,6 +95,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PathToFileNameConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
