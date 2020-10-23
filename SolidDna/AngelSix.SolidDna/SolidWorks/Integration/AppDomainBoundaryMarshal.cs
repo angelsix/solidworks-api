@@ -62,17 +62,17 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Called when the add-in has connected to SolidWorks
         /// </summary>
-        public void ConnectedToSolidWorks()
+        public void ConnectedToSolidWorks(SolidAddIn solidAddIn)
         {
-            PlugInIntegration.ConnectedToSolidWorks();
+            PlugInIntegration.ConnectedToSolidWorks(solidAddIn);
         }
 
         /// <summary>
         /// Called when the add-in has disconnected from SolidWorks
         /// </summary>
-        public void DisconnectedFromSolidWorks()
+        public void DisconnectedFromSolidWorks(SolidAddIn solidAddIn)
         {
-            PlugInIntegration.DisconnectedFromSolidWorks();
+            PlugInIntegration.DisconnectedFromSolidWorks(solidAddIn);
         }
 
         #endregion
@@ -97,9 +97,10 @@ namespace AngelSix.SolidDna
         /// Runs any initialization code required on plug-ins
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
-        public void ConfigurePlugIns(string addinPath)
+        /// <param name="solidAddIn"></param>
+        public void ConfigurePlugIns(string addinPath, SolidAddIn solidAddIn)
         {
-            PlugInIntegration.ConfigurePlugIns(addinPath);
+            PlugInIntegration.ConfigurePlugIns(addinPath, solidAddIn);
         }
 
         /// <summary>

@@ -31,8 +31,8 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// If true, searches in the directory of the application (where AngelSix.SolidDna.dll is) for any dll that
         /// contains any <see cref="SolidPlugIn"/> implementations and adds them to the <see cref="PlugInDetails"/>
-        /// during the <see cref="ConfigurePlugIns(string)"/> stage.
-        /// If false, the user should during the <see cref="AddInIntegration.PreLoadPlugIns"/> method, add
+        /// during the <see cref="ConfigurePlugIns(string, SolidAddIn)"/> stage.
+        /// If false, the user should during the <see cref="SolidAddIn.PreLoadPlugIns"/> method, add
         /// any specific implementations of the <see cref="SolidPlugIn"/> to <see cref="PlugInIntegration.PlugInDetails"/> list
         /// </summary>
         public static bool AutoDiscoverPlugins { get; set; } = true;
@@ -100,18 +100,19 @@ namespace AngelSix.SolidDna
 
         #region Connected to SolidWorks
 
-        /// <summary>
-        /// Called when the add-in has connected to SolidWorks
-        /// </summary>
-        public static void ConnectedToSolidWorks()
+       /// <summary>
+       /// Called when the add-in has connected to SolidWorks
+       /// </summary>
+       /// <param name="solidAddIn"></param>
+        public static void ConnectedToSolidWorks(SolidAddIn solidAddIn)
         {
             // If use detached app domain...
             if (AppDomainBoundary.UseDetachedAppDomain)
                 // Get boundary to re-call us from other app domain
-                AppDomainBoundary.ConnectedToSolidWorks();
+                AppDomainBoundary.ConnectedToSolidWorks(solidAddIn);
             else
             {
-                AddInIntegration.OnConnectedToSolidWorks();
+                solidAddIn.OnConnectedToSolidWorks();
 
                 // Inform plug-ins
                 PlugIns.ForEach(plugin =>
@@ -127,15 +128,16 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Called when the add-in has disconnected from SolidWorks
         /// </summary>
-        public static void DisconnectedFromSolidWorks()
+        /// <param name="solidAddIn"></param>
+        public static void DisconnectedFromSolidWorks(SolidAddIn solidAddIn)
         {
             // If use detached app domain...
             if (AppDomainBoundary.UseDetachedAppDomain)
                 // Get boundary to re-call us from other app domain
-                AppDomainBoundary.DisconnectedFromSolidWorks();
+                AppDomainBoundary.DisconnectedFromSolidWorks(solidAddIn);
             else
             {
-                AddInIntegration.OnDisconnectedFromSolidWorks();
+                solidAddIn.OnDisconnectedFromSolidWorks();
 
                 // Inform plug-ins
                 PlugIns.ForEach(plugin =>
@@ -407,13 +409,14 @@ namespace AngelSix.SolidDna
         /// Runs any initialization code required on plug-ins
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
-        public static void ConfigurePlugIns(string addinPath)
+        /// <param name="solidAddIn"></param>
+        public static void ConfigurePlugIns(string addinPath, SolidAddIn solidAddIn)
         {
             // If use detached app domain...
             if (AppDomainBoundary.UseDetachedAppDomain)
             {
                 // Get boundary to re-call us from other app domain
-                AppDomainBoundary.ConfigurePlugIns(addinPath);
+                AppDomainBoundary.ConfigurePlugIns(addinPath, solidAddIn);
             }
             else
             {
@@ -462,8 +465,8 @@ namespace AngelSix.SolidDna
                     Logger?.LogDebugSource($"Setting Add-In Description: {firstPlugInWithTitle.AddInDescription}");
 
                     // Set title and description details
-                    AddInIntegration.SolidWorksAddInTitle = firstPlugInWithTitle.AddInTitle;
-                    AddInIntegration.SolidWorksAddInDescription = firstPlugInWithTitle.AddInDescription;
+                    solidAddIn.SolidWorksAddInTitle = firstPlugInWithTitle.AddInTitle;
+                    solidAddIn.SolidWorksAddInDescription = firstPlugInWithTitle.AddInDescription;
                 }
                 // Otherwise
                 else

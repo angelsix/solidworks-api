@@ -70,7 +70,7 @@ namespace AngelSix.SolidDna
 
             // Add references from this assembly (AngelSix.SolidDna) including itself
             // to be resolved by the assembly resolver
-            AddReferenceAssemblies<AddInIntegration>(includeSelf: true);
+            AddReferenceAssemblies<SolidAddIn>(includeSelf: true);
 
             // If we want a separate app domain...
             if (UseDetachedAppDomain)
@@ -125,7 +125,7 @@ namespace AngelSix.SolidDna
             if (File.Exists(pathToConfigureDll))
             {
                 // AddIn class type
-                var addinType = typeof(AddInIntegration);
+                var addinType = typeof(SolidAddIn);
 
                 // Load all methods...
                 var match = Assembly.LoadFile(pathToConfigureDll).GetTypes()
@@ -135,7 +135,7 @@ namespace AngelSix.SolidDna
                         // Store class
                         methodClass: t,
                         // Select the ConfigureServices method
-                        method: t.GetMethod(nameof(AddInIntegration.ConfigureServices)))
+                        method: t.GetMethod(nameof(SolidAddIn.ConfigureServices)))
                       )
                       // Only use first method for now
                       .FirstOrDefault();
@@ -230,9 +230,10 @@ namespace AngelSix.SolidDna
         /// Runs any initialization code required on plug-ins
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
-        public static void ConfigurePlugIns(string addinPath)
+        /// <param name="solidAddIn"></param>
+        public static void ConfigurePlugIns(string addinPath, SolidAddIn solidAddIn)
         {
-            Marshal.ConfigurePlugIns(addinPath);
+            Marshal.ConfigurePlugIns(addinPath, solidAddIn);
         }
 
         #endregion
@@ -242,17 +243,19 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Called when the add-in has connected to SolidWorks
         /// </summary>
-        public static void ConnectedToSolidWorks()
+        /// <param name="solidAddIn"></param>
+        public static void ConnectedToSolidWorks(SolidAddIn solidAddIn)
         {
-            Marshal.ConnectedToSolidWorks();
+            Marshal.ConnectedToSolidWorks(solidAddIn);
         }
 
         /// <summary>
         /// Called when the add-in has disconnected from SolidWorks
         /// </summary>
-        public static void DisconnectedFromSolidWorks()
+        /// <param name="solidAddIn"></param>
+        public static void DisconnectedFromSolidWorks(SolidAddIn solidAddIn)
         {
-            Marshal.DisconnectedFromSolidWorks();
+            Marshal.DisconnectedFromSolidWorks(solidAddIn);
         }
 
         #endregion

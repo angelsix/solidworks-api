@@ -80,7 +80,7 @@ namespace AngelSix.SolidDna
         public async void AddToTaskpaneAsync()
         {
             // Create our Taskpane
-            mTaskpaneView = await AddInIntegration.SolidWorks.CreateTaskpaneAsync(Icon, AddInIntegration.SolidWorksAddInTitle);
+            mTaskpaneView = await AddInIntegration.SolidWorks.CreateTaskpaneAsync(Icon, "Fix me");//AddInIntegration.SolidWorksAddInTitle);
 
             // Load our UI into the taskpane
             mHostControl = await mTaskpaneView.AddControlAsync<ITaskpaneControl>(mHostProgId, string.Empty);
@@ -89,7 +89,7 @@ namespace AngelSix.SolidDna
             ThreadHelpers.Enable((Control)mHostControl);
 
             // Hook into disconnect event of SolidWorks to unload ourselves automatically
-            AddInIntegration.DisconnectedFromSolidWorks += () => RemoveFromTaskpane();
+            // Fix me //AddInIntegration.DisconnectedFromSolidWorks += () => RemoveFromTaskpane(); 
 
             // Add WPF control if we have one
             if (WpfControl != null)

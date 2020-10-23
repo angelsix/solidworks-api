@@ -9,7 +9,7 @@ namespace AngelSix.SolidDna
     /// A basic implementation of the AddIn Integration class used when registering the dll for COM.
     /// Mainly used for setting up DI so when loading the PlugIn's they have the expected services
     /// </summary>
-    public class ComRegisterAddInIntegration : AddInIntegration
+    public class ComRegisterAddInIntegration : SolidAddIn
     {
         public ComRegisterAddInIntegration()
         {
