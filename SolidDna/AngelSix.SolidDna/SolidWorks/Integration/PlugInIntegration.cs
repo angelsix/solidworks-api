@@ -62,17 +62,8 @@ namespace AngelSix.SolidDna
                 // Log it
                 Logger?.LogDebugSource($"PlugIn Setup...");
 
-                // Get the version number (such as 25 for 2016)
-                var postFix = "";
-                if (version != null && version.Contains("."))
-                    postFix = "." + version.Substring(0, version.IndexOf('.'));
-
-                // Store a reference to the current SolidWorks instance
-                // Initialize SolidWorks (SolidDNA class)
-                AddInIntegration.SolidWorks = new SolidWorksApplication((SldWorks)Activator.CreateInstance(Type.GetTypeFromProgID("SldWorks.Application" + postFix)), cookie);
-
-                // Log it
-                Logger?.LogDebugSource($"SolidWorks Instance Created? {AddInIntegration.SolidWorks != null}");
+                // Store a reference to the current SolidWorks instance as a SolidDNA class.
+                AddInIntegration.ConnectToActiveSolidWorks(version, cookie);
             }
         }
 

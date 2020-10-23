@@ -22,7 +22,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Represents the current SolidWorks application
         /// </summary>
-        public static SolidWorksApplication SolidWorks { get; set; }
+        public static SolidWorksApplication SolidWorks { get; private set; }
 
         #endregion
 
@@ -71,13 +71,31 @@ namespace AngelSix.SolidDna
         /// Remember to call <see cref="TearDown"/> once done.
         /// </summary>
         /// <returns></returns>
-        public static bool ConnectToActiveSolidWorks()
+        public static void ConnectToActiveSolidWorks(string version, int cookie)
         {
-            // Create new blank add-in
-            var addin = new BlankAddInIntegration();
+            if (SolidWorks != null)
+            {
+                Logger.LogDebugSource("SolidWorks instance was already created");
+                return;
+            }
 
-            // Return if we successfully got an instance
-            return ConnectToActiveSolidWorksForStandAlone();
+            try
+            {
+                // Get the version number (such as 25 for 2016)
+                var postFix = "";
+                if (version != null && version.Contains("."))
+                    postFix = "." + version.Substring(0, version.IndexOf('.'));
+
+                // Initialize SolidWorks (SolidDNA class)
+                SolidWorks = new SolidWorksApplication((SldWorks)Activator.CreateInstance(Type.GetTypeFromProgID("SldWorks.Application" + postFix)), cookie);
+
+                // Log it
+                Logger?.LogDebugSource($"SolidWorks Instance Created? {SolidWorks != null}");
+            }
+            catch (Exception e)
+            {
+                Logger.LogDebugSource("Failed to get active instance of SolidWorks in add-in mode", exception: e);
+            }
         }
 
         #endregion
