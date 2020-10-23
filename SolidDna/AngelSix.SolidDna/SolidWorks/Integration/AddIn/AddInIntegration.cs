@@ -12,7 +12,7 @@ namespace AngelSix.SolidDna
     /// IMPORTANT: The class that overrides <see cref="ISwAddin"/> MUST be the same class that 
     /// contains the ComRegister and ComUnregister functions due to how SolidWorks loads add-ins
     /// </summary>
-    public abstract class AddInIntegration
+    public static class AddInIntegration
     {
         #region Public Properties
 
