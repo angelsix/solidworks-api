@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Dna;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,15 @@ namespace AngelSix.SolidDna
         /// Flag if we have loaded into memory (as ConnectedToSolidWorks can happen multiple times if unloaded/reloaded)
         /// </summary>
         protected static bool mLoaded = false;
+
+        #endregion
+
+        #region Public members
+
+        /// <summary>
+        /// A list of available plug-ins loaded once SolidWorks has connected
+        /// </summary>
+        public List<SolidPlugIn> PlugIns = new List<SolidPlugIn>();
 
         #endregion
 

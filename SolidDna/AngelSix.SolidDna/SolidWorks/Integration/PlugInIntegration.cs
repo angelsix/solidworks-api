@@ -18,11 +18,6 @@ namespace AngelSix.SolidDna
         #region Public Properties
 
         /// <summary>
-        /// A list of available plug-ins loaded once SolidWorks has connected
-        /// </summary>
-        public static List<SolidPlugIn> PlugIns = new List<SolidPlugIn>();
-
-        /// <summary>
         /// A list of all plug-ins that have been added to be loaded. 
         /// The key is the absolute file path, and the Type is the <see cref="SolidPlugIn"/> implementation type
         /// </summary>
@@ -115,7 +110,7 @@ namespace AngelSix.SolidDna
                 solidAddIn.OnConnectedToSolidWorks();
 
                 // Inform plug-ins
-                PlugIns.ForEach(plugin =>
+                solidAddIn.PlugIns.ForEach(plugin =>
                 {
                     // Log it
                     Logger?.LogDebugSource($"Firing ConnectedToSolidWorks event for plugin `{plugin.AddInTitle}`...");
@@ -140,7 +135,7 @@ namespace AngelSix.SolidDna
                 solidAddIn.OnDisconnectedFromSolidWorks();
 
                 // Inform plug-ins
-                PlugIns.ForEach(plugin =>
+                solidAddIn.PlugIns.ForEach(plugin =>
                 {
                     // Log it
                     Logger?.LogDebugSource($"Firing DisconnectedFromSolidWorks event for plugin `{plugin.AddInTitle}`...");
@@ -449,13 +444,13 @@ namespace AngelSix.SolidDna
                 // *********************************************************************************
 
                 // Load all plug-in's at this stage for faster lookup
-                PlugIns = SolidDnaPlugIns(addinPath);
+                solidAddIn.PlugIns = SolidDnaPlugIns(addinPath);
 
                 // Log it
-                Logger?.LogDebugSource($"{PlugIns.Count} plug-ins found");
+                Logger?.LogDebugSource($"{solidAddIn.PlugIns.Count} plug-ins found");
 
                 // Find first plug-in in the list and use that as the title and description (for COM register)
-                var firstPlugInWithTitle = PlugIns.FirstOrDefault(f => !string.IsNullOrEmpty(f.AddInTitle));
+                var firstPlugInWithTitle = solidAddIn.PlugIns.FirstOrDefault(f => !string.IsNullOrEmpty(f.AddInTitle));
 
                 // If we have a title...
                 if (firstPlugInWithTitle != null)
