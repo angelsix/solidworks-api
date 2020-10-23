@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Dna;
@@ -81,7 +82,7 @@ namespace AngelSix.SolidDna
 
         #endregion
 
-        #region Adding and removing active add-ins
+        #region List of active add-ins
 
         /// <summary>
         /// Add a newly loaded add-in to the list of active ones.
@@ -103,6 +104,17 @@ namespace AngelSix.SolidDna
             // If the list is now empty, we tear down SOLIDWORKS
             if (!ActiveAddIns.Any())
                 TearDown();
+        }
+
+        /// <summary>
+        /// Get one of the active add-ins by its type.
+        /// </summary>
+        /// <param name="type">The type of the add-in that contains the new taskpane</param>
+        /// <returns>Returns the first add-in with the requested name or null.</returns>
+        public static SolidAddIn GetAddInWithType(Type type)
+        {
+            // Get the first add-in of this type. Is null when not found.
+            return ActiveAddIns.FirstOrDefault(x => x.GetType() == type);
         }
 
         #endregion

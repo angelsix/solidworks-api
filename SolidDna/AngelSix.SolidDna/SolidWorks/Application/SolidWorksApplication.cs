@@ -728,14 +728,14 @@ namespace AngelSix.SolidDna
         ///     The bitmap should be 16 colors and 16 x 18 (width x height) pixels. 
         ///     Any portions of the bitmap that are white (RGB 255,255,255) will be transparent.
         /// </param>
-        /// <param name="toolTip">The title text to show at the top of the taskpane</param>
-        public async Task<Taskpane> CreateTaskpaneAsync(string iconPath, string toolTip)
+        /// <param name="titleAndToolTip">The title text to show at the top of the taskpane</param>
+        public async Task<Taskpane> CreateTaskpaneAsync(string iconPath, string titleAndToolTip)
         {
             // Wrap any error creating the taskpane in a SolidDna exception
             return SolidDnaErrors.Wrap<Taskpane>(() =>
             {
                 // Attempt to create the taskpane
-                var comTaskpane = BaseObject.CreateTaskpaneView2(iconPath, toolTip);
+                var comTaskpane = BaseObject.CreateTaskpaneView2(iconPath, titleAndToolTip);
 
                 // If we fail, return null
                 if (comTaskpane == null)
