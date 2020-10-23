@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
 using Dna;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swpublished;
@@ -23,26 +25,13 @@ namespace AngelSix.SolidDna
 
         #endregion
 
-        #region Tear Down
+        #region Private properties
 
         /// <summary>
-        /// Cleans up the SolidWorks instance
+        /// A list of all add-ins that are currently active.
+        /// Private so we can call <see cref="TearDown"/> when the list becomes empty.
         /// </summary>
-        public static void TearDown()
-        {
-            // If we have an reference...
-            if (SolidWorks != null)
-            {
-                // Log it
-                Logger?.LogDebugSource($"Disposing SolidWorks COM reference...");
-
-                // Dispose SolidWorks COM
-                SolidWorks?.Dispose();
-            }
-
-            // Set to null
-            SolidWorks = null;
-        }
+        private static List<SolidAddIn> ActiveAddIns { get; } = new List<SolidAddIn>();
 
         #endregion
 
@@ -88,6 +77,55 @@ namespace AngelSix.SolidDna
 
             // Return if we successfully got an instance
             return ConnectToActiveSolidWorksForStandAlone();
+        }
+
+        #endregion
+
+        #region Adding and removing active add-ins
+
+        /// <summary>
+        /// Add a newly loaded add-in to the list of active ones.
+        /// </summary>
+        /// <param name="addIn"></param>
+        public static void AddAddIn(SolidAddIn addIn)
+        {
+            ActiveAddIns.Add(addIn);
+        }
+
+        /// <summary>
+        /// Remove an unloaded add-in from the list of active ones.
+        /// </summary>
+        /// <param name="addIn"></param>
+        public static void RemoveAddInAndTearDownSolidWorksWhenLast(SolidAddIn addIn)
+        {
+            ActiveAddIns.Remove(addIn);
+
+            // If the list is now empty, we tear down SOLIDWORKS
+            if (!ActiveAddIns.Any())
+                TearDown();
+        }
+
+        #endregion
+
+        #region Tear Down
+
+        /// <summary>
+        /// Cleans up the SolidWorks instance
+        /// </summary>
+        private static void TearDown()
+        {
+            // If we have an reference...
+            if (SolidWorks != null)
+            {
+                // Log it
+                Logger?.LogDebugSource($"Disposing SolidWorks COM reference...");
+
+                // Dispose SolidWorks COM
+                SolidWorks?.Dispose();
+            }
+
+            // Set to null
+            SolidWorks = null;
         }
 
         #endregion

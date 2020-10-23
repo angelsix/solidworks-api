@@ -138,6 +138,9 @@ namespace AngelSix.SolidDna
         {
             try
             {
+                // Add this add-in to the list of currently active add-ins.
+                AddInIntegration.AddAddIn(this);
+
                 // Fire event
                 PreConnectToSolidWorks();
 
@@ -252,6 +255,9 @@ namespace AngelSix.SolidDna
 
             // Unload our domain
             AppDomainBoundary.Unload();
+
+            // Remove it from the list and tear down SOLIDWORKS when it was the last add-in.
+            AddInIntegration.RemoveAddInAndTearDownSolidWorksWhenLast(this);
 
             // Return ok
             return true;
