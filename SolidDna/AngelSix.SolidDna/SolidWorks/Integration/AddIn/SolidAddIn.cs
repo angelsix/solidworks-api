@@ -16,7 +16,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Flag if we have loaded into memory (as ConnectedToSolidWorks can happen multiple times if unloaded/reloaded)
         /// </summary>
-        protected static bool mLoaded = false;
+        protected bool mLoaded;
 
         #endregion
 
@@ -268,6 +268,9 @@ namespace AngelSix.SolidDna
 
             // Remove it from the list and tear down SOLIDWORKS when it was the last add-in.
             AddInIntegration.RemoveAddInAndTearDownSolidWorksWhenLast(this);
+
+            // Reset mLoaded so we can restart this add-in
+            mLoaded = false;
 
             // Return ok
             return true;
