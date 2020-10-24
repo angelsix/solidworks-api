@@ -142,7 +142,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Cleans up the SolidWorks instance
         /// </summary>
-        private static void TearDown()
+        public static void TearDown()
         {
             // If we have an reference...
             if (SolidWorks != null)
