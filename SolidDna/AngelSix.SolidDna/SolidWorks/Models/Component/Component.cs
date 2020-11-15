@@ -62,6 +62,11 @@ namespace AngelSix.SolidDna
         public string FilePath => BaseObject.GetPathName();
 
         /// <summary>
+        /// Check if this sub-assembly is flexible.
+        /// </summary>
+        public bool IsFlexible => BaseObject.Solving == (int)swComponentSolvingOption_e.swComponentFlexibleSolving;
+
+        /// <summary>
         /// Check if the Component is Root
         /// </summary>
         public bool IsRoot => BaseObject.IsRoot();
