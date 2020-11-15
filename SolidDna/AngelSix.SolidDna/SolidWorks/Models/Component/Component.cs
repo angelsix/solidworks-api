@@ -41,12 +41,20 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// The name of the configuration for this component.
         /// </summary>
-        public string ConfigurationName => BaseObject.ReferencedConfiguration;
+        public string ConfigurationName
+        {
+            get => BaseObject.ReferencedConfiguration;
+            set => BaseObject.ReferencedConfiguration = value;
+        } 
 
         /// <summary>
         /// The name of the display state for this component.
         /// </summary>
-        public string DisplayStateName => BaseObject.ReferencedDisplayState2;
+        public string DisplayStateName
+        {
+            get => BaseObject.ReferencedDisplayState2;
+            set => BaseObject.ReferencedDisplayState2 = value;
+        }
 
         /// <summary>
         /// The complete path to the component. Can be null.
@@ -72,7 +80,13 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Check if this component is visible. Returns false when the visibility is unknown.
         /// </summary>
-        public bool IsVisible => BaseObject.Visible == (int) swComponentVisibilityState_e.swComponentVisible;
+        public bool IsVisible
+        {
+            get => BaseObject.Visible == (int)swComponentVisibilityState_e.swComponentVisible;
+            set => BaseObject.Visible = (int)(value
+                ? swComponentVisibilityState_e.swComponentVisible
+                : swComponentVisibilityState_e.swComponentHidden);
+        }
 
         /// <summary>
         /// Get the name of the component. 
