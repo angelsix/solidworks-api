@@ -1,7 +1,6 @@
 ﻿using SolidWorks.Interop.sldworks;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace AngelSix.SolidDna
