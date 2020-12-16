@@ -743,7 +743,6 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Gets all of the custom properties in this model including any configuration specific properties
         /// </summary>
-        /// <param name="action">The custom properties list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>
         /// <returns>Custom property and the configuration name it belongs to (or null if none)</returns>
         public IEnumerable<(string configuration, CustomProperty property)> AllCustomProperties()
         {
@@ -1039,7 +1038,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="includeSelf">True to include this file as part of the dependency list</param>
         /// <param name="includeDrawings">True to look for drawings with the same name as their models</param>
-        /// <returns>Returns a list of full filepaths of all dependencies of this model</returns>
+        /// <returns>Returns a list of full file paths of all dependencies of this model</returns>
         public List<string> Dependencies(bool includeSelf = true, bool includeDrawings = true)
         {
             // New list
