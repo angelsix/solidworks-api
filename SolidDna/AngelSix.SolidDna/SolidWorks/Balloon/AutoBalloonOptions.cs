@@ -37,7 +37,7 @@
         /// True to insert magnetic lines, false to not.
         /// Only valid when <see cref="Layout"/> is not set to <see cref="BalloonLayoutType.Circle"/>
         /// </summary>
-        public bool InsertMagnaticLine { get; set; }
+        public bool InsertMagneticLine { get; set; }
 
         /// <summary>
         /// The item number increment

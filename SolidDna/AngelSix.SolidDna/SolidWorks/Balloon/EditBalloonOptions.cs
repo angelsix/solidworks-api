@@ -1,7 +1,7 @@
 ﻿namespace AngelSix.SolidDna
 {
     /// <summary>
-    /// Options for the <see cref="AutoBalloonOptions.EditBalloonOption"/>
+    /// Options for the <see cref="AutoBalloonOptions.EditBalloonOptions"/>
     /// </summary>
     public enum EditBalloonOptions
     {

@@ -476,6 +476,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="filePath">The path to the file</param>
         /// <param name="options">The options to use when opening the file (flags, so | multiple options together)</param>
+        /// <param name="configuration">The name of the configuration you want to open. If you skip this parameter, SolidWorks will open the configuration is which the model was last saved.</param>
         public Model OpenFile(string filePath, OpenDocumentOptions options = OpenDocumentOptions.None, string configuration = null)
         {
             // Wrap any error
@@ -685,6 +686,7 @@ namespace AngelSix.SolidDna
         /// Sets the specified user preference value
         /// </summary>
         /// <param name="preference">The preference to set</param>
+        /// <param name="value">The new value of the preference</param>
         /// <returns></returns>
         public bool SetUserPreferencesDouble(swUserPreferenceDoubleValue_e preference, double value) => BaseObject.SetUserPreferenceDoubleValue((int)preference, value);
 
@@ -699,6 +701,7 @@ namespace AngelSix.SolidDna
         /// Sets the specified user preference value
         /// </summary>
         /// <param name="preference">The preference to set</param>
+        /// <param name="value">The new value of the preference</param>
         /// <returns></returns>
         public bool SetUserPreferencesInteger(swUserPreferenceIntegerValue_e preference, int value) => BaseObject.SetUserPreferenceIntegerValue((int)preference, value);
 
@@ -713,6 +716,7 @@ namespace AngelSix.SolidDna
         /// Sets the specified user preference value
         /// </summary>
         /// <param name="preference">The preference to set</param>
+        /// <param name="value">The new value of the preference</param>
         /// <returns></returns>
         public void SetUserPreferencesToggle(swUserPreferenceToggle_e preference, bool value) => BaseObject.SetUserPreferenceToggle((int)preference, value);
 

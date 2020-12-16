@@ -124,6 +124,7 @@
         /// </summary>
         SolidWorksModelPartGetFeatureByNameError = 11007,
 
+        /// <summary>
         /// There was an error saving a model
         /// </summary>
         SolidWorksModelSaveError = 11008,

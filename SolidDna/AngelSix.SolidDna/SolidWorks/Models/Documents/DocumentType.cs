@@ -3,7 +3,7 @@
 namespace AngelSix.SolidDna
 {
     /// <summary>
-    /// The opens for a document type used in calls such as <see cref="SolidWorksApplication.OpenFile(string, bool)"/>
+    /// The opens for a document type used in calls such as <see cref="SolidWorksApplication.OpenFile(string, OpenDocumentOptions, string)"/>
     /// from <see cref="swDocumentTypes_e"/>
     /// </summary>
     public enum DocumentType

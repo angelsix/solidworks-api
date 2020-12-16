@@ -430,7 +430,7 @@ namespace AngelSix.SolidDna
         /// <param name="type">The tab for this type of model</param>
         /// <param name="manager">The command manager</param>
         /// <param name="items">Items to add</param>
-        /// <param name="items">Flyout Items to add</param>
+        /// <param name="flyoutItems">Flyout Items to add</param>
         /// <param name="title">The title of the tab</param>
         public void AddItemsToTab(ModelType type, CommandManager manager, List<CommandManagerItem> items, List<CommandManagerFlyout> flyoutItems, string title = "")
         {
