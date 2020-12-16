@@ -36,18 +36,6 @@ namespace AngelSix.SolidDna
         public static AppDomain AppDomain { get; private set; }
 
         /// <summary>
-        /// If true, will load your Add-in dll in its own application domain so you can 
-        /// unload and rebuild your add-in without having to close SolidWorks
-        /// NOTE: This does seem to expose some bugs and issues in SolidWorks API
-        ///       in terms of resolving references to specific dll's, so if you experience
-        ///       issues try turning this off
-        /// NOTE: Also no IoC is available in this detached domain at the moment
-        ///       due to AddinIntegration non-static instance intializing the IoC.
-        ///       That means no Logger for example, so safe log with Logger?.
-        /// </summary>
-        public static bool UseDetachedAppDomain { get; set; }
-
-        /// <summary>
         /// The cross-domain marshal to use for the cross-Application domain calls
         /// </summary>
         public static AppDomainBoundaryMarshal Marshal { get; private set; }
@@ -63,7 +51,9 @@ namespace AngelSix.SolidDna
         /// <param name="assemblyFilePath">The path to the assembly</param>
         /// <param name="configureDllPath">Path to the dll that contains the custom configure services method</param>
         /// <param name="configureName">The name of the <see cref="ConfigureServiceAttribute"/> method to use</param>
-        public static void Setup(string assemblyPath, string assemblyFilePath, string configureDllPath, string configureName)
+        /// <param name="useDetachedAppDomain"></param>
+        public static void Setup(string assemblyPath, string assemblyFilePath, string configureDllPath,
+            string configureName, bool useDetachedAppDomain)
         {
             // Help resolve any assembly references
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
@@ -73,7 +63,7 @@ namespace AngelSix.SolidDna
             AddReferenceAssemblies<SolidAddIn>(includeSelf: true);
 
             // If we want a separate app domain...
-            if (UseDetachedAppDomain)
+            if (useDetachedAppDomain)
             {
                 // Create random number at end to allow for multiple add-ins
                 var random = new Random();

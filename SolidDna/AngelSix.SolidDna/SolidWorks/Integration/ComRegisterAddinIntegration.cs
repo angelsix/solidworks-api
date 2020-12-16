@@ -18,7 +18,8 @@ namespace AngelSix.SolidDna
                 // As for COM Registration this won't get ConnectedToSW called
                 // and thereby no call to setup IoC, we do this manually here
                 // Setup application (allowing for AppDomain boundary setup)
-                AppDomainBoundary.Setup(this.AssemblyPath(), this.AssemblyFilePath(), typeof(ComRegisterAddInIntegration).Assembly.AssemblyFilePath(), "");
+                AppDomainBoundary.Setup(this.AssemblyPath(), this.AssemblyFilePath(),
+                    typeof(ComRegisterAddInIntegration).Assembly.AssemblyFilePath(), "", UseDetachedAppDomain);
             }
             catch (Exception ex)
             {

@@ -40,12 +40,19 @@ namespace AngelSix.SolidDna
         /// The description displayed for this SolidWorks Add-in
         /// </summary>
         public string SolidWorksAddInDescription { get; set; } = "All your pixels are belong to us!";
-        
+
         /// <summary>
-        /// If true, loads the plug-ins in their own app-domain
+        /// If true, will load your Add-in dll in its own application domain so you can 
+        /// unload and rebuild your add-in without having to close SolidWorks.
         /// NOTE: Must be set before connecting to SolidWorks
+        /// NOTE: This does seem to expose some bugs and issues in SolidWorks API
+        ///       in terms of resolving references to specific dll's, so if you experience
+        ///       issues try turning this off
+        /// NOTE: Also no IoC is available in this detached domain at the moment
+        ///       due to AddinIntegration non-static instance initializing the IoC.
+        ///       That means no Logger for example, so safe log with Logger?.
         /// </summary>
-        public bool DetachedAppDomain { get; set; }
+        public static bool UseDetachedAppDomain { get; set; }
 
         #endregion
 
@@ -94,7 +101,7 @@ namespace AngelSix.SolidDna
 
         /// <summary>
         /// Run immediately when <see cref="ConnectToSW(object, int)"/> is called
-        /// to do any pre-setup such as <see cref="AppDomainBoundary.UseDetachedAppDomain"/>
+        /// to do any pre-setup such as <see cref="UseDetachedAppDomain"/>
         /// </summary>
         public abstract void PreConnectToSolidWorks();
 
@@ -157,7 +164,7 @@ namespace AngelSix.SolidDna
                 // Setup application (allowing for AppDomain boundary setup)
                 AppDomainBoundary.Setup(this.AssemblyPath(), this.AssemblyFilePath(),
                     // The type of this abstract class will be the class implementing it
-                    GetType().Assembly.Location, "");
+                    GetType().Assembly.Location, "", UseDetachedAppDomain);
 
                 // Log it
                 Logger?.LogTraceSource($"Fired PreConnectToSolidWorks...");
@@ -194,7 +201,7 @@ namespace AngelSix.SolidDna
                 // If this is the first load, or we are not loading add-ins 
                 // into this domain they need loading every time as they were
                 // fully unloaded on disconnect
-                if (!mLoaded || AppDomainBoundary.UseDetachedAppDomain)
+                if (!mLoaded || UseDetachedAppDomain)
                 {
                     // Any pre-load steps
                     PreLoadPlugIns();
