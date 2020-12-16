@@ -1000,10 +1000,9 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Recurses components and sub-components and provides a callback action to process and work with each components
         /// </summary>
-        /// <param name="componentAction">The callback action that is called for each components in the component</param>
         /// <param name="startComponent">The components to start at</param>
         /// <param name="componentDepth">The current depth of the sub-components based on the original calling components</param>
-        private IEnumerable<(Component, int)> RecurseComponents(Component startComponent = null, int componentDepth = 0)
+        private static IEnumerable<(Component, int)> RecurseComponents(Component startComponent = null, int componentDepth = 0)
         {
             // While that component is not null...
             if (startComponent != null)

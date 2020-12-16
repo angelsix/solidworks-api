@@ -99,15 +99,14 @@ namespace AngelSix.SolidDna
                 if (SolidDnaEnvironment.LogAndIgnoreUncaughtExceptions)
                 {
                     // Log the error
-                    Logger?.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError?.ToString()}");
+                    Logger?.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError}");
                     if (error.InnerException != null)
                         Logger?.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
 
                     return default;
                 }
                 // Otherwise, throw 
-                else
-                    throw error;
+                throw error;
             }
         }
 
@@ -137,7 +136,7 @@ namespace AngelSix.SolidDna
                 if (SolidDnaEnvironment.LogAndIgnoreUncaughtExceptions)
                 {
                     // Log the error
-                    Logger?.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError?.ToString()}");
+                    Logger?.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError}");
                     if (error.InnerException != null)
                         Logger?.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
                 }
@@ -175,7 +174,7 @@ namespace AngelSix.SolidDna
                 if (SolidDnaEnvironment.LogAndIgnoreUncaughtExceptions)
                 {
                     // Log the error
-                    Logger?.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError?.ToString()}");
+                    Logger?.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError}");
                     if (error.InnerException != null)
                         Logger?.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
 
@@ -183,8 +182,7 @@ namespace AngelSix.SolidDna
                     return default;
                 }
                 // Otherwise, throw it up
-                else
-                    throw error;
+                throw error;
             }
         }
 
