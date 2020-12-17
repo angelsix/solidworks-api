@@ -31,6 +31,10 @@ namespace AngelSix.SolidDna
 
         #region Public Properties
 
+        public AppDomainBoundary AppDomainBoundary { get; private set; } = new AppDomainBoundary();
+
+        public PlugInIntegration PlugInIntegration { get; private set; } = new PlugInIntegration();
+
         /// <summary>
         /// The title displayed for this SolidWorks Add-in
         /// </summary>
@@ -52,7 +56,7 @@ namespace AngelSix.SolidDna
         ///       due to AddinIntegration non-static instance initializing the IoC.
         ///       That means no Logger for example, so safe log with Logger?.
         /// </summary>
-        public static bool UseDetachedAppDomain { get; set; }
+        public bool UseDetachedAppDomain { get; set; }
 
         #endregion
 
@@ -83,7 +87,8 @@ namespace AngelSix.SolidDna
         /// </summary>
         public SolidAddIn()
         {
-
+            AppDomainBoundary.ParentAddIn = this;
+            PlugInIntegration.ParentAddIn = this;
         }
 
         #endregion
@@ -193,7 +198,7 @@ namespace AngelSix.SolidDna
                 Logger?.LogDebugSource($"PlugInIntegration Setup...");
 
                 // Setup plug-in application domain
-                PlugInIntegration.Setup(assemblyPath, ((SldWorks)thisSw).RevisionNumber(), cookie);
+                PlugInIntegration.Setup(assemblyPath, ((SldWorks)thisSw).RevisionNumber(), cookie, UseDetachedAppDomain);
 
                 // Log it
                 Logger?.LogDebugSource($"Firing PreLoadPlugIns...");
@@ -272,9 +277,13 @@ namespace AngelSix.SolidDna
 
             // Unload our domain
             AppDomainBoundary.Unload();
+            AppDomainBoundary = null;
 
             // Remove it from the list and tear down SOLIDWORKS when it was the last add-in.
             AddInIntegration.RemoveAddInAndTearDownSolidWorksWhenLast(this);
+            
+            // Clear our references
+            PlugInIntegration = null;
 
             // Reset mLoaded so we can restart this add-in
             mLoaded = false;
@@ -352,12 +361,12 @@ namespace AngelSix.SolidDna
                     var pluginPath = typeof(PlugInIntegration).CodeBaseNormalized();
 
                     // Force auto-discovering plug-in during COM registration
-                    PlugInIntegration.AutoDiscoverPlugins = true;
+                    addIn.PlugInIntegration.AutoDiscoverPlugins = true;
 
                     Logger?.LogInformationSource("Configuring plugins...");
 
                     // Let plug-ins configure title and descriptions
-                    PlugInIntegration.ConfigurePlugIns(pluginPath, addIn);
+                    addIn.PlugInIntegration.ConfigurePlugIns(pluginPath, addIn);
 
                     // Set SolidWorks add-in title and description
                     rk.SetValue("Title", addIn.SolidWorksAddInTitle);

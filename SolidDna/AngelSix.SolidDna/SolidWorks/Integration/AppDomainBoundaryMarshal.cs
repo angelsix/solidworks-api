@@ -9,6 +9,8 @@ namespace AngelSix.SolidDna
     /// </summary>
     public class AppDomainBoundaryMarshal : MarshalByRefObject
     {
+        public AppDomainBoundary ParentAppDomainBoundary { get; set; }
+
         /// <summary>
         /// Configures the application IoC
         /// </summary>
@@ -26,11 +28,12 @@ namespace AngelSix.SolidDna
         /// Must be called to setup the PlugInIntegration
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
-        /// <param name="cookie">The cookie Id of the SolidWorks instance</param>
         /// <param name="version">The version of the currently connected SolidWorks instance</param>
-        public void PluginIntegrationSetup(string addinPath, string version, int cookie)
+        /// <param name="cookie">The cookie Id of the SolidWorks instance</param>
+        /// <param name="useDetachedAppDomain"></param>
+        public void PluginIntegrationSetup(string addinPath, string version, int cookie, bool useDetachedAppDomain)
         {
-            PlugInIntegration.Setup(addinPath, version, cookie);
+            ParentAppDomainBoundary.ParentAddIn.PlugInIntegration.Setup(addinPath, version, cookie, useDetachedAppDomain);
         }
 
         /// <summary>
@@ -38,7 +41,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         public void PluginIntegrationTeardown()
         {
-            PlugInIntegration.Teardown();
+            ParentAppDomainBoundary.ParentAddIn.PlugInIntegration.Teardown();
         }
 
         #endregion
@@ -64,7 +67,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         public void ConnectedToSolidWorks(SolidAddIn solidAddIn)
         {
-            PlugInIntegration.ConnectedToSolidWorks(solidAddIn);
+            solidAddIn.PlugInIntegration.ConnectedToSolidWorks(solidAddIn);
         }
 
         /// <summary>
@@ -72,7 +75,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         public void DisconnectedFromSolidWorks(SolidAddIn solidAddIn)
         {
-            PlugInIntegration.DisconnectedFromSolidWorks(solidAddIn);
+            solidAddIn.PlugInIntegration.DisconnectedFromSolidWorks(solidAddIn);
         }
 
         #endregion
@@ -86,7 +89,7 @@ namespace AngelSix.SolidDna
         public void OnCallback(string name)
         {
             // Let listeners know
-            PlugInIntegration.OnCallback(name);
+            ParentAppDomainBoundary.ParentAddIn.PlugInIntegration.OnCallback(name);
         }
 
         #endregion
@@ -100,7 +103,7 @@ namespace AngelSix.SolidDna
         /// <param name="solidAddIn"></param>
         public void ConfigurePlugIns(string addinPath, SolidAddIn solidAddIn)
         {
-            PlugInIntegration.ConfigurePlugIns(addinPath, solidAddIn);
+            solidAddIn.PlugInIntegration.ConfigurePlugIns(addinPath, solidAddIn);
         }
 
         /// <summary>
@@ -109,7 +112,7 @@ namespace AngelSix.SolidDna
         /// <param name="fullPath">The absolute path to the plug-in dll</param>
         public void AddPlugIn(string fullPath)
         {
-            PlugInIntegration.AddPlugIn(fullPath);
+            ParentAppDomainBoundary.ParentAddIn.PlugInIntegration.AddPlugIn(fullPath);
         }
 
         /// <summary>
@@ -118,7 +121,7 @@ namespace AngelSix.SolidDna
         /// <typeparam name="T">The class that implements the <see cref="SolidPlugIn"/></typeparam>
         public void AddPlugIn<T>()
         {
-            PlugInIntegration.AddPlugIn<T>();
+            ParentAppDomainBoundary.ParentAddIn.PlugInIntegration.AddPlugIn<T>();
         }
 
         /// <summary>
@@ -129,7 +132,7 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public List<PlugInDetails> GetPlugInDetails(string fullPath)
         {
-            return PlugInIntegration.GetPlugInDetails(fullPath);
+            return ParentAppDomainBoundary.ParentAddIn.PlugInIntegration.GetPlugInDetails(fullPath);
         }
 
         #endregion

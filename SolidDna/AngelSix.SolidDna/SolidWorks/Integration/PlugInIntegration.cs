@@ -13,24 +13,26 @@ namespace AngelSix.SolidDna
     /// <summary>
     /// Provides functions related to SolidDna plug-ins
     /// </summary>
-    public static class PlugInIntegration
+    public class PlugInIntegration
     {
         #region Public Properties
 
+        public SolidAddIn ParentAddIn { get; set; }
+        
         /// <summary>
         /// A list of all plug-ins that have been added to be loaded. 
         /// The key is the absolute file path, and the Type is the <see cref="SolidPlugIn"/> implementation type
         /// </summary>
-        public static Dictionary<string, List<PlugInDetails>> PlugInDetails { get; private set; } = new Dictionary<string, List<PlugInDetails>>();
+        public Dictionary<string, List<PlugInDetails>> PlugInDetails { get; private set; } = new Dictionary<string, List<PlugInDetails>>();
 
         /// <summary>
         /// If true, searches in the directory of the application (where AngelSix.SolidDna.dll is) for any dll that
         /// contains any <see cref="SolidPlugIn"/> implementations and adds them to the <see cref="PlugInDetails"/>
         /// during the <see cref="ConfigurePlugIns(string, SolidAddIn)"/> stage.
         /// If false, the user should during the <see cref="SolidAddIn.PreLoadPlugIns"/> method, add
-        /// any specific implementations of the <see cref="SolidPlugIn"/> to <see cref="PlugInIntegration.PlugInDetails"/> list
+        /// any specific implementations of the <see cref="SolidPlugIn"/> to <see cref="PlugInDetails"/> list
         /// </summary>
-        public static bool AutoDiscoverPlugins { get; set; } = true;
+        public bool AutoDiscoverPlugins { get; set; } = true;
 
         #endregion
 
@@ -39,7 +41,7 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Called when a SolidWorks callback is fired
         /// </summary>
-        public static event Action<string> CallbackFired = (name) => { };
+        public static event Action<string> CallbackFired = name => { };
 
         #endregion
 
@@ -49,14 +51,15 @@ namespace AngelSix.SolidDna
         /// Must be called to setup the PlugInIntegration
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
-        /// <param name="cookie">The cookie Id of the SolidWorks instance</param>
         /// <param name="version">The version of the currently connected SolidWorks instance</param>
-        public static void Setup(string addinPath, string version, int cookie)
+        /// <param name="cookie">The cookie Id of the SolidWorks instance</param>
+        /// <param name="useDetachedAppDomain"></param>
+        public void Setup(string addinPath, string version, int cookie, bool useDetachedAppDomain)
         {
             // If use detached app domain...
-            if (AppDomainBoundary.UseDetachedAppDomain)
+            if (useDetachedAppDomain)
                 // Get boundary to re-call us from other app domain
-                AppDomainBoundary.PluginIntegrationSetup(addinPath, version, cookie);
+                ParentAddIn.AppDomainBoundary.PluginIntegrationSetup(addinPath, version, cookie, useDetachedAppDomain);
             else
             {
                 // Log it
@@ -70,12 +73,13 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Cleans up the plug-in app domain so that the plug-in dll files can be edited after unloading
         /// </summary>
-        public static void Teardown()
+        /// <param name="useDetachedAppDomain"></param>
+        public void Teardown()
         {
             // If use detached app domain...
-            if (AppDomainBoundary.UseDetachedAppDomain)
+            if (ParentAddIn.UseDetachedAppDomain)
                 // Get boundary to re-call us from other app domain
-                AppDomainBoundary.PluginIntegrationTeardown();
+                ParentAddIn.AppDomainBoundary.PluginIntegrationTeardown();
             else
             {
                 // Nothing to do right now
@@ -90,12 +94,12 @@ namespace AngelSix.SolidDna
        /// Called when the add-in has connected to SolidWorks
        /// </summary>
        /// <param name="solidAddIn"></param>
-        public static void ConnectedToSolidWorks(SolidAddIn solidAddIn)
+        public void ConnectedToSolidWorks(SolidAddIn solidAddIn)
         {
             // If use detached app domain...
-            if (AppDomainBoundary.UseDetachedAppDomain)
+            if (solidAddIn.UseDetachedAppDomain)
                 // Get boundary to re-call us from other app domain
-                AppDomainBoundary.ConnectedToSolidWorks(solidAddIn);
+                solidAddIn.AppDomainBoundary.ConnectedToSolidWorks(solidAddIn);
             else
             {
                 solidAddIn.OnConnectedToSolidWorks();
@@ -115,12 +119,12 @@ namespace AngelSix.SolidDna
         /// Called when the add-in has disconnected from SolidWorks
         /// </summary>
         /// <param name="solidAddIn"></param>
-        public static void DisconnectedFromSolidWorks(SolidAddIn solidAddIn)
+        public void DisconnectedFromSolidWorks(SolidAddIn solidAddIn)
         {
             // If use detached app domain...
-            if (AppDomainBoundary.UseDetachedAppDomain)
+            if (solidAddIn.UseDetachedAppDomain)
                 // Get boundary to re-call us from other app domain
-                AppDomainBoundary.DisconnectedFromSolidWorks(solidAddIn);
+                solidAddIn.AppDomainBoundary.DisconnectedFromSolidWorks(solidAddIn);
             else
             {
                 solidAddIn.OnDisconnectedFromSolidWorks();
@@ -144,12 +148,12 @@ namespace AngelSix.SolidDna
         /// Adds a plug-in based on its <see cref="SolidPlugIn"/> implementation
         /// </summary>
         /// <typeparam name="T">The class that implements the <see cref="SolidPlugIn"/></typeparam>
-        public static void AddPlugIn<T>()
+        public void AddPlugIn<T>()
         {
             // If use detached app domain...
-            if (AppDomainBoundary.UseDetachedAppDomain)
+            if (ParentAddIn.UseDetachedAppDomain)
                 // Get boundary to re-call us from other app domain
-                AppDomainBoundary.AddPlugIn<T>();
+                ParentAddIn.AppDomainBoundary.AddPlugIn<T>();
             else
             {
                 // Get the full path to the assembly
@@ -173,12 +177,12 @@ namespace AngelSix.SolidDna
         /// Adds a plug-in based on its <see cref="SolidPlugIn"/> implementation
         /// </summary>
         /// <param name="fullPath">The absolute path to the plug-in dll</param>
-        public static void AddPlugIn(string fullPath)
+        public void AddPlugIn(string fullPath)
         {
             // If use detached app domain...
-            if (AppDomainBoundary.UseDetachedAppDomain)
+            if (ParentAddIn.UseDetachedAppDomain)
                 // Get boundary to re-call us from other app domain
-                AppDomainBoundary.AddPlugIn(fullPath);
+                ParentAddIn.AppDomainBoundary.AddPlugIn(fullPath);
             else
             {
                 // Don't auto discover plug-ins if we added manually
@@ -206,12 +210,12 @@ namespace AngelSix.SolidDna
         /// Called by the SolidWorks domain (AddInIntegration) when a callback is fired
         /// </summary>
         /// <param name="name">The parameter passed into the generic callback</param>
-        public static void OnCallback(string name)
+        public void OnCallback(string name)
         {
             // If use detached app domain...
-            if (AppDomainBoundary.UseDetachedAppDomain)
+            if (ParentAddIn.UseDetachedAppDomain)
                 // Get boundary to re-call us from other app domain
-                AppDomainBoundary.OnCallback(name);
+                ParentAddIn.AppDomainBoundary.OnCallback(name);
             else
             {
                 try
@@ -237,8 +241,9 @@ namespace AngelSix.SolidDna
         /// Discovers all SolidDna plug-ins
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
+        /// <param name="solidAddIn"></param>
         /// <returns></returns>
-        public static List<SolidPlugIn> SolidDnaPlugIns(string addinPath)
+        public List<SolidPlugIn> SolidDnaPlugIns(string addinPath, SolidAddIn solidAddIn)
         {
             // Create new empty list
             var assemblies = new List<SolidPlugIn>();
@@ -249,7 +254,7 @@ namespace AngelSix.SolidDna
                 // Log it
                 Logger?.LogDebugSource($"Loading all PlugIns...");
 
-                if (AppDomainBoundary.UseDetachedAppDomain)
+                if (solidAddIn.UseDetachedAppDomain)
                 {
                     // Invalid combination... cannot load all from cross domain
                     // (we don't create the PlugInDetails class for each item
@@ -284,13 +289,13 @@ namespace AngelSix.SolidDna
                         try
                         {
                             // If we are called in the main domain, cross-load
-                            if (AppDomainBoundary.UseDetachedAppDomain)
+                            if (solidAddIn.UseDetachedAppDomain)
                             {
                                 // Log it
                                 Logger?.LogDebugSource($"Cross-domain loading PlugIn {path.AssemblyFullName}...");
 
                                 // Create instance of the plug-in via cross-domain and cast back
-                                var plugin = (dynamic)AppDomainBoundary.AppDomain.CreateInstanceAndUnwrap(
+                                var plugin = (dynamic) ParentAddIn.AppDomainBoundary.AppDomain.CreateInstanceAndUnwrap(
                                                         path.AssemblyFullName,
                                                         path.TypeFullName);
 
@@ -336,14 +341,14 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="pluginFullPath">The full path to the plug-in dll to load</param>
         /// <param name="onFound">Called when a <see cref="SolidPlugIn"/> is found</param>
-        public static void GetPlugIns(string pluginFullPath, Action<SolidPlugIn> onFound)
+        public void GetPlugIns(string pluginFullPath, Action<SolidPlugIn> onFound)
         {
             // Load the assembly
             // NOTE: Calling LoadFrom instead of LoadFile will auto-resolve references in that folder
             //       otherwise they won't resolve.
             //       For this reason its important that plug-ins are in the same folder as the 
             //       AngelSix.SolidDna.dll and all other used references
-            var assembly = Assembly.LoadFrom(pluginFullPath);
+            var assembly = System.Reflection.Assembly.LoadFrom(pluginFullPath);
 
             // If we didn't succeed, ignore
             if (assembly == null)
@@ -366,8 +371,14 @@ namespace AngelSix.SolidDna
             types.Where(p => type.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract).ToList().ForEach(p =>
             {
                 // Create SolidDna plugin class instance
-                if (Activator.CreateInstance(p) is SolidPlugIn inter)
-                    onFound(inter);
+                if (Activator.CreateInstance(p) is SolidPlugIn plugIn)
+                {
+                    // Store the add-in that owns this plugin
+                    plugIn.ParentAddIn = ParentAddIn;
+
+                    // Call the action that further sets up the plugin
+                    onFound(plugIn);
+                }
             });
         }
 
@@ -377,7 +388,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="fullPath">The assembly full path to load</param>
         /// <returns></returns>
-        public static List<PlugInDetails> GetPlugInDetails(string fullPath)
+        public List<PlugInDetails> GetPlugInDetails(string fullPath)
         {
             var list = new List<PlugInDetails>();
 
@@ -396,13 +407,13 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
         /// <param name="solidAddIn"></param>
-        public static void ConfigurePlugIns(string addinPath, SolidAddIn solidAddIn)
+        public void ConfigurePlugIns(string addinPath, SolidAddIn solidAddIn)
         {
-            // If use detached app domain...
-            if (AppDomainBoundary.UseDetachedAppDomain)
+            // If this add-in uses detached app domain...
+            if (solidAddIn.UseDetachedAppDomain)
             {
                 // Get boundary to re-call us from other app domain
-                AppDomainBoundary.ConfigurePlugIns(addinPath, solidAddIn);
+                solidAddIn.AppDomainBoundary.ConfigurePlugIns(addinPath, solidAddIn);
             }
             else
             {
@@ -435,7 +446,7 @@ namespace AngelSix.SolidDna
                 // *********************************************************************************
 
                 // Load all plug-in's at this stage for faster lookup
-                solidAddIn.PlugIns = SolidDnaPlugIns(addinPath);
+                solidAddIn.PlugIns = SolidDnaPlugIns(addinPath, solidAddIn);
 
                 // Log it
                 Logger?.LogDebugSource($"{solidAddIn.PlugIns.Count} plug-ins found");
