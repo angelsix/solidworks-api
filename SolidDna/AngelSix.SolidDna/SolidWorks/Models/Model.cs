@@ -165,9 +165,6 @@ namespace AngelSix.SolidDna
         {
             // Update information about this model
             ReloadModelData();
-
-            // Attach event handlers
-            SetupModelEventHandlers();
         }
 
         #endregion
@@ -179,12 +176,15 @@ namespace AngelSix.SolidDna
         /// </summary>
         protected void ReloadModelData()
         {
-            // Clean up any previous data
+            // Clean up any previous data and unhook event handlers
             DisposeAllReferences();
 
             // Can't do much if there is no document
             if (BaseObject == null)
                 return;
+
+            // Attach event handlers
+            SetupModelEventHandlers();
 
             // Get the file path
             FilePath = BaseObject.GetPathName();
