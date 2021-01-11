@@ -183,9 +183,6 @@ namespace AngelSix.SolidDna
             if (BaseObject == null)
                 return;
 
-            // Attach event handlers
-            SetupModelEventHandlers();
-
             // Get the file path
             FilePath = BaseObject.GetPathName();
 
@@ -209,6 +206,9 @@ namespace AngelSix.SolidDna
 
             // Set assembly access
             Assembly = IsAssembly ? new AssemblyDocument((AssemblyDoc)BaseObject) : null;
+
+            // Attach event handlers
+            SetupModelEventHandlers();
 
             // Inform listeners
             ModelInformationChanged();
