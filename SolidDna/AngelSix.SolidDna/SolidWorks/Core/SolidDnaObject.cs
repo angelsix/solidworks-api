@@ -84,8 +84,8 @@ namespace AngelSix.SolidDna
             // Do any specific disposal
             SolidDnaObjectDisposal.Dispose<T>(BaseObject);
 
-            // COM release object
-            Marshal.FinalReleaseComObject(BaseObject);
+            // COM release object. Calling Marshal.FinalReleaseComObject caused other add-ins to malfunction, so we use the less aggressive option
+            Marshal.ReleaseComObject(BaseObject);
 
             // Clear reference
             BaseObject = default(T);
