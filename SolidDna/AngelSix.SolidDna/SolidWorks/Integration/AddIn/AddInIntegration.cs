@@ -14,7 +14,7 @@ namespace AngelSix.SolidDna
     /// IMPORTANT: The class that overrides <see cref="ISwAddin"/> MUST be the same class that 
     /// contains the ComRegister and ComUnregister functions due to how SolidWorks loads add-ins
     /// </summary>
-    public abstract class AddInIntegration : ISwAddin
+    public abstract class AddInIntegration : ISwAddin, ISwPEManager
     {
         #region Protected Members
 
@@ -36,6 +36,23 @@ namespace AngelSix.SolidDna
         /// The description displayed for this SolidWorks Add-in
         /// </summary>
         public static string SolidWorksAddInDescription { get; set; } = "All your pixels are belong to us!";
+
+        /// <summary>
+        /// The Partner Product license key for this SolidWorks add-in.
+        /// Enter your key here if your add-in is a registered partner product for SolidWorks 2021 or newer. Make sure the key is valid for the current SolidWorks version.
+        /// Set this value in your add-in constructor because the <see cref="IdentifyToSW"/> event is fired before <see cref="ConnectToSW"/>.
+        /// If the key is valid, the add-in appears under the group 'Partner Gold Add-ins' or 'Partner Solution Add-ins'.
+        /// If the key is empty or not valid, the add-in appears under the group 'Other Add-ins'. 
+        /// More info: <see href="https://help.solidworks.com/2021/english/api/sldworksapiprogguide/GettingStarted/SolidWorks_Partner_Program_2.htm" />
+        /// </summary>
+        public static string SolidWorksAddinPartnerLicenseKey { get; set; } = "";
+
+        /// <summary>
+        /// The resulting partner add-in status. If <see cref="SolidWorksAddinPartnerLicenseKey"/> is an empty string, the status will be PartnerAddInKeyStatus.Fail.
+        /// This is not a problem, but your add-in will appear under the group 'Other Add-ins'. 
+        /// See <see cref="SolidWorksAddinPartnerLicenseKey"/> for more info.
+        /// </summary>
+        public static PartnerAddInKeyStatus SolidWorksAddinPartnerKeyStatus { get; private set; }
 
         /// <summary>
         /// Represents the current SolidWorks application
@@ -269,6 +286,19 @@ namespace AngelSix.SolidDna
 
             // Return ok
             return true;
+        }
+
+        /// <summary>
+        /// Called when SolidWorks tries to determine if this add-in is registered with the Partner Program.
+        /// See <see cref="SolidWorksAddinPartnerLicenseKey"/>.
+        /// </summary>
+        /// <param name="classFactory"></param>
+        public void IdentifyToSW(object classFactory)
+        {
+            if (!(classFactory is ISwPEClassFactory factory)) return;
+            
+            // Register our add-in as a partner product. If the key is an empty string, the status will be PartnerAddInKeyStatus.Fail. This is not a 
+            SolidWorksAddinPartnerKeyStatus = (PartnerAddInKeyStatus) factory.SetPartnerKey(SolidWorksAddinPartnerLicenseKey, out var tokenForFutureUse);
         }
 
         #endregion
