@@ -67,7 +67,7 @@ namespace SolidDnaNuGet
     /// <summary>
     /// Register as a SolidWorks Add-In
     /// </summary>
-    public class MyAddinIntegration : AddInIntegration
+    public class MyAddinIntegration : SolidAddIn
     {
         /// <summary>
         /// Specific application start-up code

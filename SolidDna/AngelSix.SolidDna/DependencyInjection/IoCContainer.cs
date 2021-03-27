@@ -18,11 +18,6 @@ namespace AngelSix.SolidDna
         /// </summary>
         public static ILocalizationManager Localization => Get<ILocalizationManager>();
 
-        /// <summary>
-        /// The instance of the <see cref="AddInIntegration"/> class that is used for this add-in
-        /// </summary>
-        public static AddInIntegration AddIn => Get<AddInIntegration>();
-
         #endregion
 
         #region Method shortcuts

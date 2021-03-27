@@ -6,12 +6,11 @@ namespace SolidDna.CustomProperties
     /// <summary>
     /// Register as a SolidWorks Add-in
     /// </summary>
-    public class SolidDnaAddinIntegration : AddInIntegration
+    public class SolidDnaAddinIntegration : SolidAddIn
     {
         /// <summary>
         /// Specific application start-up code
         /// </summary>
-        /// <param name="solidWorks"></param>
         public override void ApplicationStartup()
         {
 
@@ -42,7 +41,7 @@ namespace SolidDna.CustomProperties
         /// <summary>
         /// The Taskpane UI for our plug-in
         /// </summary>
-        private TaskpaneIntegration<TaskpaneUserControlHost> mTaskpane;
+        private TaskpaneIntegration<TaskpaneUserControlHost, SolidDnaAddinIntegration> mTaskpane;
 
         #endregion
 
@@ -65,7 +64,7 @@ namespace SolidDna.CustomProperties
         public override void ConnectedToSolidWorks()
         {
             // Create our taskpane
-            mTaskpane = new TaskpaneIntegration<TaskpaneUserControlHost>()
+            mTaskpane = new TaskpaneIntegration<TaskpaneUserControlHost, SolidDnaAddinIntegration>
             {
                 Icon = Path.Combine(this.AssemblyPath(), "logo-small.bmp"),
                 WpfControl = new CustomPropertiesUI()

@@ -3,7 +3,7 @@
     /// <summary>
     /// Creates a blank AddIn integration class
     /// </summary>
-    public class BlankAddInIntegration : AddInIntegration
+    public class BlankAddInIntegration : SolidAddIn
     {
         #region Constructor
 

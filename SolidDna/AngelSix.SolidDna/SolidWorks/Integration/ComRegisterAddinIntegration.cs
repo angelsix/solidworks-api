@@ -9,7 +9,7 @@ namespace AngelSix.SolidDna
     /// A basic implementation of the AddIn Integration class used when registering the dll for COM.
     /// Mainly used for setting up DI so when loading the PlugIn's they have the expected services
     /// </summary>
-    public class ComRegisterAddInIntegration : AddInIntegration
+    public class ComRegisterAddInIntegration : SolidAddIn
     {
         public ComRegisterAddInIntegration()
         {
@@ -18,7 +18,8 @@ namespace AngelSix.SolidDna
                 // As for COM Registration this won't get ConnectedToSW called
                 // and thereby no call to setup IoC, we do this manually here
                 // Setup application (allowing for AppDomain boundary setup)
-                AppDomainBoundary.Setup(this.AssemblyPath(), this.AssemblyFilePath(), typeof(ComRegisterAddInIntegration).Assembly.AssemblyFilePath(), "");
+                AppDomainBoundary.Setup(this.AssemblyPath(), this.AssemblyFilePath(),
+                    typeof(ComRegisterAddInIntegration).Assembly.AssemblyFilePath(), "", UseDetachedAppDomain);
             }
             catch (Exception ex)
             {

@@ -23,6 +23,8 @@ namespace AngelSix.SolidDna
         /// <returns></returns>
         public abstract string AddInDescription { get; }
 
+        public SolidAddIn ParentAddIn { get; set; }
+
         #endregion
 
         #region Public Methods
@@ -49,6 +51,34 @@ namespace AngelSix.SolidDna
     /// </summary>
     public abstract class SolidPlugIn<T> : SolidPlugIn
     {
+        private SolidAddIn mParentAddIn;
+
+        /// <summary>
+        /// The add-in that contains this plugin.
+        /// We override the default add-in property so we can call <see cref="AppDomainBoundary"/> and <see cref="PlugInIntegration"/> methods and include the generic T.
+        /// </summary>
+        public new SolidAddIn ParentAddIn
+        {
+            get => mParentAddIn;
+            set
+            {
+                // If we already have an add-in, do not change it.
+                if (mParentAddIn != null) return;
+                mParentAddIn = value;
+                
+                // Once we have our parent add-in, we can call these methods.
+
+                // Add any references from the parent plug-in project
+                ParentAddIn.AppDomainBoundary.AddReferenceAssemblies<T>();
+
+                // Disable discovering plug-in and make it quicker by auto-adding it
+                ParentAddIn.PlugInIntegration.AutoDiscoverPlugins = false;
+
+                // Add this plug-in
+                ParentAddIn.PlugInIntegration.AddPlugIn<T>();
+            }
+        }
+
         #region Constructor
 
         /// <summary>
@@ -56,14 +86,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         public SolidPlugIn() : base()
         {
-            // Add any references from the parent plug-in project
-            AppDomainBoundary.AddReferenceAssemblies<T>();
-
-            // Disable discovering plug-in and make it quicker by auto-adding it
-            PlugInIntegration.AutoDiscoverPlugins = false;
-
-            // Add this plug-in
-            PlugInIntegration.AddPlugIn<T>();
+            
         }
 
         #endregion

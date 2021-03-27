@@ -5,7 +5,7 @@ namespace SolidDna.DynamicLoadPlugIn
     /// <summary>
     /// Register as a SolidWorks Add-in
     /// </summary>
-    public class SolidDnaAddinIntegration : AddInIntegration
+    public class SolidDnaAddinIntegration : SolidAddIn
     {
         /// <summary>
         /// Specific application start-up code
