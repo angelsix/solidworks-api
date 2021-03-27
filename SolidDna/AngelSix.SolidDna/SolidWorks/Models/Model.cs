@@ -22,9 +22,14 @@ namespace AngelSix.SolidDna
 
         /// <summary>
         /// Indicates if this file has been saved (so exists on disk).
-        /// If not, it's a new model currently only in-memory and will not have a file path
+        /// If not, it's a new model currently only in-memory and will not have a file path.
+        /// SolidWorks 2020 started setting a path for a file that is loaded with 3D Interconnect, so the path is no longer empty.
+        /// That is why we have to check if the file actually exists.
         /// </summary>
-        public bool HasBeenSaved => !string.IsNullOrEmpty(FilePath);
+        public bool HasBeenSaved =>
+            SolidWorksEnvironment.Application.SolidWorksVersion.Version < 2020
+                ? !string.IsNullOrEmpty(FilePath)
+                : !string.IsNullOrEmpty(FilePath) && File.Exists(FilePath);
 
         /// <summary>
         /// Indicates if this file needs saving (has file changes).
