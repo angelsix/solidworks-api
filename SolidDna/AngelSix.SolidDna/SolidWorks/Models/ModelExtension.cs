@@ -64,14 +64,13 @@ namespace AngelSix.SolidDna
                 // Make sure we are a part
                 if (!Parent.IsPart && !Parent.IsAssembly)
                 {
-                    if (doNotThrowOnError)
-                        return new MassProperties();
-                    else
-                        throw new InvalidOperationException(Localization.GetString("SolidWorksModelGetMassModelNotPartError"));
+                    if (doNotThrowOnError) return new MassProperties();
+                    throw new InvalidOperationException(Localization.GetString("SolidWorksModelGetMassModelNotPartError"));
                 }
 
                 double[] massProps = null;
-                var status = -1;
+                const int statusDefault = -1;
+                var status = statusDefault;
 
                 //
                 // SolidWorks 2016 is the start of support for MassProperties2
@@ -86,15 +85,14 @@ namespace AngelSix.SolidDna
                     massProps = (double[])BaseObject.GetMassProperties2(2, out status, false);
 
                 // Make sure it succeeded
-                if (status == (int)swMassPropertiesStatus_e.swMassPropertiesStatus_UnknownError)
+                if (status == (int)swMassPropertiesStatus_e.swMassPropertiesStatus_UnknownError || status == statusDefault) // SOLIDWORKS does not always update the status when it returns null
                 {
-                    if (doNotThrowOnError)
-                        return new MassProperties();
-                    else
-                        throw new InvalidOperationException(Localization.GetString("SolidWorksModelGetMassModelStatusFailed"));
+                    if (doNotThrowOnError) return new MassProperties();
+                    throw new InvalidOperationException(Localization.GetString("SolidWorksModelGetMassModelStatusFailed"));
                 }
+               
                 // If we have no mass, return empty
-                else if (status == (int)swMassPropertiesStatus_e.swMassPropertiesStatus_NoBody)
+                if (status == (int)swMassPropertiesStatus_e.swMassPropertiesStatus_NoBody)
                     return new MassProperties();
 
                 // Otherwise we have the properties so return them
