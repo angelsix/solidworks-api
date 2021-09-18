@@ -18,7 +18,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
     /// 
     /// NOTE: This application is designed to run on x64 machines and x64 installs of SolidWorks by default
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         #region Private Members
 
@@ -57,6 +57,9 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
 
         #region Public properties
 
+        /// <summary>
+        /// A list of all add-ins that were previously registered.
+        /// </summary>
         public ObservableCollection<string> PreviousAddInPaths { get; private set; } = new ObservableCollection<string>();
 
         #endregion

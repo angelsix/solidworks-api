@@ -24,7 +24,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <StackPanel>
+            <StackPanel Grid.Row="0">
                 <Label Content="SolidWorks Add-in Installer" FontWeight="Bold" FontSize="20" />
                 <TextBlock Margin="0 10" TextWrapping="WrapWithOverflow" Text="This tool will register and install a SolidWorks Add-in dll file into the SolidWorks registry so the add-in will show up in SolidWorks" />
 
@@ -35,7 +35,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBox Padding="5" Name="RegAsmPath" Margin="0 0 10 0" />
+                    <TextBox Grid.Column="0" Padding="5" Name="RegAsmPath" Margin="0 0 10 0" />
                     <Button Name="BrowseRegAsmButton" Click="BrowseRegAsmButton_Click" Grid.Column="1" Content="Browse" Padding="5" />
                 </Grid>
 
@@ -46,7 +46,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBox Padding="5" Name="DllPath" Margin="0 0 10 0" />
+                    <TextBox Grid.Column="0" Padding="5" Name="DllPath" Margin="0 0 10 0" />
                     <Button Name="BrowseDllButton" Click="BrowseDllButton_Click" Grid.Column="1" Content="Browse" Padding="5" />
                 </Grid>
             </StackPanel>
