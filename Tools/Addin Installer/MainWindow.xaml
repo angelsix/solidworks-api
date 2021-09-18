@@ -54,21 +54,22 @@
             <Grid Grid.Row="1" Margin="0 20 0 0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="120" />
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Name="UninstallButton" Padding="5"
-                        Click="UninstallButton_Click" Margin="0 0 5 0">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="Resources/Cancel.png" Height="20" />
-                        <TextBlock Text="Uninstall" VerticalAlignment="Center" Margin="5 0"/>
-                    </StackPanel>
-                </Button>
-                <Button Grid.Column="1" Margin="5 0 0 0" Padding="5"
+                <Button Grid.Column="1" Margin="5 0" Padding="5"
                         Name="InstallButton" Click="InstallButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="Resources/Plus.png" Height="20" />
                         <TextBlock Text="Install" VerticalAlignment="Center" Margin="5 0"/>
+                    </StackPanel>
+                </Button>
+                <Button Grid.Column="2" Name="UninstallButton" Padding="5" Margin="5 0 0 0"
+                        Click="UninstallButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="Resources/Cancel.png" Height="20" />
+                        <TextBlock Text="Uninstall" VerticalAlignment="Center" Margin="5 0"/>
                     </StackPanel>
                 </Button>
             </Grid>
