@@ -13,6 +13,7 @@
         Icon="Resources/favicon.ico">
     <Window.Resources>
         <local:PathToFileNameConverter x:Key="PathToFileNameConverter" />
+        <local:PathToVisibilityConverter x:Key="PathToVisibilityConverter" />
     </Window.Resources>
     <Border Padding="10">
         <Grid>
@@ -76,14 +77,21 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" 
                                            Text="{Binding Converter={StaticResource PathToFileNameConverter}}" 
                                            ToolTip="{Binding}" 
                                            VerticalAlignment="Center" />
-                                <Button Grid.Column="1" Content="Install" Margin="5 2" Padding="5 2" Click="InstallPreviousAddIn_OnClick" />
-                                <Button Grid.Column="2" Content="Uninstall" Margin="5 2" Padding="5 2" Click="UninstallPreviousAddIn_OnClick" />
-                                <Button Grid.Column="3" Content="Remove" Margin="5 2 5 2" Padding="5 2" Click="RemovePathFromPrevious_OnClick" />
+                                <TextBlock Grid.Column="1" Text="Debug" ToolTip="This DLL is in the Debug folder"
+                                           Visibility="{Binding Converter={StaticResource PathToVisibilityConverter}, ConverterParameter=Debug}"
+                                           FontWeight="Bold" Foreground="Blue" VerticalAlignment="Center" Padding="2"/>
+                                <TextBlock Grid.Column="1" Text="Release" ToolTip="This DLL is in the Release folder"
+                                           Visibility="{Binding Converter={StaticResource PathToVisibilityConverter}, ConverterParameter=Release}"
+                                           FontWeight="Bold" Foreground="Fuchsia" VerticalAlignment="Center" Padding="2"/>
+                                <Button Grid.Column="2" Content="Install" Margin="5 2" Padding="5 2" Click="InstallPreviousAddIn_OnClick" />
+                                <Button Grid.Column="3" Content="Uninstall" Margin="5 2" Padding="5 2" Click="UninstallPreviousAddIn_OnClick" />
+                                <Button Grid.Column="4" Content="Remove" Margin="5 2 5 2" Padding="5 2" Click="RemovePathFromPrevious_OnClick" />
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
