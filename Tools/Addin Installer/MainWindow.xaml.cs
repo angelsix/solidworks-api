@@ -270,9 +270,8 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         /// <param name="addinPath"></param>
         private void AddPathToPreviousPaths(string addinPath)
         {
-            var lower = addinPath.ToLower();
-            if (!PreviousAddInPaths.Contains(lower))
-                PreviousAddInPaths.Add(lower);
+            if (!PreviousAddInPaths.Any(x => x.Equals(addinPath, StringComparison.InvariantCultureIgnoreCase)))
+                PreviousAddInPaths.Add(addinPath);
         }
 
         #endregion
