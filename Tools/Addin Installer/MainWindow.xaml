@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AngelSix.SolidWorksApi.AddinInstaller"
         mc:Ignorable="d"
         Title="SolidWorks Addin Installer - angelsix.com" 
-        Height="500" 
+        Height="600" 
         MinHeight="350"
         Width="525" 
         MinWidth="525"
@@ -20,6 +20,9 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
@@ -119,6 +122,17 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
+
+            <Label Grid.Row="4" Content="Currently installed add-in Dlls" FontWeight="Bold" Margin="0 10 0 0" />
+            <ItemsControl Grid.Row="5" ItemsSource="{Binding InstalledAddInTitles, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                          HorizontalContentAlignment="Stretch">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" VerticalAlignment="Center" Margin="0 5"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            
         </Grid>
     </Border>
 </Window>
