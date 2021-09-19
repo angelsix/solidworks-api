@@ -9,6 +9,8 @@ using Microsoft.Win32;
 using System.Diagnostics;
 using System.Windows.Controls;
 using AngelSix.SolidWorksApi.AddinInstaller.Properties;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace AngelSix.SolidWorksApi.AddinInstaller
 {
@@ -18,7 +20,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
     /// 
     /// NOTE: This application is designed to run on x64 machines and x64 installs of SolidWorks by default
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : INotifyPropertyChanged
     {
         #region Private Members
 
@@ -31,6 +33,20 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         /// The folder location where 64bit .Net Frameworks are installed, relative to the Windows folder
         /// </summary>
         private const string MRegAsmWindowsPath = "Microsoft.NET\\Framework64";
+
+        /// <summary>
+        /// List of installed add-ins. We use a backing field so we can call <see cref="PropertyChanged"/> when the list is set.
+        /// </summary>
+        private ObservableCollection<string> _installedAddInTitles = new ObservableCollection<string>();
+
+        #endregion
+
+        #region Public Members
+
+        /// <summary>
+        /// The event that fires when the list of active add-ins changes value so the user interface knows when to refresh.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -51,14 +67,33 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
 
             // Find previous dll paths
             ReadPreviousPaths();
+
+            // Get all add-ins that are currently installed
+            GetInstalledAddIns();
         }
 
         #endregion
 
         #region Public properties
 
+        /// <summary>
+        /// A list of all add-ins that were previously registered.
+        /// </summary>
         public ObservableCollection<string> PreviousAddInPaths { get; private set; } = new ObservableCollection<string>();
 
+        /// <summary>
+        /// A list of all add-ins that are currently installed.
+        /// </summary>
+        public ObservableCollection<string> InstalledAddInTitles
+        {
+            get => _installedAddInTitles;
+            private set
+            {
+                _installedAddInTitles = value;
+                OnPropertyChanged();
+            }
+        }
+        
         #endregion
 
         #region Private Helpers
@@ -77,6 +112,45 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
             PreviousAddInPaths.CollectionChanged += SavePaths;
         }
 
+        /// <summary>
+        /// Get all add-ins that are currently installed.
+        /// </summary>
+        private void GetInstalledAddIns()
+        {
+            const RegistryHive hive = RegistryHive.LocalMachine;
+            const RegistryView view = RegistryView.Registry64;
+            const string keyPath = "SOFTWARE\\SolidWorks\\AddIns";
+
+            var addInTitles = new List<string>();
+            using (var registryKey = RegistryKey.OpenBaseKey(hive, view).OpenSubKey(keyPath))
+            {
+                if (registryKey == null)
+                    return;
+
+                foreach (var subKeyName in registryKey.GetSubKeyNames())
+                {
+                    using (var key = registryKey.OpenSubKey(subKeyName))
+                    {
+                        var value = (string) key?.GetValue("Title");
+
+                        // The Presentation Manager can be listed multiple times and it's not listed in the add-in window, so we skip it.
+                        if (value == null || value.Equals("Presentation Manager"))
+                            continue;
+
+                        addInTitles.Add(value);
+                    }
+                }
+            }
+
+            InstalledAddInTitles = new ObservableCollection<string>(addInTitles);
+        }
+
+        /// <summary>
+        /// Call this method when a property changes and the user interface needs a refresh.
+        /// </summary>
+        /// <param name="name"></param>
+        private void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        
         /// <summary>
         /// Save the list of previously used paths as user settings.
         /// </summary>
@@ -212,6 +286,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
             if (process.ExitCode == 0)
             {
                 AddPathToPreviousPaths(addinPath);
+                GetInstalledAddIns();
                 MessageBox.Show("Add-in was successfully registered", "Success");
             }
             // Otherwise just show the results
@@ -257,6 +332,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
             if (process.ExitCode == 0)
             {
                 AddPathToPreviousPaths(addinPath);
+                GetInstalledAddIns();
                 MessageBox.Show("Add-in was successfully unregistered", "Success");
             }
             // Otherwise just show the results
@@ -270,9 +346,8 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         /// <param name="addinPath"></param>
         private void AddPathToPreviousPaths(string addinPath)
         {
-            var lower = addinPath.ToLower();
-            if (!PreviousAddInPaths.Contains(lower))
-                PreviousAddInPaths.Add(lower);
+            if (!PreviousAddInPaths.Any(x => x.Equals(addinPath, StringComparison.InvariantCultureIgnoreCase)))
+                PreviousAddInPaths.Add(addinPath);
         }
 
         #endregion
