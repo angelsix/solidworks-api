@@ -165,9 +165,6 @@ namespace AngelSix.SolidDna
         {
             // Update information about this model
             ReloadModelData();
-
-            // Attach event handlers
-            SetupModelEventHandlers();
         }
 
         #endregion
@@ -179,7 +176,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         protected void ReloadModelData()
         {
-            // Clean up any previous data
+            // Clean up any previous data and unhook event handlers
             DisposeAllReferences();
 
             // Can't do much if there is no document
@@ -209,6 +206,9 @@ namespace AngelSix.SolidDna
 
             // Set assembly access
             Assembly = IsAssembly ? new AssemblyDocument((AssemblyDoc)BaseObject) : null;
+
+            // Attach event handlers
+            SetupModelEventHandlers();
 
             // Inform listeners
             ModelInformationChanged();
