@@ -6,7 +6,7 @@ namespace SolidDna.WpfAddIn
     /// <summary>
     /// Register as a SolidWorks Add-in
     /// </summary>
-    public class MyAddinIntegration : AddInIntegration
+    public class MyAddinIntegration : SolidAddIn
     {
         /// <summary>
         /// Specific application start-up code
@@ -44,7 +44,7 @@ namespace SolidDna.WpfAddIn
         /// <summary>
         /// The Taskpane UI for our plug-in
         /// </summary>
-        private TaskpaneIntegration<MyTaskpaneUI> mTaskpane;
+        private TaskpaneIntegration<MyTaskpaneUI, MyAddinIntegration> mTaskpane;
 
         #endregion
 
@@ -67,7 +67,7 @@ namespace SolidDna.WpfAddIn
         public override void ConnectedToSolidWorks()
         {
             // Create our taskpane
-            mTaskpane = new TaskpaneIntegration<MyTaskpaneUI>()
+            mTaskpane = new TaskpaneIntegration<MyTaskpaneUI,MyAddinIntegration>
             {
                 Icon = Path.Combine(this.AssemblyPath(), "logo-small.bmp"),
                 WpfControl = new MyAddinControl()

@@ -11,7 +11,9 @@ namespace AngelSix.SolidDna
     /// IMPORTANT: It is required that the class overriding this only uses a parameterless constructor
     /// as it is created via Com so cannot have a parameter-based construction otherwise it won't load
     /// </summary>
-    public class TaskpaneIntegration<THost> where THost : ITaskpaneControl, new()
+    public class TaskpaneIntegration<THost, TParentAddIn> 
+        where THost : ITaskpaneControl, new()
+        where TParentAddIn : SolidAddIn, new()
     {
         #region Protected Members
 
@@ -34,6 +36,11 @@ namespace AngelSix.SolidDna
         /// The ProgId of the host control to be created
         /// </summary>
         protected string mHostProgId;
+
+        /// <summary>
+        /// The add-in that contains this taskpane
+        /// </summary>
+        protected SolidAddIn mParentAddin;
 
         #endregion
 
@@ -66,6 +73,9 @@ namespace AngelSix.SolidDna
         {
             // Find out the ProgId of the desired control type
             mHostProgId = new THost().ProgId;
+
+            // Find out which add-in this task pane belongs to
+            mParentAddin = AddInIntegration.GetAddInWithType(typeof(TParentAddIn));
         }
 
         #endregion
@@ -79,8 +89,11 @@ namespace AngelSix.SolidDna
         /// </summary>
         public async void AddToTaskpaneAsync()
         {
+            // Get the title for the task pane from the parent add-in. If something goes wrong and we cannot find the parent add-in, set it to a default value.
+            var taskpaneTitle = mParentAddin?.SolidWorksAddInTitle ?? "Unknown add-in";
+
             // Create our Taskpane
-            mTaskpaneView = await AddInIntegration.SolidWorks.CreateTaskpaneAsync(Icon, AddInIntegration.SolidWorksAddInTitle);
+            mTaskpaneView = await AddInIntegration.SolidWorks.CreateTaskpaneAsync(Icon, taskpaneTitle);
 
             // Load our UI into the taskpane
             mHostControl = await mTaskpaneView.AddControlAsync<ITaskpaneControl>(mHostProgId, string.Empty);
@@ -89,7 +102,8 @@ namespace AngelSix.SolidDna
             ThreadHelpers.Enable((Control)mHostControl);
 
             // Hook into disconnect event of SolidWorks to unload ourselves automatically
-            AddInIntegration.DisconnectedFromSolidWorks += () => RemoveFromTaskpane();
+            if (mParentAddin != null)
+                mParentAddin.DisconnectedFromSolidWorks += RemoveFromTaskpane;
 
             // Add WPF control if we have one
             if (WpfControl != null)
@@ -120,13 +134,13 @@ namespace AngelSix.SolidDna
                 AppContext.SetSwitch("Switch.System.Windows.Input.Stylus.DisableStylusAndTouchSupport", true);
 
                 // Add and dock it to the parent control
-                if (mHostControl is Control)
+                if (mHostControl is Control control)
                 {
                     // Make sure parent is docked
-                    (mHostControl as Control).Dock = DockStyle.Fill;
+                    control.Dock = DockStyle.Fill;
 
                     // Add WPF host
-                    (mHostControl as Control).Controls.Add(mElementHost);
+                    control.Controls.Add(mElementHost);
                 }
 
             }

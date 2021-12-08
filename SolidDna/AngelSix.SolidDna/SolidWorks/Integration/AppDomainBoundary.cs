@@ -19,11 +19,13 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// A list of assemblies to use when resolving any missing references
         /// </summary>
-        protected static List<AssemblyName> mReferencedAssemblies = new List<AssemblyName>();
+        protected List<AssemblyName> mReferencedAssemblies = new List<AssemblyName>();
 
         #endregion
 
         #region Public Properties
+
+        public SolidAddIn ParentAddIn { get; set; }
 
         /// <summary>
         /// Gets the list of all known reference assemblies in this solution
@@ -33,24 +35,12 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// The AppDomain used to load and unload plug-ins
         /// </summary>
-        public static AppDomain AppDomain { get; private set; }
-
-        /// <summary>
-        /// If true, will load your Add-in dll in its own application domain so you can 
-        /// unload and rebuild your add-in without having to close SolidWorks
-        /// NOTE: This does seem to expose some bugs and issues in SolidWorks API
-        ///       in terms of resolving references to specific dll's, so if you experience
-        ///       issues try turning this off
-        /// NOTE: Also no IoC is available in this detached domain at the moment
-        ///       due to AddinIntegration non-static instance intializing the IoC.
-        ///       That means no Logger for example, so safe log with Logger?.
-        /// </summary>
-        public static bool UseDetachedAppDomain { get; set; }
+        public AppDomain AppDomain { get; private set; }
 
         /// <summary>
         /// The cross-domain marshal to use for the cross-Application domain calls
         /// </summary>
-        public static AppDomainBoundaryMarshal Marshal { get; private set; }
+        public AppDomainBoundaryMarshal Marshal { get; private set; }
 
         #endregion
 
@@ -63,17 +53,19 @@ namespace AngelSix.SolidDna
         /// <param name="assemblyFilePath">The path to the assembly</param>
         /// <param name="configureDllPath">Path to the dll that contains the custom configure services method</param>
         /// <param name="configureName">The name of the <see cref="ConfigureServiceAttribute"/> method to use</param>
-        public static void Setup(string assemblyPath, string assemblyFilePath, string configureDllPath, string configureName)
+        /// <param name="useDetachedAppDomain"></param>
+        public void Setup(string assemblyPath, string assemblyFilePath, string configureDllPath,
+            string configureName, bool useDetachedAppDomain)
         {
             // Help resolve any assembly references
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             // Add references from this assembly (AngelSix.SolidDna) including itself
             // to be resolved by the assembly resolver
-            AddReferenceAssemblies<AddInIntegration>(includeSelf: true);
+            AddReferenceAssemblies<SolidAddIn>(includeSelf: true);
 
             // If we want a separate app domain...
-            if (UseDetachedAppDomain)
+            if (useDetachedAppDomain)
             {
                 // Create random number at end to allow for multiple add-ins
                 var random = new Random();
@@ -88,6 +80,7 @@ namespace AngelSix.SolidDna
 
                 // Run code on new app-domain to configure
                 Marshal = (AppDomainBoundaryMarshal)AppDomain.CreateInstanceAndUnwrap(typeof(AppDomainBoundaryMarshal).Assembly.FullName, typeof(AppDomainBoundaryMarshal).FullName);
+                Marshal.ParentAppDomainBoundary = this;
 
                 // Setup IoC
                 Marshal.SetupIoC(assemblyFilePath, configureDllPath, configureName);
@@ -125,7 +118,7 @@ namespace AngelSix.SolidDna
             if (File.Exists(pathToConfigureDll))
             {
                 // AddIn class type
-                var addinType = typeof(AddInIntegration);
+                var addinType = typeof(SolidAddIn);
 
                 // Load all methods...
                 var match = Assembly.LoadFile(pathToConfigureDll).GetTypes()
@@ -135,7 +128,7 @@ namespace AngelSix.SolidDna
                         // Store class
                         methodClass: t,
                         // Select the ConfigureServices method
-                        method: t.GetMethod(nameof(AddInIntegration.ConfigureServices)))
+                        method: t.GetMethod(nameof(SolidAddIn.ConfigureServices)))
                       )
                       // Only use first method for now
                       .FirstOrDefault();
@@ -157,11 +150,10 @@ namespace AngelSix.SolidDna
 
         #endregion
 
-
         /// <summary>
         /// Unloads the created app domain
         /// </summary>
-        public static void Unload()
+        public void Unload()
         {
             // Now tear down app domain
             Logger?.LogDebugSource($"Unloading cross-domain...");
@@ -182,18 +174,19 @@ namespace AngelSix.SolidDna
         /// Must be called to setup the PlugInIntegration
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
-        /// <param name="cookie">The cookie Id of the SolidWorks instance</param>
         /// <param name="version">The version of the currently connected SolidWorks instance</param>
-        public static void PluginIntegrationSetup(string addinPath, string version, int cookie)
+        /// <param name="cookie">The cookie Id of the SolidWorks instance</param>
+        /// <param name="useDetachedAppDomain"></param>
+        public void PluginIntegrationSetup(string addinPath, string version, int cookie, bool useDetachedAppDomain)
         {
             // Call method from other app domain
-            Marshal.PluginIntegrationSetup(addinPath, version, cookie);
+            Marshal.PluginIntegrationSetup(addinPath, version, cookie, useDetachedAppDomain);
         }
 
         /// <summary>
         /// Tears down the app-domain that the plug-ins run inside of
         /// </summary>
-        public static void PluginIntegrationTeardown()
+        public void PluginIntegrationTeardown()
         {
             // Call method from other app domain
             Marshal.PluginIntegrationTeardown();
@@ -203,7 +196,7 @@ namespace AngelSix.SolidDna
         /// Adds a plug-in based on its <see cref="SolidPlugIn"/> implementation
         /// </summary>
         /// <typeparam name="T">The class that implements the <see cref="SolidPlugIn"/></typeparam>
-        public static void AddPlugIn<T>()
+        public void AddPlugIn<T>()
         {
             Marshal.AddPlugIn<T>();
         }
@@ -212,7 +205,7 @@ namespace AngelSix.SolidDna
         /// Adds a plug-in based on its <see cref="SolidPlugIn"/> implementation
         /// </summary>
         /// <param name="fullPath">The absolute path to the plug-in dll</param>
-        public static void AddPlugIn(string fullPath)
+        public void AddPlugIn(string fullPath)
         {
             Marshal.AddPlugIn(fullPath);
         }
@@ -221,7 +214,7 @@ namespace AngelSix.SolidDna
         /// Called by the SolidWorks domain (AddInIntegration) when a callback is fired
         /// </summary>
         /// <param name="name">The parameter passed into the generic callback</param>
-        public static void OnCallback(string name)
+        public void OnCallback(string name)
         {
             Marshal.OnCallback(name);
         }
@@ -230,9 +223,10 @@ namespace AngelSix.SolidDna
         /// Runs any initialization code required on plug-ins
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
-        public static void ConfigurePlugIns(string addinPath)
+        /// <param name="solidAddIn"></param>
+        public void ConfigurePlugIns(string addinPath, SolidAddIn solidAddIn)
         {
-            Marshal.ConfigurePlugIns(addinPath);
+            Marshal.ConfigurePlugIns(addinPath, solidAddIn);
         }
 
         #endregion
@@ -242,17 +236,19 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Called when the add-in has connected to SolidWorks
         /// </summary>
-        public static void ConnectedToSolidWorks()
+        /// <param name="solidAddIn"></param>
+        public void ConnectedToSolidWorks(SolidAddIn solidAddIn)
         {
-            Marshal.ConnectedToSolidWorks();
+            Marshal.ConnectedToSolidWorks(solidAddIn);
         }
 
         /// <summary>
         /// Called when the add-in has disconnected from SolidWorks
         /// </summary>
-        public static void DisconnectedFromSolidWorks()
+        /// <param name="solidAddIn"></param>
+        public void DisconnectedFromSolidWorks(SolidAddIn solidAddIn)
         {
-            Marshal.DisconnectedFromSolidWorks();
+            Marshal.DisconnectedFromSolidWorks(solidAddIn);
         }
 
         #endregion
@@ -266,7 +262,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <typeparam name="ReferenceType">The type contained in the assembly where the references are</typeparam>
         /// <param name="includeSelf">True to include the calling assembly</param>
-        public static void AddReferenceAssemblies<ReferenceType>(bool includeSelf = false)
+        public void AddReferenceAssemblies<ReferenceType>(bool includeSelf = false)
         {
             // Find all reference assemblies from the type
             var referencedAssemblies = typeof(ReferenceType).Assembly.GetReferencedAssemblies();
@@ -289,7 +285,7 @@ namespace AngelSix.SolidDna
         /// <param name="sender"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             // Try and find a reference assembly that matches...
             var resolvedAssembly = mReferencedAssemblies.FirstOrDefault(f => string.Equals(f.FullName, args.Name, StringComparison.InvariantCultureIgnoreCase));
