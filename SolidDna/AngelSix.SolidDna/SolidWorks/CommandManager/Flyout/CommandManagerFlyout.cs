@@ -1,7 +1,6 @@
 ﻿using SolidWorks.Interop.sldworks;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace AngelSix.SolidDna
@@ -81,6 +80,7 @@ namespace AngelSix.SolidDna
         /// Default constructor
         /// </summary>
         /// <param name="flyoutGroup">The SolidWorks command manager flyout group</param>
+        /// <param name="userId">The unique flyout ID</param>
         /// <param name="callbackId">The unique callback ID</param>
         /// <param name="items">The command items to add</param>
         /// <param name="title">The title</param>

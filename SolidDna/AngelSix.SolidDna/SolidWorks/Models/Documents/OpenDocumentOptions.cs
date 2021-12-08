@@ -50,7 +50,7 @@ namespace AngelSix.SolidDna
         /// setting swAutoLoadPartsLightweight.
         /// 
         /// To override the default and specify a value with 
-        /// <see cref="SolidDna.SolidWorksApplication.OpenFile(string, bool)"/>, set <see cref="LoadLightweight"/>. 
+        /// <see cref="SolidWorksApplication.OpenFile(string, OpenDocumentOptions, string)"/>, set <see cref="LoadLightweight"/>. 
         /// 
         /// If set, then you can set <see cref="LoadLightweight"/> to open an assembly document as lightweight
         /// </summary>

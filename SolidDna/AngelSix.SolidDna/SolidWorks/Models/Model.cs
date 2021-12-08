@@ -743,7 +743,6 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Gets all of the custom properties in this model including any configuration specific properties
         /// </summary>
-        /// <param name="action">The custom properties list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>
         /// <returns>Custom property and the configuration name it belongs to (or null if none)</returns>
         public IEnumerable<(string configuration, CustomProperty property)> AllCustomProperties()
         {
@@ -1001,10 +1000,9 @@ namespace AngelSix.SolidDna
         /// <summary>
         /// Recurses components and sub-components and provides a callback action to process and work with each components
         /// </summary>
-        /// <param name="componentAction">The callback action that is called for each components in the component</param>
         /// <param name="startComponent">The components to start at</param>
         /// <param name="componentDepth">The current depth of the sub-components based on the original calling components</param>
-        private IEnumerable<(Component, int)> RecurseComponents(Component startComponent = null, int componentDepth = 0)
+        private static IEnumerable<(Component, int)> RecurseComponents(Component startComponent = null, int componentDepth = 0)
         {
             // While that component is not null...
             if (startComponent != null)
@@ -1039,7 +1037,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="includeSelf">True to include this file as part of the dependency list</param>
         /// <param name="includeDrawings">True to look for drawings with the same name as their models</param>
-        /// <returns>Returns a list of full filepaths of all dependencies of this model</returns>
+        /// <returns>Returns a list of full file paths of all dependencies of this model</returns>
         public List<string> Dependencies(bool includeSelf = true, bool includeDrawings = true)
         {
             // New list

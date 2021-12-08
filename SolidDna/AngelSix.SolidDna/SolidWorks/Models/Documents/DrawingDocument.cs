@@ -165,7 +165,7 @@ namespace AngelSix.SolidDna
             nativeOptions.EditBalloons = options.EditBalloons;
             nativeOptions.FirstItem = options.FirstItem;
             nativeOptions.IgnoreMultiple = options.IgnoreMultiple;
-            nativeOptions.InsertMagneticLine = options.InsertMagnaticLine;
+            nativeOptions.InsertMagneticLine = options.InsertMagneticLine;
             nativeOptions.ItemNumberIncrement = options.ItemNumberIncrement;
             nativeOptions.ItemNumberStart = options.ItemNumberStart;
             nativeOptions.ItemOrder = (int)options.ItemOrder;
