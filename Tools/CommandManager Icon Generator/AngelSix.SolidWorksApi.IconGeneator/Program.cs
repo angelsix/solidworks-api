@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace AngelSix.SolidWorksApi.IconGeneator
 {
@@ -107,6 +108,25 @@ namespace AngelSix.SolidWorksApi.IconGeneator
                     combinedImage.Save($"{filenamePrepend}{size}.png");
                 }
             });
+
+            //inform users of file locations
+            Console.WriteLine("----------------------------------------");
+            Console.WriteLine($"successfully saved in: \n {AssemblyDirectory}");
+            _ = Console.ReadLine();
+        }
+
+        /// <summary>
+        /// get the path to the current exe
+        /// </summary>
+        public static string AssemblyDirectory
+        {
+            get
+            {
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
         }
 
         /// <summary>
