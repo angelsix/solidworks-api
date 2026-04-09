@@ -168,3 +168,6 @@ claudecli-history.json
 
 # Claude CLI history
 **/.claude/claudecli-history.json
+
+# AI Mecca local state
+.aimecca/
