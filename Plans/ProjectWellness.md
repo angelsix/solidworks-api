@@ -1,15 +1,9 @@
 # Project wellness
-
-Conformance gaps found on 2026-05-31, to bring this repo up to the global standard. Recommend, don't auto-run: the glossary is real work.
-
-## Readiness summary
-
-`Project.md` and `Memory.md` are in place; `Glossary.md` is missing. Naming and docs looked in order in the light sweep.
-
+Status: Ready
+End-of-day sweep on 2026-05-31 found one groundwork gap in this repo: `AgentDocumentation/Sessions/` is missing.
 ## The plan
-
-1. **Run the `project-glossary` skill** to create `AgentDocumentation/Glossary.md`. `Project.md` and `Memory.md` already exist; the glossary is the missing groundwork piece.
-
-## Decisions behind it
-
-- Glossary is the only groundwork gap; naming and docs looked in order in the light sweep.
+Seed the missing sessions folder so the repo matches the standard groundwork shape.
+## Tasks
+- [ ] 1. Create `AgentDocumentation/Sessions/` in this repo.
+## Decisions and trade-offs
+This replaces an older stale note that still claimed `AgentDocumentation/Glossary.md` was missing; it exists now.
