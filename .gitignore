@@ -171,3 +171,6 @@ claudecli-history.json
 
 # AI Mecca local state
 .aimecca/
+
+# Python
+__pycache__/
