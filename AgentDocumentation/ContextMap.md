@@ -14,9 +14,9 @@ The repo is one shippable SDK plus its support cast. The SDK — `AngelSix.Solid
 
 ## Solution / project layout
 
-16 `.sln` files, 17 `.csproj`. The one that matters is the SDK; the rest are consumers/scaffolding.
+16 `.sln` files, 18 `.csproj`. The one that matters is the SDK; the rest are consumers/scaffolding.
 
-- **`SolidDna/AngelSix.SolidDna/`** — the SDK. `AngelSix.SolidDna.sln` → `AngelSix.SolidDna.csproj` (`net472`, `PackageId AngelSix.SolidDna`, depends on `Dna.Framework`). This is where real changes live.
+- **`SolidDna/AngelSix.SolidDna/`** — the SDK. `AngelSix.SolidDna.sln` → `AngelSix.SolidDna.csproj` (`net472`, NuGet package id `AngelSix.SolidDna` — defaulted from the assembly name, not set via an explicit `PackageId`; depends on `Dna.Framework`). This is where real changes live.
 - **`ScriptRunner/SolidDNA.ScriptRunner/`** — an add-in that runs ad-hoc C# scripts inside SolidWorks (testing/automation without building a full add-in). Has a WPF taskpane (`MyTaskpaneUI.cs`, `MyAddinControl.xaml`) and `ScriptWrapperFormat.cs`.
 - **`Templates/`** — VSIX project templates devs scaffold from: `SolidDna.Blank`, `SolidDNA.StandAlone`, `SolidDna.WPF.Blank`, and the `VSIX Installer` (`SolidDNA.Templates`) that packages them.
 - **`Tutorials/01-…` through `08-StandAlone/`** — worked examples mapped to YouTube videos (blank add-in, WPF, custom properties, selection, dynamic plug-in reload, exporting, NuGet consumption, standalone). Reference material, not the product.
