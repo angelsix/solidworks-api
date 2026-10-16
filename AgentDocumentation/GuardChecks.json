@@ -1,4 +1,5 @@
 {
+  "demoRun": { "none": "The only UI is the Addin Installer, a WPF (.xaml) tool for Windows that installs SolidWorks add-ins; it cannot build or run on macOS, and guard shot has no WPF target, so there is no demo to start or shoot." },
   "version": 1,
   "build": {
     "commands": [
