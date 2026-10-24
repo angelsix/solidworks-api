@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "package": "Newtonsoft.Json",
+      "advisory": "GHSA-5crp-9r3c-p9vr",
+      "source": "ScriptRunner/SolidDNA.ScriptRunner/SolidDNA.ScriptRunner.csproj",
+      "reason": "Not a drop-in: 10.0.1 arrives via Dna.Framework -> Microsoft.Extensions.Configuration.Json 2.0.0, compiled against Newtonsoft 10.0.0.0. Add-ins load inside sldworks.exe where the add-in's binding redirects are ignored and SolidDna's AssemblyResolve matches exact versions, so forcing 13.x breaks JSON config loading in SolidWorks. Fix needs a version-tolerant resolver in SolidDna plus a new SolidDna release; Windows/SolidWorks only (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    },
+    {
+      "package": "System.Net.Http",
+      "advisory": "GHSA-7jgj-8wvc-jh57",
+      "source": "ScriptRunner/SolidDNA.ScriptRunner/SolidDNA.ScriptRunner.csproj",
+      "reason": "4.3.3 comes from the published AngelSix.SolidDna 1.0.1.8 the templates/ScriptRunner reference; SolidDna itself already pins 4.3.4. Moving them means a SolidDna package bump (API drift) and on net472 a System.Net.Http package swap needs binding redirects SolidWorks ignores; cannot be built or tested off Windows (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    },
+    {
+      "package": "Newtonsoft.Json",
+      "advisory": "GHSA-5crp-9r3c-p9vr",
+      "source": "SolidDna/AngelSix.SolidDna/AngelSix.SolidDna.csproj",
+      "reason": "Not a drop-in: 10.0.1 arrives via Dna.Framework -> Microsoft.Extensions.Configuration.Json 2.0.0, compiled against Newtonsoft 10.0.0.0. Add-ins load inside sldworks.exe where the add-in's binding redirects are ignored and SolidDna's AssemblyResolve matches exact versions, so forcing 13.x breaks JSON config loading in SolidWorks. Fix needs a version-tolerant resolver in SolidDna plus a new SolidDna release; Windows/SolidWorks only (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    },
+    {
+      "package": "Newtonsoft.Json",
+      "advisory": "GHSA-5crp-9r3c-p9vr",
+      "source": "Templates/SolidDNA.StandAlone/SolidDNA.StandAlone/SolidDNA.StandAlone.csproj",
+      "reason": "Not a drop-in: 10.0.1 arrives via Dna.Framework -> Microsoft.Extensions.Configuration.Json 2.0.0, compiled against Newtonsoft 10.0.0.0. Add-ins load inside sldworks.exe where the add-in's binding redirects are ignored and SolidDna's AssemblyResolve matches exact versions, so forcing 13.x breaks JSON config loading in SolidWorks. Fix needs a version-tolerant resolver in SolidDna plus a new SolidDna release; Windows/SolidWorks only (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    },
+    {
+      "package": "System.Net.Http",
+      "advisory": "GHSA-7jgj-8wvc-jh57",
+      "source": "Templates/SolidDNA.StandAlone/SolidDNA.StandAlone/SolidDNA.StandAlone.csproj",
+      "reason": "4.3.3 comes from the published AngelSix.SolidDna 1.0.1.8 the templates/ScriptRunner reference; SolidDna itself already pins 4.3.4. Moving them means a SolidDna package bump (API drift) and on net472 a System.Net.Http package swap needs binding redirects SolidWorks ignores; cannot be built or tested off Windows (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    },
+    {
+      "package": "Newtonsoft.Json",
+      "advisory": "GHSA-5crp-9r3c-p9vr",
+      "source": "Templates/SolidDna.Blank/SolidDNA.Blank/SolidDNA.Blank.csproj",
+      "reason": "Not a drop-in: 10.0.1 arrives via Dna.Framework -> Microsoft.Extensions.Configuration.Json 2.0.0, compiled against Newtonsoft 10.0.0.0. Add-ins load inside sldworks.exe where the add-in's binding redirects are ignored and SolidDna's AssemblyResolve matches exact versions, so forcing 13.x breaks JSON config loading in SolidWorks. Fix needs a version-tolerant resolver in SolidDna plus a new SolidDna release; Windows/SolidWorks only (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    },
+    {
+      "package": "System.Net.Http",
+      "advisory": "GHSA-7jgj-8wvc-jh57",
+      "source": "Templates/SolidDna.Blank/SolidDNA.Blank/SolidDNA.Blank.csproj",
+      "reason": "4.3.3 comes from the published AngelSix.SolidDna 1.0.1.8 the templates/ScriptRunner reference; SolidDna itself already pins 4.3.4. Moving them means a SolidDna package bump (API drift) and on net472 a System.Net.Http package swap needs binding redirects SolidWorks ignores; cannot be built or tested off Windows (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    },
+    {
+      "package": "Newtonsoft.Json",
+      "advisory": "GHSA-5crp-9r3c-p9vr",
+      "source": "Templates/SolidDna.WPF.Blank/SolidDNA.WPF.Blank/SolidDNA.WPF.Blank.csproj",
+      "reason": "Not a drop-in: 10.0.1 arrives via Dna.Framework -> Microsoft.Extensions.Configuration.Json 2.0.0, compiled against Newtonsoft 10.0.0.0. Add-ins load inside sldworks.exe where the add-in's binding redirects are ignored and SolidDna's AssemblyResolve matches exact versions, so forcing 13.x breaks JSON config loading in SolidWorks. Fix needs a version-tolerant resolver in SolidDna plus a new SolidDna release; Windows/SolidWorks only (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    },
+    {
+      "package": "System.Net.Http",
+      "advisory": "GHSA-7jgj-8wvc-jh57",
+      "source": "Templates/SolidDna.WPF.Blank/SolidDNA.WPF.Blank/SolidDNA.WPF.Blank.csproj",
+      "reason": "4.3.3 comes from the published AngelSix.SolidDna 1.0.1.8 the templates/ScriptRunner reference; SolidDna itself already pins 4.3.4. Moving them means a SolidDna package bump (API drift) and on net472 a System.Net.Http package swap needs binding redirects SolidWorks ignores; cannot be built or tested off Windows (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    },
+    {
+      "package": "Newtonsoft.Json",
+      "advisory": "GHSA-5crp-9r3c-p9vr",
+      "source": "Tutorials/02-WpfAddIn/SolidDna.WpfAddIn/SolidDna.WpfAddIn.csproj",
+      "reason": "Not a drop-in: 10.0.1 arrives via Dna.Framework -> Microsoft.Extensions.Configuration.Json 2.0.0, compiled against Newtonsoft 10.0.0.0. Add-ins load inside sldworks.exe where the add-in's binding redirects are ignored and SolidDna's AssemblyResolve matches exact versions, so forcing 13.x breaks JSON config loading in SolidWorks. Fix needs a version-tolerant resolver in SolidDna plus a new SolidDna release; Windows/SolidWorks only (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    },
+    {
+      "package": "Newtonsoft.Json",
+      "advisory": "GHSA-5crp-9r3c-p9vr",
+      "source": "Tutorials/03-CustomProperties/SolidDna.CustomProperties/SolidDna.CustomProperties.csproj",
+      "reason": "Not a drop-in: 10.0.1 arrives via Dna.Framework -> Microsoft.Extensions.Configuration.Json 2.0.0, compiled against Newtonsoft 10.0.0.0. Add-ins load inside sldworks.exe where the add-in's binding redirects are ignored and SolidDna's AssemblyResolve matches exact versions, so forcing 13.x breaks JSON config loading in SolidWorks. Fix needs a version-tolerant resolver in SolidDna plus a new SolidDna release; Windows/SolidWorks only (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    },
+    {
+      "package": "Newtonsoft.Json",
+      "advisory": "GHSA-5crp-9r3c-p9vr",
+      "source": "Tutorials/04-SelectedObjects/SolidDna.CustomProperties/SolidDna.CustomProperties.csproj",
+      "reason": "Not a drop-in: 10.0.1 arrives via Dna.Framework -> Microsoft.Extensions.Configuration.Json 2.0.0, compiled against Newtonsoft 10.0.0.0. Add-ins load inside sldworks.exe where the add-in's binding redirects are ignored and SolidDna's AssemblyResolve matches exact versions, so forcing 13.x breaks JSON config loading in SolidWorks. Fix needs a version-tolerant resolver in SolidDna plus a new SolidDna release; Windows/SolidWorks only (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    },
+    {
+      "package": "Newtonsoft.Json",
+      "advisory": "GHSA-5crp-9r3c-p9vr",
+      "source": "Tutorials/05-DynamicPlugInReload/SolidDna.DynamicLoadPlugIn.Main/SolidDna.DynamicLoadPlugIn.Main.csproj",
+      "reason": "Not a drop-in: 10.0.1 arrives via Dna.Framework -> Microsoft.Extensions.Configuration.Json 2.0.0, compiled against Newtonsoft 10.0.0.0. Add-ins load inside sldworks.exe where the add-in's binding redirects are ignored and SolidDna's AssemblyResolve matches exact versions, so forcing 13.x breaks JSON config loading in SolidWorks. Fix needs a version-tolerant resolver in SolidDna plus a new SolidDna release; Windows/SolidWorks only (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    },
+    {
+      "package": "Newtonsoft.Json",
+      "advisory": "GHSA-5crp-9r3c-p9vr",
+      "source": "Tutorials/05-DynamicPlugInReload/SolidDna.DynamicLoadPlugIn/SolidDna.DynamicLoadPlugIn.csproj",
+      "reason": "Not a drop-in: 10.0.1 arrives via Dna.Framework -> Microsoft.Extensions.Configuration.Json 2.0.0, compiled against Newtonsoft 10.0.0.0. Add-ins load inside sldworks.exe where the add-in's binding redirects are ignored and SolidDna's AssemblyResolve matches exact versions, so forcing 13.x breaks JSON config loading in SolidWorks. Fix needs a version-tolerant resolver in SolidDna plus a new SolidDna release; Windows/SolidWorks only (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    },
+    {
+      "package": "Newtonsoft.Json",
+      "advisory": "GHSA-5crp-9r3c-p9vr",
+      "source": "Tutorials/06-Exporting/SolidDna.Exporting/SolidDna.Exporting.csproj",
+      "reason": "Not a drop-in: 10.0.1 arrives via Dna.Framework -> Microsoft.Extensions.Configuration.Json 2.0.0, compiled against Newtonsoft 10.0.0.0. Add-ins load inside sldworks.exe where the add-in's binding redirects are ignored and SolidDna's AssemblyResolve matches exact versions, so forcing 13.x breaks JSON config loading in SolidWorks. Fix needs a version-tolerant resolver in SolidDna plus a new SolidDna release; Windows/SolidWorks only (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    },
+    {
+      "package": "Newtonsoft.Json",
+      "advisory": "GHSA-5crp-9r3c-p9vr",
+      "source": "Tutorials/07-SolidDnaNuGet/SolidDnaNuGet/SolidDnaNuGet.csproj",
+      "reason": "Not a drop-in: 10.0.1 arrives via Dna.Framework -> Microsoft.Extensions.Configuration.Json 2.0.0, compiled against Newtonsoft 10.0.0.0. Add-ins load inside sldworks.exe where the add-in's binding redirects are ignored and SolidDna's AssemblyResolve matches exact versions, so forcing 13.x breaks JSON config loading in SolidWorks. Fix needs a version-tolerant resolver in SolidDna plus a new SolidDna release; Windows/SolidWorks only (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    },
+    {
+      "package": "Newtonsoft.Json",
+      "advisory": "GHSA-5crp-9r3c-p9vr",
+      "source": "Tutorials/08-StandAlone/SolidDna.StandAlone/SolidDna.StandAlone.csproj",
+      "reason": "Not a drop-in: 10.0.1 arrives via Dna.Framework -> Microsoft.Extensions.Configuration.Json 2.0.0, compiled against Newtonsoft 10.0.0.0. Add-ins load inside sldworks.exe where the add-in's binding redirects are ignored and SolidDna's AssemblyResolve matches exact versions, so forcing 13.x breaks JSON config loading in SolidWorks. Fix needs a version-tolerant resolver in SolidDna plus a new SolidDna release; Windows/SolidWorks only (ai-mecca Plans/45 task 14)",
+      "expires": "2026-11-30"
+    }
+  ],
+  "skip": []
+}
